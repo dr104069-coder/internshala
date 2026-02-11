@@ -1,29 +1,55 @@
 package com.grownited.controller;
 
-import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.grownited.entity.InternshipEnrollmentEntity;
+import com.grownited.entity.InternshipEntity;
 import com.grownited.repository.InternshipEnrollmentRepository;
+import com.grownited.repository.InternshipRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class InternshipEnrollmentController {
 	
-	private static final String INTERNSHIP_ID = "internshipId";
 	@Autowired
 	InternshipEnrollmentRepository internshipenrollmentrepository;
 	
+	@Autowired
+	InternshipRepository internshipRepository;
+	
 	@GetMapping("/addInternshipEnrollment")
-    public String openInternshipEnrollmentPage() {
-        return "addInternshipEnrollment"; // JSP name
-    }
+	public String openInternshipEnrollmentPage(Model model) {
+
+	    List<InternshipEntity> internshipList =
+	            internshipRepository.findByStatus("OPEN");
+
+	    model.addAttribute("internshipList", internshipList);
+
+	    return "addInternshipEnrollment";
+	}
+	
+	@PostMapping("/saveInternshipEnrollment")
+	public String saveInternshipEnrollment(InternshipEnrollmentEntity enrollment,
+	                                       HttpSession session) {
+
+	    Integer studentId = (Integer) session.getAttribute("userId");
+	    enrollment.setStudentId(studentId);
+
+	    internshipenrollmentrepository.save(enrollment);
+
+	    return "redirect:/studentDashboard";
+	}
+	
+//	@GetMapping("/addInternshipEnrollment")
+//    public String openInternshipEnrollmentPage() {
+//        return "addInternshipEnrollment"; // JSP name
+//    }
 	
 	/*@PostMapping("/saveInternshipEnrollment")
     public String saveInternshipEnrollment(InternshipEnrollmentEntity enrollment) {
@@ -36,7 +62,7 @@ public class InternshipEnrollmentController {
         internshipenrollmentrepository.save(enrollment);
 
         return "redirect:/studentDashboard";
-    }*/
+    }
 	
 	@PostMapping("/saveInternshipEnrollment")
 	public String saveInternshipEnrollment(
@@ -61,7 +87,7 @@ public class InternshipEnrollmentController {
 	    internshipenrollmentrepository.save(enrollment);
 
 	    return "redirect:/studentDashboard";
-	}
+	}*/
 	
 	
 

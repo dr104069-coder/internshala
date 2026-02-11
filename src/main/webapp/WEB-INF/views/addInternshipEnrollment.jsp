@@ -52,7 +52,7 @@ Internship Enrollment
                 <option value="">-- Choose Internship --</option>
                 <c:forEach items="${internshipList}" var="i">
                     <option value="${i.internshipId}">
-                        ${i.title} - ${i.companyName}
+                       ${i.title}
                     </option>
                 </c:forEach>
             </select>

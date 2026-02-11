@@ -121,6 +121,7 @@ public class UserEntity {
     private String profilePicURL;
     private String gender;
     private String role;
+    private String usertype;
     private Boolean active;
 
     private LocalDate createdAt;   // ✅ camelCase only
@@ -195,6 +196,15 @@ public class UserEntity {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+
+	public String getUsertype() {
+		return usertype;
+	}
+
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
 	}
 
 	public Boolean getActive() {

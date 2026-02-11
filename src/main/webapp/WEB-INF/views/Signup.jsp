@@ -188,6 +188,23 @@ select.form-control.valid {
             <i class="bi bi-telephone"></i>
             <input type="text" name="phone" class="form-control" placeholder="Phone" required>
         </div>
+        <div class="row">
+    <div class="col">
+        <div class="input-group">
+            <i class="bi bi-mortarboard"></i>
+            <input type="text" name="qualification" class="form-control" placeholder="Qualification" required>
+        </div>
+    </div>
+    <div class="input-group">
+    <i class="bi bi-person-badge"></i>
+    <select name="usertype" class="form-control" required onchange="this.classList.add('valid')">
+        <option value="" selected disabled>UserType</option>
+        <option value="ADMIN">ADMIN</option>
+        <option value="STUDENT">STUDENT</option>
+        <option value="FACULTY">FACULTY</option>
+        <option value="EMPLOYER">EMPLOYER</option>
+    </select>
+</div>
 
         <!-- Gender -->
         <div class="input-group">
@@ -208,6 +225,13 @@ select.form-control.valid {
                     <input type="text" name="country" class="form-control" placeholder="Country" required>
                 </div>
             </div>
+            <div class="col">
+        <div class="input-group">
+            <i class="bi bi-pin-map"></i>
+            <input type="text" name="state" class="form-control" placeholder="State" required>
+        </div>
+    </div>
+</div>
             <div class="col">
                 <div class="input-group">
                     <i class="bi bi-geo-alt"></i>

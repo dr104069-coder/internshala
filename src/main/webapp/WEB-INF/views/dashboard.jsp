@@ -1,59 +1,76 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Command Center | SmartIntern</title>
+<title>Admin Dashboard | SmartIntern</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
 body{
-    background:#eef2f7;
+    margin:0;
+    background:#f4f6f9;
     font-family:'Segoe UI',sans-serif;
 }
 
-/* TOP BAR */
-.topbar{
+/* HEADER */
+.header{
     background:#0f172a;
-    color:#fff;
-    padding:14px 26px;
+    color:white;
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
-.brand{
-    font-size:22px;
-    font-weight:700;
+
+.header h5{
+    margin:0;
+    font-weight:600;
 }
 
 /* LAYOUT */
-.wrapper{
+.layout{
     display:flex;
-    min-height:calc(100vh - 64px);
+    min-height:calc(100vh - 70px);
 }
 
 /* SIDEBAR */
 .sidebar{
     width:260px;
-    background:#020617;
+    background:#111827;
     padding:20px;
 }
-.sidebar h6{
-    color:#94a3b8;
+
+.sidebar-title{
+    color:#9ca3af;
     font-size:12px;
-    margin-bottom:15px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-top:20px;
+    margin-bottom:10px;
 }
+
 .sidebar a{
     display:flex;
     align-items:center;
     gap:10px;
-    padding:11px 14px;
-    border-radius:10px;
+    padding:10px 12px;
+    border-radius:8px;
     color:#e5e7eb;
     text-decoration:none;
     margin-bottom:6px;
+    transition:0.2s;
+    font-size:14px;
 }
-.sidebar a:hover,
+
+.sidebar a:hover{
+    background:#1f2937;
+    transform:translateX(3px);
+}
+
 .sidebar a.active{
     background:#2563eb;
 }
@@ -65,47 +82,48 @@ body{
 }
 
 /* CARDS */
-.box{
-    background:#fff;
-    border-radius:16px;
-    padding:22px;
-    border:1px solid #e5e7eb;
+.stat-card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
 }
 
-/* SYSTEM STATUS */
-.status-pill{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 14px;
-    border-radius:12px;
-    margin-bottom:10px;
+.stat-card h6{
+    font-size:13px;
+    color:#6b7280;
 }
-.ok{background:#ecfdf5;color:#047857;}
-.warn{background:#fff7ed;color:#c2410c;}
-.danger{background:#fef2f2;color:#b91c1c;}
 
-/* QUICK ACTION */
-.quick-btn{
-    width:100%;
-    border-radius:12px;
-    padding:14px;
-    font-weight:600;
+.stat-number{
+    font-size:26px;
+    font-weight:700;
 }
 
 /* ACTIVITY */
-.activity{
-    font-size:14px;
-    padding:10px 0;
-    border-bottom:1px solid #e5e7eb;
+.activity-card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    margin-top:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
 }
-.activity:last-child{border:none;}
 
+.activity-item{
+    padding:10px 0;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+}
+
+.activity-item:last-child{
+    border-bottom:none;
+}
+
+/* FOOTER */
 .footer{
-    background:#020617;
-    color:#94a3b8;
-    padding:12px;
+    background:#111827;
+    color:#9ca3af;
     text-align:center;
+    padding:12px;
     font-size:13px;
 }
 </style>
@@ -113,132 +131,124 @@ body{
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar d-flex justify-content-between align-items-center">
-    <div class="brand">SmartIntern • Admin Command Center</div>
-    <a href="logout" class="btn btn-outline-light btn-sm">
-        <i class="bi bi-box-arrow-right"></i> Logout
-    </a>
+<!-- HEADER -->
+<div class="header">
+    <h5>SmartIntern Admin Panel</h5>
+    <div>
+        <a href="logout" class="btn btn-light btn-sm">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
 </div>
 
-<div class="wrapper">
+<div class="layout">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <h6>ADMIN NAVIGATION</h6>
 
+        <div class="sidebar-title">Main</div>
         <a href="#" class="active">
-            <i class="bi bi-command"></i> Command Center
+            <i class="bi bi-speedometer2"></i> Dashboard
         </a>
-        <a href="verifyEmployers">
-            <i class="bi bi-patch-check"></i> Employer Verification
+
+        <div class="sidebar-title">User Management</div>
+        <a href="listUser">
+            <i class="bi bi-people"></i> Manage Users
         </a>
-        <a href="manageUsers">
-            <i class="bi bi-people"></i> Users
+        
+      <div class="sidebar-title">Student</div>
+        <a href="addStudentInfo">
+            <i class="bi bi-patch-check"></i> Verify Student
         </a>
-        <a href="internships">
-            <i class="bi bi-briefcase"></i> Internships
+
+        <div class="sidebar-title">Employer</div>
+        <a href="employer">
+            <i class="bi bi-patch-check"></i> Verify Employers
         </a>
-        <a href="reports">
-            <i class="bi bi-graph-up"></i> Reports
+        
+
+        <div class="sidebar-title">Internships</div>
+        <a href="addInternship">
+            <i class="bi bi-briefcase"></i> Manage Internships
         </a>
+         <a href="addInternshipEnrollment">
+            <i class="bi bi-briefcase"></i> Manage Internships
+        </a>
+         <a href="applyInternship">
+            <i class="bi bi-briefcase"></i> Manage Internships
+        </a>
+        <a href="review">
+            <i class="bi bi-graph-up"></i> Review
+        </a>
+        <a href="certificate">
+            <i class="bi bi-graph-up"></i> Certificate
+        </a>
+
     </div>
 
-    <!-- MAIN -->
+    <!-- CONTENT -->
     <div class="content">
 
         <div class="row g-4">
 
-            <!-- SYSTEM HEALTH -->
-            <div class="col-md-4">
-                <div class="box">
-                    <h6 class="fw-semibold mb-3">System Health</h6>
-
-                    <div class="status-pill ok">
-                        <span>Platform Status</span>
-                        <strong>Operational</strong>
-                    </div>
-
-                    <div class="status-pill ok">
-                        <span>User Authentication</span>
-                        <strong>Stable</strong>
-                    </div>
-
-                    <div class="status-pill warn">
-                        <span>Pending Employer Verifications</span>
-                        <strong>4</strong>
-                    </div>
-
-                    <div class="status-pill danger">
-                        <span>Reported Internships</span>
-                        <strong>1</strong>
-                    </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h6>Total Users</h6>
+                    <div class="stat-number">128</div>
                 </div>
             </div>
 
-            <!-- ADMIN TASK INBOX -->
-            <div class="col-md-4">
-                <div class="box">
-                    <h6 class="fw-semibold mb-3">Admin Task Inbox</h6>
-
-                    <div class="activity">
-                        🏢 <strong>TechNova</strong> waiting for verification
-                    </div>
-                    <div class="activity">
-                        📄 Internship report flagged by student
-                    </div>
-                    <div class="activity">
-                        👤 New employer registered today
-                    </div>
-                    <div class="activity">
-                        🎓 Certificate approval pending
-                    </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h6>Active Internships</h6>
+                    <div class="stat-number">34</div>
                 </div>
             </div>
 
-            <!-- QUICK ACTIONS -->
-            <div class="col-md-4">
-                <div class="box">
-                    <h6 class="fw-semibold mb-3">Quick Admin Actions</h6>
-
-                    <button class="btn btn-primary quick-btn mb-2">
-                        Verify Employers
-                    </button>
-                    <button class="btn btn-outline-primary quick-btn mb-2">
-                        View Internship Reports
-                    </button>
-                    <button class="btn btn-outline-danger quick-btn">
-                        Suspend User
-                    </button>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h6>Pending Employers</h6>
+                    <div class="stat-number">4</div>
                 </div>
             </div>
 
-            <!-- LIVE ACTIVITY FEED -->
-            <div class="col-md-12">
-                <div class="box">
-                    <h6 class="fw-semibold mb-3">Live Platform Activity</h6>
-
-                    <div class="activity">
-                        👨‍🎓 Student <strong>Darshan</strong> applied for Java Internship
-                    </div>
-                    <div class="activity">
-                        🏢 Employer <strong>InnoSoft</strong> posted a new internship
-                    </div>
-                    <div class="activity">
-                        ✅ Employer <strong>CodeCraft</strong> verified by Admin
-                    </div>
-                    <div class="activity">
-                        🎓 Internship marked as completed
-                    </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h6>Reports Flagged</h6>
+                    <div class="stat-number">1</div>
                 </div>
             </div>
 
         </div>
+
+        <!-- ACTIVITY -->
+        <div class="activity-card">
+            <h6 class="mb-3 fw-semibold">Recent Activity</h6>
+
+            <div class="activity-item">
+                👨‍🎓 Student Darshan applied for Java Internship
+            </div>
+
+            <div class="activity-item">
+                🏢 InnoSoft posted a new internship
+            </div>
+
+            <div class="activity-item">
+                ✅ CodeCraft employer verified
+            </div>
+
+            <div class="activity-item">
+                🎓 Internship marked completed
+            </div>
+        </div>
+
     </div>
+
 </div>
 
+<!-- FOOTER -->
 <div class="footer">
-    © 2026 SmartIntern — Intelligent Internship Platform
+    © 2026 SmartIntern — Internship Management Platform
 </div>
 
 </body>

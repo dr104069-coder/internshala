@@ -8,4 +8,5 @@ import com.grownited.entity.UserDetailEntity;
 @Repository
 public interface UserDetailRepository extends JpaRepository<UserDetailEntity, Integer> {
 
+	UserDetailEntity findByUserId(Integer userId);
 }
