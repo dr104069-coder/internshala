@@ -1,12 +1,20 @@
 package com.grownited.controller;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
 import com.grownited.entity.UserDetailEntity;
 import com.grownited.entity.UserEntity;
 import com.grownited.repository.UserDetailRepository;
@@ -22,6 +30,15 @@ public class UserController {
 
 	@Autowired
 	UserDetailRepository userDetailRepository;
+	
+	 @Autowired
+		PasswordEncoder passwordEncoder;
+	    
+	    @Autowired
+		Cloudinary cloudinary;
+	
+	
+	
 
 	@GetMapping("/listUser")
 	public String listUser(Model model) {
@@ -64,6 +81,46 @@ public class UserController {
 		userRepository.deleteById(userId);
 		
 		return "redirect:/listUser";//do not open jsp , open another url -> listHackathon
+	}
+	
+	@PostMapping("/saveuser")
+	public String saveUser(UserEntity userEntity, UserDetailEntity userDetailEntity, MultipartFile profilePic) {
+
+	    System.out.println(userEntity.getFirstName());
+	    System.out.println(userEntity.getLastName());
+	    System.out.println("Processor => " + Runtime.getRuntime().availableProcessors());
+	    System.out.println(userDetailEntity.getCountry());
+	    System.out.println(userDetailEntity.getState());
+	    
+	    //userEntity.setRole("INTERN");
+	    userEntity.setActive(true);
+	    userEntity.setCreatedAt(LocalDate.now());
+	    
+	    // encode password
+	    String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+	    System.out.println(encodedPassword);
+	    userEntity.setPassword(encodedPassword);
+	    
+	    // file uploading
+	    System.out.println(profilePic.getOriginalFilename());
+	    
+	    try {
+	        Map map = cloudinary.uploader().upload(profilePic.getBytes(), null);
+	        String profilePicURL = map.get("secure_url").toString();
+	        System.out.println(profilePicURL);
+	        userEntity.setProfilePicURL(profilePicURL);
+	        
+	    } catch (IOException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+
+	    userRepository.save(userEntity);
+	    userDetailEntity.setUserId(userEntity.getUserId());
+	    userDetailRepository.save(userDetailEntity);
+	    
+	    // Redirect to listUser instead of login
+	    return "redirect:/listUser";
 	}
 
 }

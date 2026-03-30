@@ -1,28 +1,107 @@
+//package com.grownited.entity;
+//
+//import java.time.LocalDate;
+//
+//import org.springframework.format.annotation.DateTimeFormat;
+//
+//import jakarta.persistence.Column;
+//import jakarta.persistence.Entity;
+//import jakarta.persistence.GeneratedValue;
+//import jakarta.persistence.GenerationType;
+//import jakarta.persistence.Id;
+//import jakarta.persistence.Table;
+//
+//@Entity
+//@Table(name="certificate")
+//public class CertificateEntity {
+//	
+//	
+//	@Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Integer certificateId;
+//
+//    // FK to Enrollment table
+//   
+//    private Integer enrollmentId;
+//
+//    private String certificateURL;
+//
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    private LocalDate issuedDate;
+//
+//    @Column(unique = true)
+//    private String verificationCode;
+//
+//	public Integer getCertificateId() {
+//		return certificateId;
+//	}
+//
+//	public void setCertificateId(Integer certificateId) {
+//		this.certificateId = certificateId;
+//	}
+//
+//	public Integer getEnrollmentId() {
+//		return enrollmentId;
+//	}
+//
+//	public void setEnrollmentId(Integer enrollmentId) {
+//		this.enrollmentId = enrollmentId;
+//	}
+//
+//	public String getCertificateURL() {
+//		return certificateURL;
+//	}
+//
+//	public void setCertificateURL(String certificateURL) {
+//		this.certificateURL = certificateURL;
+//	}
+//
+//	public LocalDate getIssuedDate() {
+//		return issuedDate;
+//	}
+//
+//	public void setIssuedDate(LocalDate issuedDate) {
+//		this.issuedDate = issuedDate;
+//	}
+//
+//	public String getVerificationCode() {
+//		return verificationCode;
+//	}
+//
+//	public void setVerificationCode(String verificationCode) {
+//		this.verificationCode = verificationCode;
+//	}
+//
+//    
+//    
+//    
+//    
+//
+//}
+
+
+
+
 package com.grownited.entity;
 
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="certificate")
 public class CertificateEntity {
-	
-	
-	@Id
+    
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer certificateId;
 
-    // FK to Enrollment table
-   
-    private Integer enrollmentId;
+    // ✅ PROPER FK Mapping
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enrollment_id", nullable = false)
+    private InternshipEnrollmentEntity enrollment;
 
     private String certificateURL;
 
@@ -32,49 +111,45 @@ public class CertificateEntity {
     @Column(unique = true)
     private String verificationCode;
 
-	public Integer getCertificateId() {
-		return certificateId;
-	}
+    // Getters & Setters
 
-	public void setCertificateId(Integer certificateId) {
-		this.certificateId = certificateId;
-	}
+    public Integer getCertificateId() {
+        return certificateId;
+    }
 
-	public Integer getEnrollmentId() {
-		return enrollmentId;
-	}
+    public void setCertificateId(Integer certificateId) {
+        this.certificateId = certificateId;
+    }
 
-	public void setEnrollmentId(Integer enrollmentId) {
-		this.enrollmentId = enrollmentId;
-	}
+    public InternshipEnrollmentEntity getEnrollment() {
+        return enrollment;
+    }
 
-	public String getCertificateURL() {
-		return certificateURL;
-	}
+    public void setEnrollment(InternshipEnrollmentEntity enrollment) {
+        this.enrollment = enrollment;
+    }
 
-	public void setCertificateURL(String certificateURL) {
-		this.certificateURL = certificateURL;
-	}
+    public String getCertificateURL() {
+        return certificateURL;
+    }
 
-	public LocalDate getIssuedDate() {
-		return issuedDate;
-	}
+    public void setCertificateURL(String certificateURL) {
+        this.certificateURL = certificateURL;
+    }
 
-	public void setIssuedDate(LocalDate issuedDate) {
-		this.issuedDate = issuedDate;
-	}
+    public LocalDate getIssuedDate() {
+        return issuedDate;
+    }
 
-	public String getVerificationCode() {
-		return verificationCode;
-	}
+    public void setIssuedDate(LocalDate issuedDate) {
+        this.issuedDate = issuedDate;
+    }
 
-	public void setVerificationCode(String verificationCode) {
-		this.verificationCode = verificationCode;
-	}
+    public String getVerificationCode() {
+        return verificationCode;
+    }
 
-    
-    
-    
-    
-
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
 }

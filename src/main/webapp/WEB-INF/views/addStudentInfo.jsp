@@ -1,902 +1,1206 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Add Student Information | SmartIntern</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student Information · SmartIntern Admin</title>
 
-<!-- Bootstrap & Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-    :root {
-        --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-        --secondary-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffd166 100%);
-        --sidebar-gradient: linear-gradient(180deg, #1a237e 0%, #311b92 100%);
-        --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.05);
-        --sidebar-width: 280px;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-        color: #333;
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
-
-    /* Animated Background Elements */
-    .bg-shapes {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        overflow: hidden;
-    }
-
-    .bg-shape {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.1;
-    }
-
-    .shape-1 {
-        width: 300px;
-        height: 300px;
-        background: var(--primary-gradient);
-        top: -100px;
-        left: -100px;
-        animation: float 25s infinite linear;
-    }
-
-    .shape-2 {
-        width: 200px;
-        height: 200px;
-        background: var(--secondary-gradient);
-        bottom: -50px;
-        right: 10%;
-        animation: float 20s infinite linear reverse;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(180deg); }
-    }
-
-    /* Sidebar - Enhanced Unified Design */
-    .sidebar {
-        width: var(--sidebar-width);
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        background: var(--sidebar-gradient);
-        color: #fff;
-        padding: 0;
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-    }
-
-    .sidebar:hover {
-        box-shadow: 15px 0 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .sidebar-header {
-        padding: 30px 25px;
-        background: rgba(255, 255, 255, 0.05);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        text-align: center;
-    }
-
-    .sidebar-header h3 {
-        margin: 0;
-        font-weight: 700;
-        font-size: 1.8rem;
-        background: linear-gradient(135deg, #ff6b6b 0%, #ffd166 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        letter-spacing: 0.5px;
-    }
-
-    .sidebar-header .role-badge {
-        display: inline-block;
-        padding: 6px 16px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 20px;
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.9);
-        margin-top: 10px;
-        font-weight: 500;
-    }
-
-    .sidebar-menu {
-        padding: 20px 15px;
-        height: calc(100vh - 140px);
-        overflow-y: auto;
-    }
-
-    .sidebar-menu a {
-        display: flex;
-        align-items: center;
-        padding: 14px 20px;
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-        border-radius: 12px;
-        margin-bottom: 10px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .sidebar-menu a i {
-        margin-right: 14px;
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
-        transition: transform 0.3s;
-    }
-
-    .sidebar-menu a .badge {
-        margin-left: auto;
-        background: linear-gradient(135deg, #ff6b6b 0%, #ffd166 100%);
-        font-size: 0.7rem;
-        padding: 3px 8px;
-        border-radius: 10px;
-        min-width: 20px;
-        text-align: center;
-    }
-
-    .sidebar-menu a:hover {
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
-        transform: translateX(8px);
-    }
-
-    .sidebar-menu a:hover i {
-        transform: scale(1.1);
-    }
-
-    .sidebar-menu a.active {
-        background: linear-gradient(90deg, rgba(106, 17, 203, 0.8) 0%, rgba(37, 117, 252, 0.8) 100%);
-        color: #fff;
-        box-shadow: 0 5px 20px rgba(106, 17, 203, 0.4);
-    }
-
-    .sidebar-menu a.active:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 4px;
-        background: linear-gradient(to bottom, #ff6b6b, #ffd166);
-    }
-
-    .sidebar-footer {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        padding: 20px 25px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.1);
-    }
-
-    .sidebar-footer a {
-        display: flex;
-        align-items: center;
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s;
-    }
-
-    .sidebar-footer a:hover {
-        color: #fff;
-    }
-
-    .sidebar-footer i {
-        margin-right: 10px;
-        font-size: 1.2rem;
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: var(--sidebar-width);
-        padding: 40px;
-        min-height: 100vh;
-        position: relative;
-        background: #f8fafc;
-    }
-
-    /* Form Card - Redesigned */
-    .form-card {
-        max-width: 1000px;
-        margin: 0 auto;
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(10px);
-        padding: 50px;
-        border-radius: 24px;
-        box-shadow: var(--card-shadow);
-        animation: fadeSlideUp 0.7s ease-out forwards;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .form-card:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 6px;
-        background: linear-gradient(90deg, #6a11cb 0%, #2575fc 50%, #6a11cb 100%);
-        background-size: 200% 100%;
-        animation: gradientShift 3s infinite linear;
-    }
-
-    @keyframes fadeSlideUp {
-        from { opacity: 0; transform: translateY(40px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Header Section */
-    .form-header {
-        text-align: center;
-        margin-bottom: 40px;
-        position: relative;
-    }
-
-    .form-icon {
-        width: 90px;
-        height: 90px;
-        margin: 0 auto 25px;
-        background: var(--primary-gradient);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 2.5rem;
-        box-shadow: 0 15px 35px rgba(106, 17, 203, 0.3);
-        border: 4px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .section-title {
-        font-weight: 800;
-        margin-bottom: 12px;
-        font-size: 2.5rem;
-        background: linear-gradient(90deg, #1a237e, #6a11cb);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        letter-spacing: -0.5px;
-    }
-
-    .section-sub {
-        color: #64748b;
-        margin-bottom: 40px;
-        font-size: 1.2rem;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-        line-height: 1.6;
-    }
-
-    /* Form Layout */
-    .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -15px;
-    }
-
-    /* Input Groups - Enhanced */
-    .input-group-custom {
-        margin-bottom: 32px;
-        padding: 0 15px;
-        flex: 1 0 100%;
-    }
-
-    @media (min-width: 768px) {
-        .input-group-custom {
-            flex: 0 0 50%;
-            max-width: 50%;
+    <style>
+        /* ========================================================
+           PROFESSIONAL BLUE COLOR SYSTEM - MATCHING DASHBOARD
+           ======================================================== */
+        :root {
+            --deep-blue: #2C3E50;
+            --bright-blue: #4B8BBE;
+            --soft-blue: #B3CDE0;
+            --pure-white: #FFFFFF;
+            --medium-grey: #A8A8A8;
+            
+            --deep-blue-dark: #1e2b38;
+            --deep-blue-light: #3a4f64;
+            --bright-blue-dark: #3a6f99;
+            --bright-blue-light: #6ba5d1;
+            --soft-blue-dark: #8faec9;
+            --soft-blue-light: #c5dbea;
+            
+            --glass-deep: rgba(44, 62, 80, 0.7);
+            --glass-deep-darker: rgba(44, 62, 80, 0.85);
+            --glass-bright: rgba(75, 139, 190, 0.15);
+            --glass-soft: rgba(179, 205, 224, 0.15);
+            
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-blue: rgba(75, 139, 190, 0.3);
+            --border-soft: rgba(179, 205, 224, 0.3);
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3CDE0;
+            --text-muted: #A8A8A8;
+            --text-dark: #2C3E50;
+            
+            --shadow-sm: 0 2px 8px rgba(44, 62, 80, 0.2);
+            --shadow-md: 0 4px 16px rgba(44, 62, 80, 0.3);
+            --shadow-lg: 0 8px 24px rgba(44, 62, 80, 0.4);
+            --shadow-xl: 0 12px 32px rgba(44, 62, 80, 0.5);
+            --shadow-blue: 0 4px 20px rgba(75, 139, 190, 0.3);
+            
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 85px;
+            --header-height: 80px;
+            
+            --transition-smooth: 350ms cubic-bezier(0.23, 1, 0.32, 1);
+            --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-elegant: 450ms cubic-bezier(0.165, 0.84, 0.44, 1);
+            --transition-soft: 300ms ease-out;
         }
-    }
 
-    .input-group-custom label {
-        font-weight: 700;
-        margin-bottom: 12px;
-        display: block;
-        color: #1e293b;
-        font-size: 1.05rem;
-        transition: color 0.3s;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-group-custom label i {
-        margin-right: 12px;
-        color: #6a11cb;
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
-    }
-
-    .input-wrapper {
-        position: relative;
-    }
-
-    .input-group-custom input,
-    .input-group-custom select {
-        width: 100%;
-        padding: 18px 20px 18px 55px;
-        border-radius: 16px;
-        border: 2px solid #e2e8f0;
-        background: #f8fafc;
-        font-size: 1.05rem;
-        color: #1e293b;
-        transition: all 0.3s ease;
-        font-family: 'Inter', sans-serif;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-        appearance: none;
-    }
-
-    .input-group-custom input:focus,
-    .input-group-custom select:focus {
-        border-color: #6a11cb;
-        background: white;
-        box-shadow: 0 8px 25px rgba(106, 17, 203, 0.15);
-        outline: none;
-        transform: translateY(-3px);
-    }
-
-    .input-icon {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94a3b8;
-        font-size: 1.2rem;
-        transition: color 0.3s;
-        z-index: 2;
-    }
-
-    .input-group-custom input:focus + .input-icon,
-    .input-group-custom select:focus + .input-icon {
-        color: #6a11cb;
-    }
-
-    /* Optional Fields */
-    .optional-label {
-        display: inline-block;
-        background: linear-gradient(to right, #ffd166, #ffb347);
-        color: #333;
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        margin-left: 10px;
-        box-shadow: 0 3px 10px rgba(255, 209, 102, 0.2);
-    }
-
-    /* Submit Button - Enhanced */
-    .btn-submit-container {
-        text-align: center;
-        margin-top: 50px;
-        position: relative;
-    }
-
-    .btn-save {
-        background: var(--primary-gradient);
-        border: none;
-        color: #fff;
-        padding: 20px 60px;
-        border-radius: 50px;
-        font-weight: 800;
-        font-size: 1.2rem;
-        letter-spacing: 0.5px;
-        transition: all 0.4s ease;
-        box-shadow: 0 15px 35px rgba(106, 17, 203, 0.3);
-        position: relative;
-        overflow: hidden;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-    }
-
-    .btn-save i {
-        margin-right: 12px;
-        font-size: 1.5rem;
-        transition: transform 0.3s;
-    }
-
-    .btn-save:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(106, 17, 203, 0.4);
-        background: linear-gradient(135deg, #5a0db9 0%, #1c68f0 100%);
-    }
-
-    .btn-save:hover i {
-        transform: scale(1.2);
-    }
-
-    .btn-save:active {
-        transform: translateY(-4px);
-    }
-
-    .btn-save:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.7s;
-    }
-
-    .btn-save:hover:before {
-        left: 100%;
-    }
-
-    /* Progress Indicator */
-    .form-progress {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 50px;
-        position: relative;
-    }
-
-    .progress-step {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #e2e8f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        color: #94a3b8;
-        margin: 0 30px;
-        position: relative;
-        transition: all 0.3s;
-        z-index: 1;
-        border: 3px solid white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    }
-
-    .progress-step.active {
-        background: var(--primary-gradient);
-        color: white;
-        box-shadow: 0 8px 25px rgba(106, 17, 203, 0.3);
-        transform: scale(1.1);
-    }
-
-    .progress-step:not(:last-child):after {
-        content: '';
-        position: absolute;
-        width: 60px;
-        height: 4px;
-        background: #e2e8f0;
-        right: -60px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 0;
-    }
-
-    /* Footer Note */
-    .form-footer {
-        text-align: center;
-        margin-top: 50px;
-        color: #94a3b8;
-        font-size: 0.95rem;
-        padding-top: 25px;
-        border-top: 1px solid #e2e8f0;
-        font-weight: 500;
-    }
-
-    .form-footer i {
-        margin-right: 10px;
-        color: #6a11cb;
-        font-size: 1.1rem;
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 1200px) {
-        .sidebar {
-            width: 90px;
+        /* ========================================================
+           GLOBAL STYLES - EXACTLY LIKE DASHBOARD
+           ======================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .sidebar-header h3 span,
-        .sidebar-header .role-badge,
-        .sidebar-menu a span,
-        .sidebar-menu a .badge,
-        .sidebar-footer span {
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #2C3E50 0%, #1e2b38 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Subtle Grid Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(75, 139, 190, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(75, 139, 190, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Blue Accent Glow */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(75, 139, 190, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ========================================================
+           SMARTINTERN LOGO
+           ======================================================== */
+        .smartintern-logo {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-blue {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #2C3E50, #4B8BBE);
+            border: 2px solid var(--bright-blue);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: logoMove 4s var(--transition-bounce) infinite;
+            box-shadow: 0 0 20px rgba(75, 139, 190, 0.3);
+        }
+
+        @keyframes logoMove {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 0 20px rgba(75, 139, 190, 0.3); }
+            25% { transform: translateY(-8px) rotate(5deg) scale(1.05); box-shadow: 0 10px 30px rgba(75, 139, 190, 0.5); }
+            50% { transform: translateY(5px) rotate(-3deg) scale(0.98); box-shadow: 0 5px 25px rgba(75, 139, 190, 0.4); }
+            75% { transform: translateY(-3px) rotate(2deg) scale(1.02); box-shadow: 0 8px 28px rgba(75, 139, 190, 0.45); }
+        }
+
+        .logo-blue i {
+            font-size: 28px;
+            color: var(--pure-white);
+            filter: drop-shadow(0 0 10px rgba(75, 139, 190, 0.5));
+            animation: iconMove 3s var(--transition-bounce) infinite;
+        }
+
+        @keyframes iconMove {
+            0%, 100% { transform: scale(1) rotate(0deg); color: var(--pure-white); }
+            33% { transform: scale(1.15) rotate(10deg); color: var(--soft-blue); }
+            66% { transform: scale(0.95) rotate(-10deg); color: var(--bright-blue-light); }
+        }
+
+        .logo-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--pure-white);
+            letter-spacing: -0.5px;
+            position: relative;
+            animation: textMove 4s var(--transition-smooth) infinite;
+        }
+
+        @keyframes textMove {
+            0%, 100% { transform: translateX(0); text-shadow: 0 0 10px rgba(75, 139, 190, 0.3); }
+            25% { transform: translateX(3px); text-shadow: 2px 2px 15px rgba(75, 139, 190, 0.5); }
+            50% { transform: translateX(-2px); text-shadow: -2px 2px 15px rgba(75, 139, 190, 0.5); }
+            75% { transform: translateX(2px); text-shadow: 2px -2px 15px rgba(75, 139, 190, 0.5); }
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--bright-blue), transparent);
+            animation: lineMove 3s var(--transition-smooth) infinite;
+        }
+
+        @keyframes lineMove {
+            0%, 100% { width: 0; opacity: 0; left: 50%; }
+            25% { width: 30%; opacity: 0.5; left: 35%; }
+            50% { width: 70%; opacity: 1; left: 15%; }
+            75% { width: 100%; opacity: 0.8; left: 0; }
+        }
+
+        /* ========================================================
+           HEADER - EXACTLY LIKE DASHBOARD
+           ======================================================== */
+        .admin-header {
+            height: var(--header-height);
+            background: var(--glass-deep-darker);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-blue);
+            padding: 0 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            animation: headerFade 0.8s var(--transition-elegant);
+        }
+
+        @keyframes headerFade {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dark-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-blue);
+            color: var(--soft-blue);
+            border-radius: 40px;
+            padding: 0.6rem 1.4rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all var(--transition-soft);
+            cursor: pointer;
+        }
+
+        .dark-btn:hover {
+            background: var(--bright-blue);
+            border-color: var(--bright-blue);
+            color: var(--pure-white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-blue);
+        }
+
+        .dark-btn i {
+            transition: transform var(--transition-soft);
+        }
+
+        .dark-btn:hover i {
+            transform: rotate(180deg);
+        }
+
+        .logout-btn {
+            background: var(--deep-blue);
+            border: 1px solid var(--border-blue);
+            color: var(--pure-white);
+            border-radius: 40px;
+            padding: 0.6rem 1.6rem;
+            font-weight: 500;
+            transition: all var(--transition-soft);
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: var(--bright-blue);
+            color: var(--pure-white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-blue);
+        }
+
+        /* ========================================================
+           LAYOUT
+           ======================================================== */
+        .dashboard-layout {
+            display: flex;
+            min-height: calc(100vh - var(--header-height));
+            transition: all var(--transition-smooth);
+            position: relative;
+        }
+
+        /* ========================================================
+           SIDEBAR - EXACTLY LIKE DASHBOARD
+           ======================================================== */
+        .nav-sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-deep-darker);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border-blue);
+            padding: 2rem 1.2rem;
+            box-shadow: var(--shadow-lg);
+            transition: width 0.3s var(--transition-elegant), padding 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            white-space: nowrap;
+            z-index: 500;
+            border-radius: 0 30px 30px 0;
+            animation: sidebarSlide 0.8s var(--transition-elegant);
+        }
+
+        @keyframes sidebarSlide {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .nav-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: var(--bright-blue);
+            animation: borderGrow 1s var(--transition-elegant) forwards;
+            box-shadow: 0 0 20px var(--bright-blue);
+        }
+
+        @keyframes borderGrow {
+            to { height: 100%; }
+        }
+
+        .nav-sidebar::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(75, 139, 190, 0.05) 0%, transparent 70%);
+            animation: glowFloat 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes glowFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            25% { transform: translate(5%, 5%) scale(1.1); opacity: 0.5; }
+            50% { transform: translate(-5%, -5%) scale(0.9); opacity: 0.3; }
+            75% { transform: translate(3%, -3%) scale(1.05); opacity: 0.4; }
+        }
+
+        .nav-sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+            padding: 2rem 0.5rem;
+        }
+
+        .nav-sidebar.collapsed .nav-category,
+        .nav-sidebar.collapsed .dropdown-toggle span,
+        .nav-sidebar.collapsed .dropdown-item span {
             display: none;
         }
-        
-        .sidebar-header {
-            padding: 25px 10px;
-        }
-        
-        .sidebar-header h3 {
+
+        .nav-sidebar.collapsed .dropdown-toggle i {
+            margin: 0 auto;
             font-size: 1.5rem;
+            animation: iconPulse 2s ease-in-out infinite;
         }
-        
-        .sidebar-menu a {
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .nav-sidebar.collapsed .dropdown-toggle {
             justify-content: center;
-            padding: 15px;
-            margin: 0 10px 10px;
+            padding: 1rem 0;
         }
-        
-        .sidebar-menu a i {
-            margin-right: 0;
-            font-size: 1.4rem;
-        }
-        
-        .sidebar-footer {
-            padding: 15px;
-            text-align: center;
-        }
-        
-        .sidebar-footer i {
-            margin-right: 0;
-            font-size: 1.4rem;
-        }
-        
-        .main-content {
-            margin-left: 90px;
-            padding: 30px;
-        }
-        
-        .form-card {
-            padding: 40px 30px;
-        }
-    }
 
-    @media (max-width: 992px) {
-        .main-content {
-            padding: 30px 20px;
+        .nav-sidebar.collapsed .dropdown-menu {
+            display: none;
         }
-        
-        .form-card {
-            padding: 35px 25px;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-        }
-        
-        .form-icon {
-            width: 75px;
-            height: 75px;
-            font-size: 2rem;
-        }
-    }
 
-    @media (max-width: 768px) {
-        .input-group-custom {
-            flex: 0 0 100%;
-            max-width: 100%;
+        .dashboard-layout.fullscreen .nav-sidebar {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
         }
-        
-        .section-title {
-            font-size: 1.8rem;
+
+        .dashboard-layout.fullscreen .main-panel {
+            width: 100%;
         }
-        
-        .section-sub {
-            font-size: 1rem;
+
+        .nav-category {
+            color: var(--medium-grey);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0.8rem;
+            opacity: 0.7;
         }
-        
-        .form-progress {
-            margin-bottom: 30px;
+
+        .nav-sidebar .dropdown {
+            width: 100%;
+            margin-bottom: 0.3rem;
         }
-        
-        .progress-step {
-            width: 40px;
-            height: 40px;
-            margin: 0 15px;
+
+        .nav-sidebar .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            color: var(--soft-blue);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all var(--transition-elegant);
+            width: 100%;
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .nav-sidebar .dropdown-toggle i {
+            font-size: 1.3rem;
+            width: 1.8rem;
+            color: var(--bright-blue);
+            transition: all var(--transition-bounce);
+        }
+
+        .nav-sidebar .dropdown-toggle:hover {
+            color: var(--pure-white);
+            transform: translateX(8px);
+            background: rgba(75, 139, 190, 0.05);
+        }
+
+        .nav-sidebar .dropdown-toggle.active {
+            background: rgba(75, 139, 190, 0.1);
+            border-left: 3px solid var(--bright-blue);
+            color: var(--pure-white);
+        }
+
+        .nav-sidebar .dropdown-menu {
+            background: var(--glass-deep);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-blue);
+            border-radius: 12px;
+            padding: 0.5rem 0.2rem;
+            margin: 0.3rem 0 0.8rem 0;
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            position: static !important;
+            transform: none !important;
+        }
+
+        .nav-sidebar .dropdown-item {
+            border-radius: 8px;
+            padding: 0.7rem 1.6rem;
+            color: var(--soft-blue);
             font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all var(--transition-elegant);
         }
-        
+
+        .nav-sidebar .dropdown-item i {
+            color: var(--bright-blue);
+            font-size: 1.1rem;
+            width: 1.4rem;
+        }
+
+        .nav-sidebar .dropdown-item:hover {
+            background: rgba(75, 139, 190, 0.05);
+            color: var(--pure-white);
+            padding-left: 2rem;
+            transform: translateX(5px);
+        }
+
+        /* ========================================================
+           MAIN PANEL
+           ======================================================== */
+        .main-panel {
+            flex: 1;
+            padding: 2.5rem;
+            background: transparent;
+            transition: all var(--transition-smooth);
+            width: calc(100% - var(--sidebar-width));
+            animation: mainFade 1s var(--transition-elegant);
+        }
+
+        @keyframes mainFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========================================================
+           FORM CARD STYLES - MATCHING DASHBOARD
+           ======================================================== */
+        .form-card {
+            background: var(--glass-deep);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid var(--border-blue);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-elegant);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-card:hover {
+            border-color: var(--bright-blue);
+            box-shadow: var(--shadow-lg), var(--shadow-blue);
+        }
+
+        /* Header with Back Button */
+        .form-header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-blue);
+        }
+
+        .form-header-section h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--pure-white);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .form-header-section h3 i {
+            background: rgba(75, 139, 190, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            color: var(--bright-blue);
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-blue);
+            color: var(--soft-blue);
+            border-radius: 40px;
+            padding: 0.7rem 1.8rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all var(--transition-soft);
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: var(--bright-blue);
+            border-color: var(--bright-blue);
+            color: var(--pure-white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-blue);
+        }
+
+        /* Form Header with Icon */
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--deep-blue), var(--bright-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pure-white);
+            font-size: 2rem;
+            border: 3px solid var(--bright-blue);
+            box-shadow: var(--shadow-md), var(--shadow-blue);
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            color: var(--pure-white);
+        }
+
+        .section-sub {
+            color: var(--soft-blue);
+            font-size: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Progress Indicator */
+        .form-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .progress-step {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--border-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 0 30px;
+            position: relative;
+            transition: all var(--transition-soft);
+            z-index: 1;
+        }
+
+        .progress-step.active {
+            background: var(--bright-blue);
+            border-color: var(--bright-blue);
+            color: var(--pure-white);
+            box-shadow: var(--shadow-blue);
+            transform: scale(1.1);
+        }
+
         .progress-step:not(:last-child):after {
-            width: 30px;
-            right: -30px;
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 2px;
+            background: var(--border-blue);
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
         }
-        
-        .btn-save {
-            padding: 16px 40px;
+
+        /* Form Layout */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -12px;
+        }
+
+        .input-group-custom {
+            margin-bottom: 1.8rem;
+            padding: 0 12px;
+            flex: 1 0 100%;
+        }
+
+        @media (min-width: 768px) {
+            .input-group-custom {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+
+        .input-group-custom label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--soft-blue);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group-custom label i {
+            margin-right: 0.5rem;
+            color: var(--bright-blue);
             font-size: 1.1rem;
         }
-    }
 
-    @media (max-width: 480px) {
-        .main-content {
-            padding: 20px 15px;
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-group-custom input,
+        .input-group-custom select {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-blue);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--pure-white);
+            font-size: 1rem;
+            transition: all var(--transition-soft);
+        }
+
+        .input-group-custom input:focus,
+        .input-group-custom select:focus {
+            border-color: var(--bright-blue);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(75, 139, 190, 0.1);
+            outline: none;
+        }
+
+        .input-group-custom input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .input-group-custom select {
+            color: var(--pure-white);
+        }
+
+        .input-group-custom select option {
+            background: var(--deep-blue-dark);
+            color: var(--pure-white);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--bright-blue);
+            font-size: 1.1rem;
+        }
+
+        .optional-label {
+            display: inline-block;
+            background: rgba(75, 139, 190, 0.2);
+            color: var(--soft-blue);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            border: 1px solid var(--border-blue);
+        }
+
+        /* Submit Button */
+        .btn-submit-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn-save {
+            background: var(--bright-blue);
+            border: none;
+            color: var(--pure-white);
+            padding: 1rem 3rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all var(--transition-soft);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-save:hover {
+            background: var(--bright-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-blue);
+        }
+
+        .btn-save i {
+            font-size: 1.2rem;
+        }
+
+        /* Footer Note */
+        .form-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-blue);
+        }
+
+        .form-footer i {
+            color: var(--bright-blue);
+            margin-right: 0.5rem;
+        }
+
+        /* ========================================================
+           FOOTER - EXACTLY LIKE DASHBOARD
+           ======================================================== */
+        .dashboard-footer {
+            background: var(--glass-deep-darker);
+            backdrop-filter: blur(12px);
+            color: var(--medium-grey);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-blue);
+            animation: footerFade 0.8s var(--transition-elegant);
+        }
+
+        @keyframes footerFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========================================================
+           RESPONSIVE
+           ======================================================== */
+        @media (max-width: 1200px) {
+            .main-panel { padding: 2rem; }
+        }
+
+        @media (max-width: 992px) {
+            .nav-sidebar:not(.collapsed) { width: 240px; }
+            .form-card { padding: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header { padding: 0 1.5rem; }
+            .logo-text { font-size: 1.3rem; }
+            .logo-blue { width: 44px; height: 44px; }
+            .logo-blue i { font-size: 24px; }
+            .header-actions { gap: 0.8rem; }
+            .dark-btn span { display: none; }
+            .dark-btn { padding: 0.6rem; }
+            .main-panel { padding: 1.5rem; }
+            .form-header-section {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            .section-title { font-size: 1.6rem; }
+            .progress-step { width: 35px; height: 35px; margin: 0 15px; }
+            .progress-step:not(:last-child):after { width: 30px; right: -30px; }
+        }
+
+        @media (max-width: 480px) {
+            .form-card { padding: 1.5rem; }
+            .form-icon { width: 60px; height: 60px; font-size: 1.5rem; }
+        }
+
+        /* Dropdown Animations */
+        @keyframes dropdownAppear {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         
-        .form-card {
-            padding: 25px 20px;
+        .nav-sidebar .dropdown {
+            animation: dropdownAppear 0.5s var(--transition-elegant);
+            animation-fill-mode: both;
         }
-        
-        .form-icon {
-            width: 65px;
-            height: 65px;
-            font-size: 1.8rem;
-        }
-        
-        .progress-step {
-            width: 35px;
-            height: 35px;
-            margin: 0 10px;
-        }
-        
-        .progress-step:not(:last-child):after {
-            width: 20px;
-            right: -20px;
-        }
-    }
-
-    /* Scrollbar Styling */
-    .sidebar-menu::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    .sidebar-menu::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-    }
-
-    .sidebar-menu::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-    }
-
-    .sidebar-menu::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-</style>
+    </style>
 </head>
-
 <body>
-    <!-- Background Shapes -->
-    <div class="bg-shapes">
-        <div class="bg-shape shape-1"></div>
-        <div class="bg-shape shape-2"></div>
-    </div>
 
-    <!-- SIDEBAR (Unified Design - Same as Dashboard) -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3><i class="fas fa-graduation-cap me-2"></i> SmartIntern</h3>
-            <div class="role-badge">Student Portal</div>
-        </div>
-        
-        <div class="sidebar-menu">
-            <a href="studentDashboard">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-            
-            <a href="addStudentInfo" class="active">
-                <i class="bi bi-person-lines-fill"></i>
-                <span>Add Information</span>
-                <span class="badge">!</span>
-            </a>
-            
-            <a href="profile">
-                <i class="bi bi-person-circle"></i>
-                <span>Profile</span>
-            </a>
-            
-            <a href="internships">
-                <i class="bi bi-briefcase-fill"></i>
-                <span>Internships</span>
-                <span class="badge">3</span>
-            </a>
-            
-            <a href="applications">
-                <i class="bi bi-file-earmark-text-fill"></i>
-                <span>Applications</span>
-                <span class="badge">5</span>
-            </a>
-            
-            <a href="tasks">
-                <i class="bi bi-list-task"></i>
-                <span>Tasks</span>
-            </a>
-            
-            <a href="certificates">
-                <i class="bi bi-award-fill"></i>
-                <span>Certificates</span>
-            </a>
-            
-            <a href="messages">
-                <i class="bi bi-chat-dots-fill"></i>
-                <span>Messages</span>
-                <span class="badge">2</span>
-            </a>
-        </div>
-        
-        <div class="sidebar-footer">
-            <a href="logout">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <div class="form-card">
-            
-            <!-- Form Header with Icon -->
-            <div class="form-header">
-                <div class="form-icon">
-                    <i class="fas fa-user-graduate"></i>
+    <!-- HEADER - EXACTLY LIKE DASHBOARD -->
+    <header class="admin-header">
+        <div class="logo-container">
+            <div class="smartintern-logo">
+                <div class="logo-blue">
+                    <i class="bi bi-briefcase-fill"></i>
                 </div>
-                <h3 class="section-title">Student Profile Details</h3>
-                <p class="section-sub">Build a professional academic profile to unlock personalized internship opportunities with SmartIntern</p>
+            </div>
+            <span class="logo-text">SmartIntern</span>
+        </div>
+        <div class="header-actions">
+            <span class="dark-btn" id="toggleCollapseBtn">
+                <i class="bi bi-layout-sidebar"></i> <span id="collapseText">Collapse</span>
+            </span>
+            <span class="dark-btn" id="fullscreenModeBtn">
+                <i class="bi bi-arrows-fullscreen"></i> <span>Fullscreen</span>
+            </span>
+            <a href="logout" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i> <span>Exit</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- LAYOUT -->
+    <div class="dashboard-layout" id="dashboardLayout">
+
+        <!-- SIDEBAR - EXACTLY LIKE DASHBOARD (ADMIN SIDEBAR) -->
+        <aside class="nav-sidebar" id="mainSidebar">
+            <div class="nav-category">Core</div>
+
+            <!-- Dashboard dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </button>
             </div>
 
-            <!-- Progress Indicator -->
-            <div class="form-progress">
-                <div class="progress-step active">1</div>
-                <div class="progress-step">2</div>
-                <div class="progress-step">3</div>
+            <div class="nav-category">Identity</div>
+
+            <!-- Manage Users dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-people-fill"></i> <span>Manage Users</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listUser"><i class="bi bi-person-plus"></i> <span>Users</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addUser"><i class="bi bi-person-dash"></i> <span>Add User</span></a></li>
+                </ul>
             </div>
 
-            <!-- Form -->
-            <form action="/saveInformation" method="post" enctype="multipart/form-data">
+            <!-- Manage Student dropdown - ACTIVE -->
+            <div class="dropdown">
+                <button class="dropdown-toggle active" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-mortarboard-fill"></i> <span>Manage Student</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listStudent"><i class="bi bi-check-circle"></i> <span>Students</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addStudentInfo"><i class="bi bi-x-circle"></i> <span>Add Student</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Verify Employers dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-building"></i> <span>Verify Employers</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listEmployer"><i class="bi bi-shield-check"></i> <span>Employers</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addEmployer"><i class="bi bi-shield-exclamation"></i> <span>Add Employer</span></a></li>
+                </ul>
+            </div>
+
+            <div class="nav-category">Opportunities</div>
+
+            <!-- Internship dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-briefcase-fill"></i> <span>Internship</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listInternship"><i class="bi bi-send"></i> <span>List Internship</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addInternship"><i class="bi bi-file-text"></i> <span>Add Internship</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Enrollments dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-journal-bookmark-fill"></i> <span>Enrollments</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listEnrollment"><i class="bi bi-list-check"></i> <span>List Enrollments</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addInternshipEnrollment"><i class="bi bi-clock-history"></i> <span>New Enroll</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Applications dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-send-fill"></i> <span>Applications</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-envelope-open"></i> <span>Inbox</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/applyInternship"><i class="bi bi-archive"></i> <span>New Application</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Reviews dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-star-fill"></i> <span>Reviews</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listReview"><i class="bi bi-star-half"></i> <span>All Reviews</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addReview"><i class="bi bi-star"></i> <span>Add Review</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Certificates dropdown -->
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-award-fill"></i> <span>Certificates</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/listCertificate"><i class="bi bi-file-pdf"></i> <span>List Certificates</span></a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/addCertificate"><i class="bi bi-download"></i> <span>Add Certificate</span></a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- MAIN PANEL -->
+        <main class="main-panel">
+
+            <div class="form-card">
                 
-                <div class="form-row">
-                    <!-- LOCATION -->
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-city"></i> City</label>
-                        <div class="input-wrapper">
-                            <input type="text" name="city" placeholder="Enter your city">
-                            <span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
+                <!-- Header with Back Button -->
+                <div class="form-header-section">
+                    <h3>
+                        <i class="bi bi-mortarboard-fill"></i> 
+                        Add Student Information
+                    </h3>
+                    <a href="listStudent" class="btn-back">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+
+                <!-- Form Header with Icon -->
+                <div class="form-header">
+                    <div class="form-icon">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h3 class="section-title">Student Profile Details</h3>
+                    <p class="section-sub">Build a professional academic profile to unlock personalized internship opportunities with SmartIntern</p>
+                </div>
+
+                <!-- Progress Indicator -->
+                <div class="form-progress">
+                    <div class="progress-step active">1</div>
+                    <div class="progress-step">2</div>
+                    <div class="progress-step">3</div>
+                </div>
+
+                <!-- Form - ALL FIELDS EXACTLY THE SAME, just colors changed -->
+                <form action="/saveInformation" method="post" enctype="multipart/form-data">
+                    
+                    <div class="form-row">
+                        <!-- LOCATION -->
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-building"></i> City</label>
+                            <div class="input-wrapper">
+                                <input type="text" name="city" placeholder="Enter your city">
+                                <span class="input-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                            </div>
                         </div>
+                        
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-map-fill"></i> State</label>
+                            <div class="input-wrapper">
+                                <input type="text" name="state" placeholder="Enter your state">
+                                <span class="input-icon"><i class="bi bi-globe2"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- COLLEGE -->
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-building"></i> College Name</label>
+                            <div class="input-wrapper">
+                                <input type="text" name="collegeName" placeholder="Enter your college name">
+                                <span class="input-icon"><i class="bi bi-university"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- DEGREE & SEM -->
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-book"></i> Degree</label>
+                            <div class="input-wrapper">
+                                <select name="degree">
+                                    <option value="">Select Degree</option>
+                                    <option>B.E.</option>
+                                    <option>B.Tech</option>
+                                    <option>BCA</option>
+                                    <option>B.Sc IT</option>
+                                    <option>MCA</option>
+                                    <option>M.Tech</option>
+                                    <option>Diploma</option>
+                                </select>
+                                <span class="input-icon"><i class="bi bi-mortarboard"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-sort-numeric-up"></i> Semester</label>
+                            <div class="input-wrapper">
+                                <select name="semester">
+                                    <option value="">Select Semester</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="4">Semester 4</option>
+                                    <option value="5">Semester 5</option>
+                                    <option value="6">Semester 6</option>
+                                    <option value="7">Semester 7</option>
+                                    <option value="8">Semester 8</option>
+                                </select>
+                                <span class="input-icon"><i class="bi bi-layers"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- TSHIRT & YEAR -->
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-person"></i> T-Shirt Size</label>
+                            <div class="input-wrapper">
+                                <select name="tshirtSize">
+                                    <option value="">Select Size</option>
+                                    <option>SMALL</option>
+                                    <option>M</option>
+                                    <option>L</option>
+                                    <option>XL</option>
+                                    <option>XXL</option>
+                                    <option>XXXL</option>
+                                </select>
+                                <span class="input-icon"><i class="bi bi-tshirt"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-calendar-check"></i> Graduation Year</label>
+                            <div class="input-wrapper">
+                                <input type="number" name="graduationYear" placeholder="e.g. 2024">
+                                <span class="input-icon"><i class="bi bi-calendar3"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- OPTIONAL EXTRAS (NOT REQUIRED, NO LOGIC IMPACT) -->
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-code-slash"></i> Primary Skill <span class="optional-label">Optional</span></label>
+                            <div class="input-wrapper">
+                                <input type="text" placeholder="Java, Web Development, AI, etc.">
+                                <span class="input-icon"><i class="bi bi-gear"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom">
+                            <label><i class="bi bi-briefcase"></i> Career Interest <span class="optional-label">Optional</span></label>
+                            <div class="input-wrapper">
+                                <input type="text" placeholder="Software Engineer, Data Analyst, etc.">
+                                <span class="input-icon"><i class="bi bi-graph-up"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <div class="btn-submit-container">
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-check-circle"></i> Save Profile & Continue
+                        </button>
                     </div>
                     
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-landmark"></i> State</label>
-                        <div class="input-wrapper">
-                            <input type="text" name="state" placeholder="Enter your state">
-                            <span class="input-icon"><i class="fas fa-globe-americas"></i></span>
-                        </div>
+                    <div class="form-footer">
+                        <p><i class="bi bi-shield-check"></i> Your information is secure and will only be used for internship matching</p>
                     </div>
+                </form>
+            </div>
 
-                    <!-- COLLEGE -->
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-university"></i> College Name</label>
-                        <div class="input-wrapper">
-                            <input type="text" name="collegeName" placeholder="Enter your college name">
-                            <span class="input-icon"><i class="fas fa-school"></i></span>
-                        </div>
-                    </div>
-
-                    <!-- DEGREE & SEM -->
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-graduation-cap"></i> Degree</label>
-                        <div class="input-wrapper">
-                            <select name="degree">
-                                <option value="">Select Degree</option>
-                                <option>B.E.</option>
-                                <option>B.Tech</option>
-                                <option>BCA</option>
-                                <option>B.Sc IT</option>
-                                <option>MCA</option>
-                                <option>M.Tech</option>
-                                <option>Diploma</option>
-                            </select>
-                            <span class="input-icon"><i class="fas fa-user-graduate"></i></span>
-                        </div>
-                    </div>
-
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-calendar-alt"></i> Semester</label>
-                        <div class="input-wrapper">
-                            <select name="semester">
-                                <option value="">Select Semester</option>
-                                <option value="1">Semester 1</option>
-                                <option value="2">Semester 2</option>
-                                <option value="3">Semester 3</option>
-                                <option value="4">Semester 4</option>
-                                <option value="5">Semester 5</option>
-                                <option value="6">Semester 6</option>
-                                <option value="7">Semester 7</option>
-                                <option value="8">Semester 8</option>
-                            </select>
-                            <span class="input-icon"><i class="fas fa-layer-group"></i></span>
-                        </div>
-                    </div>
-
-                    <!-- TSHIRT & YEAR -->
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-tshirt"></i> T-Shirt Size</label>
-                        <div class="input-wrapper">
-                            <select name="tshirtSize">
-                                <option value="">Select Size</option>
-                                <option>SMALL</option>
-                                <option>M</option>
-                                <option>L</option>
-                                <option>XL</option>
-                                <option>XXL</option>
-                                <option>XXXL</option>
-                            </select>
-                            <span class="input-icon"><i class="fas fa-user"></i></span>
-                        </div>
-                    </div>
-
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-calendar-check"></i> Graduation Year</label>
-                        <div class="input-wrapper">
-                            <input type="number" name="graduationYear" placeholder="e.g. 2024">
-                            <span class="input-icon"><i class="fas fa-clock"></i></span>
-                        </div>
-                    </div>
-
-                    <!-- OPTIONAL EXTRAS (NOT REQUIRED, NO LOGIC IMPACT) -->
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-code"></i> Primary Skill <span class="optional-label">Optional</span></label>
-                        <div class="input-wrapper">
-                            <input type="text" placeholder="Java, Web Development, AI, etc.">
-                            <span class="input-icon"><i class="fas fa-cogs"></i></span>
-                        </div>
-                    </div>
-
-                    <div class="input-group-custom">
-                        <label><i class="fas fa-briefcase"></i> Career Interest <span class="optional-label">Optional</span></label>
-                        <div class="input-wrapper">
-                            <input type="text" placeholder="Software Engineer, Data Analyst, etc.">
-                            <span class="input-icon"><i class="fas fa-chart-line"></i></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SUBMIT -->
-                <div class="btn-submit-container">
-                    <button type="submit" class="btn-save">
-                        <i class="fas fa-check-circle"></i> Save Profile & Continue
-                    </button>
-                </div>
-                
-                <div class="form-footer">
-                    <p><i class="fas fa-shield-alt"></i> Your information is secure and will only be used for internship matching</p>
-                </div>
-            </form>
-        </div>
+        </main>
     </div>
 
-    <!-- Optional JavaScript for animations -->
+    <!-- FOOTER - EXACTLY LIKE DASHBOARD -->
+    <footer class="dashboard-footer">
+        2026 SmartIntern - Designed BY Rathod Darshan
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        (function() {
+            "use strict";
+
+            // Initialize AOS
+            AOS.init({
+                duration: 600,
+                once: true,
+                offset: 50,
+                easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
+            });
+
+            // Sidebar logic
+            const layout = document.getElementById('dashboardLayout');
+            const sidebar = document.getElementById('mainSidebar');
+            const toggleBtn = document.getElementById('toggleCollapseBtn');
+            const fullscreenBtn = document.getElementById('fullscreenModeBtn');
+            const collapseText = document.getElementById('collapseText');
+
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (layout.classList.contains('fullscreen')) {
+                    layout.classList.remove('fullscreen');
+                }
+                sidebar.classList.toggle('collapsed');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    collapseText.innerText = 'Expand';
+                } else {
+                    collapseText.innerText = 'Collapse';
+                }
+            });
+
+            fullscreenBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                layout.classList.toggle('fullscreen');
+                
+                if (layout.classList.contains('fullscreen')) {
+                    sidebar.classList.remove('collapsed');
+                    collapseText.innerText = 'Collapse';
+                    fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> Sidebar off';
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+                }
+            });
+
+            fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+            collapseText.innerText = 'Collapse';
+
             // Add focus effects to form inputs
             const inputs = document.querySelectorAll('input, select');
             
@@ -917,67 +1221,13 @@
                     }
                 });
             });
-            
-            // Animate progress steps
-            const progressSteps = document.querySelectorAll('.progress-step');
-            let currentStep = 0;
-            
-            function updateProgress() {
-                progressSteps.forEach((step, index) => {
-                    if (index <= currentStep) {
-                        step.classList.add('active');
-                    } else {
-                        step.classList.remove('active');
-                    }
-                });
-                
-                currentStep = (currentStep + 1) % progressSteps.length;
-            }
-            
-            setInterval(updateProgress, 3000);
-            
-            // Add ripple effect to sidebar links
-            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-            sidebarLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    const ripple = document.createElement('span');
-                    const rect = this.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    
-                    ripple.style.cssText = `
-                        position: absolute;
-                        border-radius: 50%;
-                        background: rgba(255, 255, 255, 0.3);
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        width: ${size}px;
-                        height: ${size}px;
-                        top: ${y}px;
-                        left: ${x}px;
-                    `;
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
+
+            // Staggered animation for dropdowns
+            document.querySelectorAll('.dropdown').forEach((dropdown, index) => {
+                dropdown.style.animation = `dropdownAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s forwards`;
             });
-            
-            // Add CSS for ripple animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        });
+        })();
     </script>
+
 </body>
 </html>

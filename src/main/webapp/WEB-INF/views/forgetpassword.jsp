@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,19 +67,8 @@ body{
 
 .form-control{
     padding-left:38px;
-    padding-right:38px;
     height:46px;
     border-radius:10px;
-}
-
-.toggle{
-    position:absolute;
-    top:50%;
-    right:12px;
-    transform:translateY(-50%);
-    background:none;
-    border:none;
-    cursor:pointer;
 }
 
 .btn-reset{
@@ -89,21 +79,6 @@ body{
     padding:12px;
     font-weight:600;
 }
-
-.strength-bar{
-    height:6px;
-    background:#e9ecef;
-    border-radius:5px;
-}
-
-.strength-fill{
-    height:100%;
-    width:0%;
-}
-
-.weak{background:#dc3545;width:33%}
-.medium{background:#ffc107;width:66%}
-.strong{background:#198754;width:100%}
 
 .login-link{
     text-align:center;
@@ -118,41 +93,24 @@ body{
     <div class="title">Forgot Password</div>
     <div class="subtitle">Reset your SmartIntern password</div>
 
-    <form action="resetpassword" method="post" id="forgotForm">
+    <!-- Success/Error messages -->
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger text-center mt-2">${error}</div>
+    </c:if>
+
+    <c:if test="${not empty success}">
+        <div class="alert alert-success text-center mt-2">${success}</div>
+    </c:if>
+
+    <form action="sendOtp" method="post" id="forgotForm">
 
         <div class="input-group">
             <i class="bi bi-envelope"></i>
-            <input type="email" name="email" class="form-control" placeholder="Registered Email" required>
-        </div>
-
-        <div class="input-group">
-            <i class="bi bi-lock"></i>
-            <input type="password" id="newPassword" name="newPassword"
-                   class="form-control" placeholder="New Password"
-                   onkeyup="checkStrength()" required>
-            <button type="button" class="toggle" onclick="toggle('newPassword')">
-                <i class="bi bi-eye"></i>
-            </button>
-        </div>
-
-        <div class="strength-bar">
-            <div id="strengthFill" class="strength-fill"></div>
-        </div>
-        <div id="strengthText" class="small fw-semibold mt-1"></div>
-
-        <div class="input-group">
-            <i class="bi bi-lock-fill"></i>
-            <input type="password" id="confirmPassword" name="confirmPassword"
-                   class="form-control" placeholder="Confirm Password" required>
-            <button type="button" class="toggle" onclick="toggle('confirmPassword')">
-                <i class="bi bi-eye"></i>
-            </button>
+            <input type="email" name="email" class="form-control" placeholder="Registered Email" required value="${email}">
         </div>
 
         <div class="d-grid">
-            <button type="button" class="btn btn-reset" onclick="submitForm()">
-                Reset Password
-            </button>
+            <button type="submit" class="btn btn-reset">Send OTP</button>
         </div>
 
         <div class="login-link">
@@ -161,41 +119,6 @@ body{
 
     </form>
 </div>
-
-<script>
-function toggle(id){
-    const f=document.getElementById(id);
-    f.type=f.type==="password"?"text":"password";
-}
-
-function checkStrength(){
-    const pwd=document.getElementById("newPassword").value;
-    const fill=document.getElementById("strengthFill");
-    const text=document.getElementById("strengthText");
-
-    if(pwd.length<6){
-        fill.className="strength-fill weak";
-        text.textContent="Weak password";
-    }else if(/[A-Z]/.test(pwd)&&/[0-9]/.test(pwd)&&/[@$!%*?&]/.test(pwd)){
-        fill.className="strength-fill strong";
-        text.textContent="Strong password";
-    }else{
-        fill.className="strength-fill medium";
-        text.textContent="Medium password";
-    }
-}
-
-function submitForm(){
-    const p1=document.getElementById("newPassword").value;
-    const p2=document.getElementById("confirmPassword").value;
-
-    if(p1!==p2){
-        alert("Passwords do not match");
-        return;
-    }
-    document.getElementById("forgotForm").submit();
-}
-</script>
 
 </body>
 </html>

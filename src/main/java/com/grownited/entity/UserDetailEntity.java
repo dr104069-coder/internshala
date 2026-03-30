@@ -1,5 +1,7 @@
 package com.grownited.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -65,6 +67,16 @@ public class UserDetailEntity {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public void setUserId(UserEntity userEntity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setCreatedAt(LocalDateTime now) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

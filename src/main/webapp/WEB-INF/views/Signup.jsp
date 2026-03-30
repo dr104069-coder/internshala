@@ -72,7 +72,7 @@ body {
     border-radius: 10px;
     height: 46px;
     font-size: 15px;
-    color: #495057;   /* SAME color for all fields */
+    color: #495057;
     background-color: #fff;
     transition: all 0.3s ease;
 }
@@ -89,17 +89,17 @@ body {
 
 /* ===== GENDER COLOR FIX ===== */
 select.form-control {
-    color: #6c757d;        /* placeholder look */
+    color: #6c757d;
     appearance: none;
     cursor: pointer;
 }
 
 select.form-control option {
-    color: #495057;        /* dropdown options */
+    color: #495057;
 }
 
 select.form-control.valid {
-    color: #495057;        /* selected value SAME as other fields */
+    color: #495057;
 }
 /* ============================ */
 
@@ -162,7 +162,8 @@ select.form-control.valid {
     <div class="brand">SmartIntern</div>
     <div class="subtitle">Your gateway to internships & training</div>
 
-    <form action="register" method="post" id="signupForm">
+    <!-- Added enctype for file upload -->
+    <form action="/register" method="post" id="signupForm" enctype="multipart/form-data">
 
         <div class="row">
             <div class="col">
@@ -188,29 +189,30 @@ select.form-control.valid {
             <i class="bi bi-telephone"></i>
             <input type="text" name="phone" class="form-control" placeholder="Phone" required>
         </div>
+
         <div class="row">
-    <div class="col">
-        <div class="input-group">
-            <i class="bi bi-mortarboard"></i>
-            <input type="text" name="qualification" class="form-control" placeholder="Qualification" required>
+            <div class="col">
+                <div class="input-group">
+                    <i class="bi bi-mortarboard"></i>
+                    <input type="text" name="qualification" class="form-control" placeholder="Qualification" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <i class="bi bi-person-badge"></i>
+                <select name="role" class="form-control" required onchange="this.classList.add('valid')">
+                    <option value="" selected disabled>UserType</option>
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="STUDENT">STUDENT</option>
+                    <option value="FACULTY">FACULTY</option>
+                    <option value="EMPLOYER">EMPLOYER</option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="input-group">
-    <i class="bi bi-person-badge"></i>
-    <select name="usertype" class="form-control" required onchange="this.classList.add('valid')">
-        <option value="" selected disabled>UserType</option>
-        <option value="ADMIN">ADMIN</option>
-        <option value="STUDENT">STUDENT</option>
-        <option value="FACULTY">FACULTY</option>
-        <option value="EMPLOYER">EMPLOYER</option>
-    </select>
-</div>
 
         <!-- Gender -->
         <div class="input-group">
             <i class="bi bi-gender-ambiguous"></i>
-            <select name="gender" class="form-control" required
-                    onchange="this.classList.add('valid')">
+            <select name="gender" class="form-control" required onchange="this.classList.add('valid')">
                 <option value="" selected disabled>Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -218,6 +220,7 @@ select.form-control.valid {
             </select>
         </div>
 
+        <!-- Location -->
         <div class="row">
             <div class="col">
                 <div class="input-group">
@@ -226,18 +229,16 @@ select.form-control.valid {
                 </div>
             </div>
             <div class="col">
-        <div class="input-group">
-            <i class="bi bi-pin-map"></i>
-            <input type="text" name="state" class="form-control" placeholder="State" required>
-        </div>
-    </div>
-</div>
-            <div class="col">
                 <div class="input-group">
-                    <i class="bi bi-geo-alt"></i>
-                    <input type="text" name="city" class="form-control" placeholder="City" required>
+                    <i class="bi bi-pin-map"></i>
+                    <input type="text" name="state" class="form-control" placeholder="State" required>
                 </div>
             </div>
+        </div>
+
+        <div class="input-group">
+            <i class="bi bi-geo-alt"></i>
+            <input type="text" name="city" class="form-control" placeholder="City" required>
         </div>
 
         <div class="input-group">
@@ -246,6 +247,7 @@ select.form-control.valid {
                    placeholder="Birth Year (e.g. 2002)" min="1980" max="2010" required>
         </div>
 
+        <!-- Password -->
         <div class="input-group">
             <i class="bi bi-lock"></i>
             <input type="password" id="password" name="password" class="form-control"
@@ -269,6 +271,13 @@ select.form-control.valid {
             </button>
         </div>
 
+        <!-- ✅ Profile Picture Upload Field -->
+        <div class="input-group mb-3">
+            <i class="bi bi-camera"></i>
+            <input type="file" name="profilePic" class="form-control" required>
+        </div>
+
+        <!-- Submit -->
         <div class="d-grid">
             <button type="button" class="btn btn-signup text-white" onclick="submitForm()">
                 Create Account

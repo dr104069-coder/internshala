@@ -1,78 +1,117 @@
 package com.grownited.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.grownited.entity.InternshipApplicationEntity;
+import com.grownited.entity.InternshipEntity;
+import com.grownited.entity.UserEntity;
 import com.grownited.repository.InternshipApplicationRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class InternshipApplicationController {
-	
-	@Autowired
-	InternshipApplicationRepository internshipapplicationRepository;
-	
-	@GetMapping("/applyInternship")
-	public String openapplyInternshipPage() {
-		return "applyInternship"; // jsp name
-	}
-	/*@PostMapping("/saveApplication")
-	public String saveApplication(InternshipApplicationEntity applicationEntity,
-	                              HttpSession session) {
 
-	    // get studentId from session
-	    Integer studentId = (Integer) session.getAttribute("userId");
+    @Autowired
+    InternshipApplicationRepository internshipapplicationRepository;
 
-	    applicationEntity.setStudentId(studentId);
-	    applicationEntity.setApplicationStatus("APPLIED");
-	    applicationEntity.setAppliedAt(LocalDateTime.now());
+    // OPEN APPLY PAGE
+    @GetMapping("/applyInternship")
+    public String openapplyInternshipPage(
+            @RequestParam Integer internshipId,
+            Model model) {
 
-	    internshipapplicationRepository.save(applicationEntity);
+        model.addAttribute("internshipId", internshipId);
 
-	    return "redirect:/studentDashboard";
-	}*/
-	@PostMapping("/saveApplication")
-	public String saveApplication(
-	        @ModelAttribute InternshipApplicationEntity applicationEntity,
-	        @RequestParam("resumeFile") MultipartFile file,
-	        HttpSession session) throws IOException {
+        return "applyInternship";
+    }
 
-	    Integer studentId = (Integer) session.getAttribute("userId");
+    // SAVE APPLICATION
+    @PostMapping("/saveApplication")
+    public String saveApplication(
+            @RequestParam Integer internshipId,
+            @RequestParam String coverLetter,
+            @RequestParam MultipartFile resumeFile,
+            HttpSession session) {
 
-	    applicationEntity.setStudentId(studentId);
-	    applicationEntity.setApplicationStatus("APPLIED");
-	    applicationEntity.setAppliedAt(LocalDateTime.now());
+        UserEntity student = (UserEntity) session.getAttribute("user");
 
-	    // Upload directory
-	    String uploadDir = "C:/uploads/";
+        InternshipApplicationEntity application = new InternshipApplicationEntity();
 
-	    File directory = new File(uploadDir);
-	    if (!directory.exists()) {
-	        directory.mkdirs();   // 🔥 create folder automatically
-	    }
+        InternshipEntity internship = new InternshipEntity();
+        internship.setInternshipId(internshipId);
 
-	    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-	    File destination = new File(uploadDir + fileName);
+        application.setInternship(internship);
+        application.setStudent(student);
 
-	    file.transferTo(destination);
+        application.setCoverLetter(coverLetter);
+        application.setResumeUrl(resumeFile.getOriginalFilename());
+        application.setApplicationStatus("APPLIED");
+        application.setAppliedAt(LocalDateTime.now());
 
-	    applicationEntity.setResumeUrl(fileName);
+        internshipapplicationRepository.save(application);
 
-	    internshipapplicationRepository.save(applicationEntity);
+        return "redirect:/studentDashboard";
+    }
 
-	    return "redirect:/studentDashboard";
-	}
+    // LIST APPLICATIONS
+    @GetMapping("/listapplications")
+    public String listApplications(Model model) {
 
+        List<InternshipApplicationEntity> applications =
+                internshipapplicationRepository.findAll();
 
+        model.addAttribute("applications", applications);
+
+        return "listApplications";
+    }
+
+    // VIEW APPLICATION
+    @GetMapping("/viewApplication")
+    public String viewApplication(@RequestParam Integer applicationId, Model model) {
+
+        InternshipApplicationEntity application =
+                internshipapplicationRepository.findById(applicationId)
+                        .orElse(null);
+
+        model.addAttribute("application", application);
+
+        return "viewApplication";
+    }
+
+    // DELETE APPLICATION
+    @GetMapping("/deleteApplication")
+    public String deleteApplication(@RequestParam Integer applicationId) {
+
+        internshipapplicationRepository.deleteById(applicationId);
+
+        return "redirect:/listapplications";
+    }
+    
+    
+    @GetMapping("/myApplications")
+    public String myApplications(HttpSession session, Model model) {
+
+        UserEntity user = (UserEntity) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // ✅ Fetch only logged-in user applications
+        List<InternshipApplicationEntity> applications =
+                internshipapplicationRepository.findByStudent(user);
+
+        model.addAttribute("applications", applications);
+
+        return "applications"; // new JSP
+    }
 }

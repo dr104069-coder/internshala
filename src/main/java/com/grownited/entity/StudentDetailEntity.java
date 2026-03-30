@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,6 +32,10 @@ public class StudentDetailEntity {
 	private String tshirtSize;     // SMALL, L, XL, XXL, XXXL
 
 	private Integer graduationYear;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id")   // FK column in DB
+	private UserEntity user;
 
 	public Integer getStudentDetailId() {
 		return studentDetailId;
@@ -117,6 +123,14 @@ public class StudentDetailEntity {
 
 	public void setGraduationYear(Integer graduationYear) {
 		this.graduationYear = graduationYear;
+	}
+
+	public UserEntity getUser() {
+		return user;
+	}
+
+	public void setUser(UserEntity user) {
+		this.user = user;
 	}
 	
 	

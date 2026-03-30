@@ -219,8 +219,8 @@ public class UserEntity {
 		return createdAt;
 	}
 
-	public void setCreatedAt(LocalDate createdAt) {
-		this.createdAt = createdAt;
+	public void setCreatedAt(LocalDate localDateTime) {
+		this.createdAt = localDateTime;
 	}
 
 	public String getGender() {

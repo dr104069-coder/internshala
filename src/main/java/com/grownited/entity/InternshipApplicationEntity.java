@@ -2,68 +2,87 @@ package com.grownited.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name="internshipapplication")
+@Table(name = "internship_application")
 public class InternshipApplicationEntity {
 
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment
-	private Integer applicationId;
-	private Integer internshipId;   // fk = internship
-	private Integer studentId;      // fk = users (student)
-	private String coverLetter;
-	private String resumeUrl;
-	private String applicationStatus;   // APPLIED, SHORTLISTED, REJECTED, SELECTED
-	private LocalDateTime appliedAt;
-	public Integer getApplicationId() {
-		return applicationId;
-	}
-	public void setApplicationId(Integer applicationId) {
-		this.applicationId = applicationId;
-	}
-	public Integer getInternshipId() {
-		return internshipId;
-	}
-	public void setInternshipId(Integer internshipId) {
-		this.internshipId = internshipId;
-	}
-	public Integer getStudentId() {
-		return studentId;
-	}
-	public void setStudentId(Integer studentId) {
-		this.studentId = studentId;
-	}
-	public String getCoverLetter() {
-		return coverLetter;
-	}
-	public void setCoverLetter(String coverLetter) {
-		this.coverLetter = coverLetter;
-	}
-	public String getResumeUrl() {
-		return resumeUrl;
-	}
-	public void setResumeUrl(String resumeUrl) {
-		this.resumeUrl = resumeUrl;
-	}
-	public String getApplicationStatus() {
-		return applicationStatus;
-	}
-	public void setApplicationStatus(String applicationStatus) {
-		this.applicationStatus = applicationStatus;
-	}
-	public LocalDateTime getAppliedAt() {
-		return appliedAt;
-	}
-	public void setAppliedAt(LocalDateTime appliedAt) {
-		this.appliedAt = appliedAt;
-	}
-	
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer applicationId;
+
+    // FK → Internship
+    @ManyToOne
+    @JoinColumn(name = "internship_id")
+    private InternshipEntity internship;
+
+    // FK → Student (User)
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private UserEntity student;
+
+    private String coverLetter;
+
+    private String resumeUrl;
+
+    private String applicationStatus;
+
+    private LocalDateTime appliedAt;
+
+    public Integer getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    public InternshipEntity getInternship() {
+        return internship;
+    }
+
+    public void setInternship(InternshipEntity internship) {
+        this.internship = internship;
+    }
+
+    public UserEntity getStudent() {
+        return student;
+    }
+
+    public void setStudent(UserEntity student) {
+        this.student = student;
+    }
+
+    public String getCoverLetter() {
+        return coverLetter;
+    }
+
+    public void setCoverLetter(String coverLetter) {
+        this.coverLetter = coverLetter;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public void setResumeUrl(String resumeUrl) {
+        this.resumeUrl = resumeUrl;
+    }
+
+    public String getApplicationStatus() {
+        return applicationStatus;
+    }
+
+    public void setApplicationStatus(String applicationStatus) {
+        this.applicationStatus = applicationStatus;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public void setAppliedAt(LocalDateTime appliedAt) {
+        this.appliedAt = appliedAt;
+    }
 }

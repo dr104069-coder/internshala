@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.grownited.entity.EmployerEntity;
+import com.grownited.entity.UserEntity;
 import com.grownited.repository.EmployerRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class EmplyerController {
@@ -23,17 +26,62 @@ public class EmplyerController {
     public String openEmployerPage() {
         return "employer";  // employer.jsp
     }
-
+    
+    
+    
+    
     @PostMapping("/saveEmployer")
-    public String saveEmployer(EmployerEntity employerEntity) {
+    public String saveEmployer(EmployerEntity employerEntity,
+                               HttpSession session) {
 
+        UserEntity user = (UserEntity) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        String role = user.getRole().trim().toUpperCase();
+
+        if (!role.equals("EMPLOYER") && !role.equals("ADMIN")) {
+            return "redirect:/login";
+        }
+        employerEntity.setUser(user);   // 🔐 SESSION FK
         employerEntity.setCreatedAt(LocalDate.now());
         employerEntity.setCompanyVerified(false);
 
         employerRepository.save(employerEntity);
 
-        return "redirect:/studentDashboard";
+        return "redirect:/listEmployer";
     }
+
+//    @PostMapping("/saveEmployer")
+//    public String saveEmployer(EmployerEntity employerEntity) {
+//
+//        employerEntity.setCreatedAt(LocalDate.now());
+//        employerEntity.setCompanyVerified(false);
+//
+//        employerRepository.save(employerEntity);
+//
+//        return "redirect:/employerdashboard";
+//    }
+    
+  /*  @PostMapping("/saveEmployer")
+    public String saveEmployer(EmployerEntity employerEntity, HttpSession session) {
+
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        employerEntity.setUserId(userId);
+        employerEntity.setCreatedAt(LocalDate.now());
+        employerEntity.setCompanyVerified(false);
+
+        employerRepository.save(employerEntity);
+
+        return "redirect:/dashboard";
+    }*/
     
     @GetMapping("/listEmployer")
     public String listEmployer(Model model) {
