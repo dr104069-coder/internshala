@@ -1270,6 +1270,12 @@
                   <span class="detail-label">End Date</span>
                   <span class="detail-value">${internship.endDate}</span>
                 </div>
+                
+                <div class="detail-item">
+                  <span class="detail-label">Start Apply Date</span>
+                  <span class="detail-value">${internship.startApplyDate}</span>
+                </div>
+                
                 <div class="detail-item">
                   <span class="detail-label">Last Apply Date</span>
                   <span class="detail-value">${internship.lastApplyDate}</span>
@@ -1302,9 +1308,10 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-              <a href="editInternship?internshipId=${internship.internshipId}" class="edit-btn">
-                <i class="bi bi-pencil-square"></i> Edit Internship
-              </a>
+             <!-- This should be just a link, not auto-executing -->
+<a href="Internshipedit?internshipId=${internship.internshipId}" class="edit-btn">
+    <i class="bi bi-pencil-square"></i> Edit Internship
+</a>
               <a href="deleteInternship?internshipId=${internship.internshipId}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this internship?')">
                 <i class="bi bi-trash"></i> Delete Internship
               </a>

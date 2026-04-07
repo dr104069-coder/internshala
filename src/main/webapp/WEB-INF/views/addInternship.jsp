@@ -1142,6 +1142,12 @@
                             <label><i class="bi bi-calendar"></i> End Date</label>
                             <input type="date" name="endDate" class="form-control">
                         </div>
+                        
+                        
+                         <div class="input-group-custom">
+                            <label><i class="bi bi-calendar"></i> Start Apply Date</label>
+                            <input type="date" name="startApplyDate" class="form-control">
+                        </div>
 
                         <div class="input-group-custom">
                             <label><i class="bi bi-calendar"></i> Last Apply Date</label>

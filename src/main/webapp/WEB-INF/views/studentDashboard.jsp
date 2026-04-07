@@ -932,27 +932,6 @@ body {
     box-shadow: 0 4px 12px rgba(36, 123, 160, 0.3);
 }
 
-.view-all-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.2rem;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50px;
-    color: var(--cerulean);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    border: 1px solid var(--tropical-teal);
-}
-
-.view-all-btn:hover {
-    background: var(--cerulean);
-    color: white;
-    transform: translateX(5px);
-}
-
 .me-2 {
     margin-right: 0.5rem;
 }
@@ -1132,6 +1111,48 @@ body {
         justify-content: center;
     }
 }
+
+.pagination-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--tropical-teal);
+    background: white;
+    color: var(--cerulean);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: var(--cerulean);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--cerulean), var(--tropical-teal));
+    color: white;
+    border-color: transparent;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 </style>
 </head>
 <body>
@@ -1147,7 +1168,7 @@ body {
             </div>
             <div class="logo-text">
                 <h1>SmartIntern</h1>
-                <p>AI-Powered Internship Platform</p>
+                <p>Internship Platform</p>
             </div>
         </div>
         
@@ -1155,7 +1176,7 @@ body {
             <a href="myinternships" class="nav-link-header">
                 <i class="fas fa-briefcase"></i>
                 <span>My Internships</span>
-                <span class="nav-badge-header">${liveInternshipsCount + upcomingInternshipsCount}</span>
+               
             </a>
             <a href="/myApplications" class="nav-link-header">
                 <i class="fas fa-file-alt"></i>
@@ -1198,7 +1219,7 @@ body {
                     <a href="settings" class="dropdown-item-custom">
                         <i class="fas fa-cog"></i> Settings
                     </a>
-                    <a href="applications" class="dropdown-item-custom">
+                    <a href="/myCertificates" class="dropdown-item-custom">
                         <i class="fas fa-file-alt"></i> My Certificates
                     </a>
                     <div class="dropdown-divider"></div>
@@ -1218,7 +1239,7 @@ body {
         <div class="welcome-content">
             <div class="welcome-text">
                 <h2>Welcome back, ${user.firstName} ${user.lastName}! 👋</h2>
-                <p>Your AI-powered internship assistant is here to help you find the perfect opportunity.</p>
+                <p>Your internship assistant is here to help you find the perfect opportunity.</p>
             </div>
             <div class="welcome-stats">
                 <div class="welcome-stat">
@@ -1276,145 +1297,230 @@ body {
         <span id="visibleCount">${fn:length(liveInternships) + fn:length(upcomingInternships)}</span> active internships found
     </div>
     
-    <!-- Live Internships Section -->
-    <div class="live-section">
-        <div class="section-title">
-            <h3><i class="fas fa-bolt me-2" style="color: var(--success);"></i> Live Internships</h3>
-            <c:if test="${fn:length(liveInternships) > 6}">
-                <a href="liveinternship.jsp" class="view-all-btn">
-                    View All <i class="fas fa-arrow-right"></i>
-                </a>
-            </c:if>
-        </div>
-        
-        <div class="internship-grid" id="liveGrid">
-            <c:forEach var="internship" items="${liveInternships}" varStatus="status" end="5">
-            <div class="internship-card-modern" 
-                 data-location="${fn:toLowerCase(internship.location)}" 
-                 data-type="${fn:toLowerCase(internship.internshipType)}"
-                 data-stipend="${internship.stipend}"
-                 data-title="${fn:toLowerCase(internship.title)}"
-                 data-company="${fn:toLowerCase(internship.employer.companyName)}"
-                 onclick="window.location.href='viewInternshipDetails?internshipId=${internship.internshipId}'">
-                <span class="internship-status status-live">
-                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> LIVE
-                </span>
-                
-                <div class="internship-company-logo">
-                    <span>${fn:substring(internship.employer.companyName, 0, 2)}</span>
-                </div>
-                
-                <h4>${internship.title}</h4>
-                <div class="internship-company">
-                    <i class="fas fa-building"></i> ${internship.employer.companyName}
-                </div>
-                
-                <div class="internship-details-modern">
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i> ${internship.location}
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-clock"></i> ${internship.internshipType}
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-calendar-alt"></i> ${internship.durationMonths} months
-                    </div>
-                </div>
-                
-                <div class="internship-footer">
-                    <div class="internship-stipend ${internship.stipend == 0 ? 'free' : ''}">
-                        <c:choose>
-                            <c:when test="${internship.stipend > 0}">
-                                ₹${internship.stipend}/month
-                            </c:when>
-                            <c:otherwise>
-                                Free
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                    <div onclick="event.stopPropagation();">
-                        <a href="viewInternshipDetails?internshipId=${internship.internshipId}" class="btn-outline-modern me-2" onclick="event.stopPropagation();">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="applyInternship?internshipId=${internship.internshipId}" class="btn-primary-modern" onclick="event.stopPropagation();">
-                            Apply
-                        </a>
-                    </div>
-                </div>
-            </div>
-            </c:forEach>
-        </div>
+   <!-- Live Internships Section -->
+<div class="live-section">
+    <div class="section-title">
+        <h3><i class="fas fa-bolt me-2" style="color: var(--success);"></i> Live Internships</h3>
     </div>
     
-    <!-- Upcoming Internships Section -->
-    <div class="upcoming-section">
-        <div class="section-title">
-            <h3><i class="fas fa-calendar-alt me-2" style="color: var(--warning);"></i> Upcoming Internships</h3>
-            <c:if test="${fn:length(upcomingInternships) > 6}">
-                <a href="upcominginternship.jsp" class="view-all-btn">
-                    View All <i class="fas fa-arrow-right"></i>
-                </a>
-            </c:if>
-        </div>
-        
-        <div class="internship-grid" id="upcomingGrid">
-            <c:forEach var="internship" items="${upcomingInternships}" varStatus="status" end="5">
-            <div class="internship-card-modern" 
-                 data-location="${fn:toLowerCase(internship.location)}" 
-                 data-type="${fn:toLowerCase(internship.internshipType)}"
-                 data-stipend="${internship.stipend}"
-                 data-title="${fn:toLowerCase(internship.title)}"
-                 data-company="${fn:toLowerCase(internship.employer.companyName)}"
-                 onclick="window.location.href='viewInternshipDetails?internshipId=${internship.internshipId}'">
-                <span class="internship-status status-upcoming">
-                    <i class="far fa-clock"></i> Starts: ${internship.startDate}
-                </span>
-                
-                <div class="internship-company-logo">
-                    <span>${fn:substring(internship.employer.companyName, 0, 2)}</span>
+    <div class="internship-grid" id="liveGrid">
+        <c:choose>
+            <c:when test="${empty liveInternships}">
+                <div class="no-results" style="grid-column: 1 / -1;">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No Live Internships</h3>
+                    <p>Check back later for new opportunities!</p>
                 </div>
-                
-                <h4>${internship.title}</h4>
-                <div class="internship-company">
-                    <i class="fas fa-building"></i> ${internship.employer.companyName}
-                </div>
-                
-                <div class="internship-details-modern">
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i> ${internship.location}
+            </c:when>
+            <c:otherwise>
+                <c:forEach var="internship" items="${liveInternships}" varStatus="status">
+                    <div class="internship-card-modern" 
+                         data-location="${fn:toLowerCase(internship.location)}" 
+                         data-type="${fn:toLowerCase(internship.internshipType)}"
+                         data-stipend="${internship.stipend}"
+                         data-title="${fn:toLowerCase(internship.title)}"
+                         data-company="${fn:toLowerCase(internship.employer.companyName)}"
+                         onclick="window.location.href='viewInternshipDetails?internshipId=${internship.internshipId}'">
+                        
+                        <span class="internship-status status-live">
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i> 
+                            <c:choose>
+                                <c:when test="${not empty internship.startApplyDate and internship.startApplyDate <= currentDate}">
+                                    OPEN FOR APPLICATIONS
+                                </c:when>
+                                <c:otherwise>
+                                    LIVE
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                        
+                        <div class="internship-company-logo">
+                            <span>${fn:substring(internship.employer.companyName, 0, 2)}</span>
+                        </div>
+                        
+                        <h4>${internship.title}</h4>
+                        <div class="internship-company">
+                            <i class="fas fa-building"></i> ${internship.employer.companyName}
+                        </div>
+                        
+                        <div class="internship-details-modern">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i> ${internship.location}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i> ${internship.internshipType}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i> ${internship.durationMonths} months
+                            </div>
+                            <c:if test="${not empty internship.startApplyDate}">
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-check"></i> Apply from: ${internship.startApplyDate}
+                                </div>
+                            </c:if>
+                        </div>
+                        
+                        <div class="internship-footer">
+                            <div class="internship-stipend ${internship.stipend == 0 ? 'free' : ''}">
+                                <c:choose>
+                                    <c:when test="${internship.stipend > 0}">
+                                        ₹${internship.stipend}/month
+                                    </c:when>
+                                    <c:otherwise>
+                                        Free
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div onclick="event.stopPropagation();">
+                                <a href="viewInternshipDetails?internshipId=${internship.internshipId}" class="btn-outline-modern me-2" onclick="event.stopPropagation();">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <c:set var="applied" value="false" />
+                                <c:forEach var="appliedId" items="${appliedInternshipIds}">
+                                    <c:if test="${appliedId == internship.internshipId}">
+                                        <c:set var="applied" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                
+                                <c:choose>
+                                    <c:when test="${applied}">
+                                        <c:set var="status" value="${applicationStatusMap[internship.internshipId]}" />
+                                        <c:choose>
+                                            <c:when test="${status == 'ACCEPTED'}">
+                                                <span class="btn-outline-modern" style="background: #10b981; color: white; border-color: #10b981;">
+                                                    <i class="fas fa-check-circle"></i> Accepted
+                                                </span>
+                                            </c:when>
+                                            <c:when test="${status == 'REJECTED'}">
+                                                <span class="btn-outline-modern" style="background: #ef4444; color: white; border-color: #ef4444;">
+                                                    <i class="fas fa-times-circle"></i> Rejected
+                                                </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="btn-outline-modern" style="background: #f59e0b; color: white; border-color: #f59e0b;">
+                                                    <i class="fas fa-hourglass-half"></i> Applied
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="applyInternship?internshipId=${internship.internshipId}" class="btn-primary-modern" onclick="event.stopPropagation();">
+                                            Apply Now
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
                     </div>
-                    <div class="detail-item">
-                        <i class="fas fa-clock"></i> ${internship.internshipType}
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-calendar-alt"></i> ${internship.durationMonths} months
-                    </div>
-                </div>
-                
-                <div class="internship-footer">
-                    <div class="internship-stipend ${internship.stipend == 0 ? 'free' : ''}">
-                        <c:choose>
-                            <c:when test="${internship.stipend > 0}">
-                                ₹${internship.stipend}/month
-                            </c:when>
-                            <c:otherwise>
-                                Free
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                    <div onclick="event.stopPropagation();">
-                        <a href="viewInternshipDetails?internshipId=${internship.internshipId}" class="btn-outline-modern me-2" onclick="event.stopPropagation();">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="#" class="btn-outline-modern" onclick="event.stopPropagation(); notifyMe(${internship.internshipId})">
-                            <i class="far fa-bell"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            </c:forEach>
-        </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
     </div>
+    
+    <!-- Pagination for Live Internships -->
+    <c:if test="${fn:length(liveInternships) > 6}">
+        <div class="pagination-container">
+            <div class="pagination" id="livePagination"></div>
+        </div>
+    </c:if>
+</div>
+    
+   <!-- Upcoming Internships Section -->
+<div class="upcoming-section">
+    <div class="section-title">
+        <h3><i class="fas fa-calendar-alt me-2" style="color: var(--warning);"></i> Upcoming Internships</h3>
+    </div>
+    
+    <div class="internship-grid" id="upcomingGrid">
+        <c:choose>
+            <c:when test="${empty upcomingInternships}">
+                <div class="no-results" style="grid-column: 1 / -1;">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3>No Upcoming Internships</h3>
+                    <p>New opportunities will be announced soon!</p>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <c:forEach var="internship" items="${upcomingInternships}" varStatus="status">
+                    <div class="internship-card-modern" 
+                         data-location="${fn:toLowerCase(internship.location)}" 
+                         data-type="${fn:toLowerCase(internship.internshipType)}"
+                         data-stipend="${internship.stipend}"
+                         data-title="${fn:toLowerCase(internship.title)}"
+                         data-company="${fn:toLowerCase(internship.employer.companyName)}"
+                         onclick="window.location.href='viewInternshipDetails?internshipId=${internship.internshipId}'">
+                        
+                        <span class="internship-status status-upcoming">
+                            <i class="far fa-clock"></i> 
+                            <c:choose>
+                                <c:when test="${not empty internship.startApplyDate}">
+                                    Applications Open: ${internship.startApplyDate}
+                                </c:when>
+                                <c:otherwise>
+                                    Starts: ${internship.startDate}
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                        
+                        <div class="internship-company-logo">
+                            <span>${fn:substring(internship.employer.companyName, 0, 2)}</span>
+                        </div>
+                        
+                        <h4>${internship.title}</h4>
+                        <div class="internship-company">
+                            <i class="fas fa-building"></i> ${internship.employer.companyName}
+                        </div>
+                        
+                        <div class="internship-details-modern">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i> ${internship.location}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i> ${internship.internshipType}
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i> ${internship.durationMonths} months
+                            </div>
+                            <c:if test="${not empty internship.startApplyDate}">
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar-check"></i> Apply from: ${internship.startApplyDate}
+                                </div>
+                            </c:if>
+                        </div>
+                        
+                        <div class="internship-footer">
+                            <div class="internship-stipend ${internship.stipend == 0 ? 'free' : ''}">
+                                <c:choose>
+                                    <c:when test="${internship.stipend > 0}">
+                                        ₹${internship.stipend}/month
+                                    </c:when>
+                                    <c:otherwise>
+                                        Free
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div onclick="event.stopPropagation();">
+                                <a href="viewInternshipDetails?internshipId=${internship.internshipId}" class="btn-outline-modern me-2" onclick="event.stopPropagation();">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="btn-outline-modern" onclick="event.stopPropagation(); notifyMe(${internship.internshipId})" style="cursor: pointer;">
+                                    <i class="far fa-bell"></i> Notify Me
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+    
+    <!-- Pagination for Upcoming Internships -->
+    <c:if test="${fn:length(upcomingInternships) > 6}">
+        <div class="pagination-container">
+            <div class="pagination" id="upcomingPagination"></div>
+        </div>
+    </c:if>
+</div>
 </main>
 
 <!-- Modern Footer - Normal Size -->
@@ -1450,6 +1556,90 @@ AOS.init({
 
 function notifyMe(id) {
     alert('You will be notified when this internship opens!');
+}
+
+// Pagination Helper Function
+function setupPagination(containerId, cardSelector, paginationId, itemsPerPage = 6) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Get visible cards (not hidden by filters)
+    const cards = Array.from(container.querySelectorAll(cardSelector)).filter(card => {
+        return card.style.display !== 'none' && !card.classList.contains('hidden');
+    });
+    
+    if (cards.length <= itemsPerPage) {
+        // Hide pagination if not needed
+        const paginationContainer = document.getElementById(paginationId)?.parentElement;
+        if (paginationContainer) paginationContainer.style.display = 'none';
+        return;
+    }
+    
+    // Show pagination container
+    const paginationContainer = document.getElementById(paginationId)?.parentElement;
+    if (paginationContainer) paginationContainer.style.display = 'flex';
+    
+    const totalPages = Math.ceil(cards.length / itemsPerPage);
+    let currentPage = 1;
+    
+    function showPage(page) {
+        currentPage = page;
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        
+        // Hide all cards first, then show only the ones for current page
+        cards.forEach(card => {
+            card.style.display = 'none';
+        });
+        
+        for (let i = start; i < end && i < cards.length; i++) {
+            cards[i].style.display = '';
+        }
+        
+        updatePaginationButtons();
+    }
+    
+    function updatePaginationButtons() {
+        const paginationDiv = document.getElementById(paginationId);
+        if (!paginationDiv) return;
+        
+        paginationDiv.innerHTML = '';
+        
+        // Previous button
+        const prevBtn = document.createElement('button');
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.className = 'page-btn';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = function() {
+            if (currentPage > 1) showPage(currentPage - 1);
+        };
+        paginationDiv.appendChild(prevBtn);
+        
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = 'page-btn';
+            if (currentPage === i) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.onclick = function() { showPage(i); };
+            paginationDiv.appendChild(pageBtn);
+        }
+        
+        // Next button
+        const nextBtn = document.createElement('button');
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.className = 'page-btn';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = function() {
+            if (currentPage < totalPages) showPage(currentPage + 1);
+        };
+        paginationDiv.appendChild(nextBtn);
+    }
+    
+    // Initially show first page
+    showPage(1);
 }
 
 // Filter Functions (with Type filter)
@@ -1568,9 +1758,11 @@ function applyFilters(searchTerm = '') {
         
         if (locationMatch && typeMatch && stipendMatch && searchMatch) {
             card.classList.remove('hidden');
+            card.style.display = '';
             visibleCount++;
         } else {
             card.classList.add('hidden');
+            card.style.display = 'none';
         }
     });
     
@@ -1589,11 +1781,7 @@ function applyFilters(searchTerm = '') {
         if (!noResultsDiv) {
             noResultsDiv = document.createElement('div');
             noResultsDiv.className = 'no-results no-results-message';
-            noResultsDiv.innerHTML = `
-                <i class="fas fa-search"></i>
-                <h3>No Internships Found</h3>
-                <p>Try adjusting your filters to see more opportunities.</p>
-            `;
+            noResultsDiv.innerHTML = '<i class="fas fa-search"></i><h3>No Internships Found</h3><p>Try adjusting your filters to see more opportunities.</p>';
             if (liveSection && upcomingSection) {
                 liveSection.parentNode.insertBefore(noResultsDiv, liveSection);
             }
@@ -1601,18 +1789,31 @@ function applyFilters(searchTerm = '') {
     } else if (noResultsDiv) {
         noResultsDiv.remove();
     }
+    
+    // Reset pagination after filtering
+    setTimeout(function() {
+        setupPagination('liveGrid', '.internship-card-modern', 'livePagination', 6);
+        setupPagination('upcomingGrid', '.internship-card-modern', 'upcomingPagination', 6);
+    }, 50);
 }
 
 // Notification bell click
-document.querySelector('.notification-badge').addEventListener('click', function() {
-    alert('You have 3 new notifications');
-});
+const notificationBadge = document.querySelector('.notification-badge');
+if (notificationBadge) {
+    notificationBadge.addEventListener('click', function() {
+        alert('You have 3 new notifications');
+    });
+}
 
-// Add staggered animation for cards
+// Initialize pagination on page load
 document.addEventListener('DOMContentLoaded', function() {
     allCards.forEach((card, index) => {
         card.style.animationDelay = (index * 0.05) + 's';
     });
+    
+    // Setup pagination for both sections
+    setupPagination('liveGrid', '.internship-card-modern', 'livePagination', 6);
+    setupPagination('upcomingGrid', '.internship-card-modern', 'upcomingPagination', 6);
     
     // Apply initial filters
     applyFilters();

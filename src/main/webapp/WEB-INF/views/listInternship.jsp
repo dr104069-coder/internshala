@@ -660,6 +660,103 @@
         transition: all var(--transition-soft);
         text-decoration: none;
     }
+    
+    /* Report Dropdown Styles */
+.report-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.report-btn {
+    background: rgba(75, 139, 190, 0.1);
+    border: 1px solid var(--border-blue);
+    color: var(--soft-blue);
+    border-radius: 40px;
+    padding: 0.7rem 1.8rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all var(--transition-soft);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.report-btn:hover {
+    background: var(--bright-blue);
+    border-color: var(--bright-blue);
+    color: var(--pure-white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-blue);
+}
+
+.report-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--glass-deep-darker);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-blue);
+    border-radius: 16px;
+    padding: 0.5rem;
+    min-width: 220px;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+    display: none;
+}
+
+.report-dropdown.active .report-menu {
+    display: block;
+    animation: menuExpand 0.3s var(--transition-bounce);
+}
+
+.report-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    color: var(--soft-blue);
+    text-decoration: none;
+    transition: all var(--transition-soft);
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+}
+
+.report-menu-item:hover {
+    background: rgba(75, 139, 190, 0.1);
+    color: var(--pure-white);
+    transform: translateX(5px);
+}
+
+.report-menu-item i {
+    font-size: 1.2rem;
+    width: 1.5rem;
+}
+
+.report-menu-item.pdf:hover i { color: #ef4444; }
+.report-menu-item.excel:hover i { color: #10b981; }
+.report-menu-item.csv:hover i { color: #3b82f6; }
+.report-menu-item.word:hover i { color: #3b82f6; }
+.report-menu-item.print:hover i { color: #8b5cf6; }
+.report-menu-item.copy:hover i { color: #f59e0b; }
+
+@keyframes menuExpand {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scaleY(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
 
     .btn-add:hover {
         background: var(--bright-blue);
@@ -1071,20 +1168,50 @@
     <main class="main-panel" id="mainPanel">
       
       <!-- Page Header with Back Button and Add Button -->
-      <div class="page-header">
-        <div class="d-flex align-items-center gap-3">
-          <a href="dashboard" class="btn-back">
+     <!-- Page Header with Back Button, Report Dropdown and Add Button -->
+<div class="page-header">
+    <div class="d-flex align-items-center gap-3">
+        <a href="dashboard" class="btn-back">
             <i class="bi bi-arrow-left"></i> Back to Dashboard
-          </a>
-          <h2 class="page-title">
+        </a>
+        <h2 class="page-title">
             <i class="bi bi-briefcase"></i>
             Internships List
-          </h2>
+        </h2>
+    </div>
+    <div class="d-flex gap-2">
+        <!-- Report Dropdown -->
+        <div class="report-dropdown" id="reportDropdown">
+            <button class="report-btn" id="reportBtn" type="button">
+                <i class="bi bi-download"></i> Download Report
+                <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="report-menu" id="reportMenu">
+                <button class="report-menu-item pdf" onclick="exportToPDF()">
+                    <i class="bi bi-file-pdf"></i> PDF Document
+                </button>
+                <button class="report-menu-item excel" onclick="exportToExcel()">
+                    <i class="bi bi-file-excel"></i> Excel (XLSX)
+                </button>
+                <button class="report-menu-item csv" onclick="exportToCSV()">
+                    <i class="bi bi-file-spreadsheet"></i> CSV File
+                </button>
+                <button class="report-menu-item word" onclick="exportToWord()">
+                    <i class="bi bi-file-word"></i> Word Document
+                </button>
+                <button class="report-menu-item print" onclick="printReport()">
+                    <i class="bi bi-printer"></i> Print Report
+                </button>
+                <button class="report-menu-item copy" onclick="copyToClipboard()">
+                    <i class="bi bi-clipboard"></i> Copy to Clipboard
+                </button>
+            </div>
         </div>
         <a href="addInternship" class="btn-add">
-          <i class="bi bi-plus-lg"></i> Add New Internship
+            <i class="bi bi-plus-lg"></i> Add New Internship
         </a>
-      </div>
+    </div>
+</div>
 
       <!-- Table Card -->
       <div class="table-card">
@@ -1132,12 +1259,17 @@
                       </c:choose>
                     </td>
                     <td>
-                      <a href="viewInternship?internshipId=${internship.internshipId}" class="action-btn btn-view" title="View">
-                        <i class="bi bi-eye"></i>
-                      </a>
-                      <a href="editInternship?internshipId=${internship.internshipId}" class="action-btn btn-edit" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                      </a>
+                     <a href="viewInternship?internshipId=${internship.internshipId}" 
+   class="action-btn btn-view" 
+   title="View"
+   onclick="console.log('View clicked for ID: ${internship.internshipId}')">
+    <i class="bi bi-eye"></i>
+</a>
+<a href="Internshipedit?internshipId=${internship.internshipId}" 
+   class="action-btn btn-edit"
+   onclick="console.log('Edit clicked for ID: ${internship.internshipId}')">
+    <i class="bi bi-pencil"></i>
+</a>
                       <a href="deleteInternship?internshipId=${internship.internshipId}" class="action-btn btn-delete" title="Delete" onclick="return confirm('Are you sure you want to delete this internship?')">
                         <i class="bi bi-trash"></i>
                       </a>
@@ -1164,24 +1296,25 @@
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-  <script>
-    (function() {
-      "use strict";
+ <script>
+  (function() {
+    "use strict";
 
-      // Initialize AOS
-      AOS.init({
-        duration: 600,
-        once: true,
-        offset: 50,
-        easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
-      });
+    // Initialize AOS
+    AOS.init({
+      duration: 600,
+      once: true,
+      offset: 50,
+      easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
+    });
 
-      const layout = document.getElementById('dashboardLayout');
-      const sidebar = document.getElementById('mainSidebar');
-      const toggleBtn = document.getElementById('toggleCollapseBtn');
-      const fullscreenBtn = document.getElementById('fullscreenModeBtn');
-      const collapseText = document.getElementById('collapseText');
+    const layout = document.getElementById('dashboardLayout');
+    const sidebar = document.getElementById('mainSidebar');
+    const toggleBtn = document.getElementById('toggleCollapseBtn');
+    const fullscreenBtn = document.getElementById('fullscreenModeBtn');
+    const collapseText = document.getElementById('collapseText');
 
+    if (toggleBtn) {
       toggleBtn.addEventListener('click', function(e) {
         e.preventDefault();
         if (layout.classList.contains('fullscreen')) {
@@ -1190,7 +1323,9 @@
         sidebar.classList.toggle('collapsed');
         collapseText.innerText = sidebar.classList.contains('collapsed') ? 'Expand' : 'Collapse';
       });
+    }
 
+    if (fullscreenBtn) {
       fullscreenBtn.addEventListener('click', function(e) {
         e.preventDefault();
         layout.classList.toggle('fullscreen');
@@ -1202,31 +1337,353 @@
           fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
         }
       });
-
       fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
-      collapseText.innerText = 'Collapse';
+    }
+    
+    if (collapseText) collapseText.innerText = 'Collapse';
 
-      // Staggered animation for dropdowns
-      document.querySelectorAll('.dropdown').forEach((dropdown, index) => {
-        dropdown.style.animation = `dropdownAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s forwards`;
-      });
+    // Staggered animation for dropdowns
+    document.querySelectorAll('.dropdown').forEach((dropdown, index) => {
+      dropdown.style.animation = `dropdownAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s forwards`;
+    });
 
-      <c:if test="${not empty internshipList}">
-      $(document).ready(function() {
-        $('#internshipTable').DataTable({
-          pageLength: 10,
-          lengthMenu: [[5, 10, 25, 50], [5, 10, 25, 50]],
-          language: {
-            search: "Search internships:",
-            searchPlaceholder: "Type to filter..."
-          },
-          columnDefs: [
-            { orderable: false, targets: 5 } // Disable sorting on actions column
-          ]
-        });
+    // Initialize DataTables
+    <c:if test="${not empty internshipList}">
+    $(document).ready(function() {
+      $('#internshipTable').DataTable({
+        pageLength: 10,
+        lengthMenu: [[5, 10, 25, 50], [5, 10, 25, 50]],
+        language: {
+          search: "Search internships:",
+          searchPlaceholder: "Type to filter..."
+        },
+        columnDefs: [
+          { orderable: false, targets: 5 }
+        ]
       });
-      </c:if>
-    })();
-  </script>
+    });
+    </c:if>
+
+    // Report Dropdown Toggle
+    const reportDropdown = document.getElementById('reportDropdown');
+    const reportBtn = document.getElementById('reportBtn');
+
+    if (reportBtn) {
+      reportBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        reportDropdown.classList.toggle('active');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (reportDropdown && !reportDropdown.contains(e.target)) {
+          reportDropdown.classList.remove('active');
+        }
+      });
+    }
+
+  })();
+
+  // ====================================================
+  // REPORT EXPORT FUNCTIONS (GLOBAL SCOPE)
+  // ====================================================
+
+  // Get table data - works with DataTables
+  function getTableData() {
+    var data = [];
+    
+    // Get DataTables instance if exists
+    var table = $('#internshipTable').DataTable();
+    var rows;
+    
+    try {
+      // Try to get data from DataTables
+      rows = table.rows({ search: 'applied' }).data();
+      if (rows && rows.length > 0) {
+        // Add headers
+        data.push(['Sr. No.', 'Title', 'Employer', 'Type', 'Status']);
+        
+        // Add data rows
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i];
+          data.push([
+            (i + 1).toString(),
+            row.title || row[1],
+            row.employer ? row.employer.companyName : row[2],
+            row.internshipType || row[3],
+            row.status || row[4]
+          ]);
+        }
+        return data;
+      }
+    } catch(e) {
+      // Fallback to DOM parsing
+      console.log('Using DOM fallback for export');
+    }
+    
+    // Fallback: Read from DOM
+    var visibleRows = document.querySelectorAll('#internshipTable tbody tr');
+    
+    if (visibleRows.length === 0 || (visibleRows.length === 1 && visibleRows[0].querySelector('.empty-state'))) {
+      return [];
+    }
+    
+    // Add headers
+    data.push(['Sr. No.', 'Title', 'Employer', 'Type', 'Status']);
+    
+    // Add data rows (skip action column)
+    for (var i = 0; i < visibleRows.length; i++) {
+      var row = visibleRows[i];
+      if (row.querySelector('.empty-state')) continue;
+      
+      var rowData = [];
+      var cells = row.querySelectorAll('td');
+      for (var j = 0; j < cells.length - 1; j++) {
+        rowData.push(cells[j].innerText.trim());
+      }
+      if (rowData.length > 0) data.push(rowData);
+    }
+    
+    return data;
+  }
+
+  // Export to PDF
+  function exportToPDF() {
+    var checkData = getTableData();
+    if (checkData.length <= 1) {
+      alert('No data available to export!');
+      return;
+    }
+    
+    var printWindow = window.open('', '_blank');
+    var date = new Date().toLocaleString();
+    
+    var htmlContent = '<!DOCTYPE html><html><head><title>Internships Report</title><style>' +
+      'body { font-family: "Segoe UI", Arial, sans-serif; margin: 40px; padding: 20px; }' +
+      '.header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #4B8BBE; padding-bottom: 20px; }' +
+      '.header h1 { color: #2C3E50; margin: 0; }' +
+      '.header p { color: #666; margin: 5px 0; }' +
+      'table { width: 100%; border-collapse: collapse; margin-top: 20px; }' +
+      'th { background-color: #4B8BBE; color: white; padding: 12px; text-align: left; }' +
+      'td { padding: 10px; border-bottom: 1px solid #ddd; }' +
+      '.footer { margin-top: 30px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #ddd; padding-top: 20px; }' +
+      '.badge-open { background: #d4edda; color: #155724; display: inline-block; padding: 4px 8px; border-radius: 4px; }' +
+      '.badge-upcoming { background: #fff3cd; color: #856404; display: inline-block; padding: 4px 8px; border-radius: 4px; }' +
+      '.badge-closed { background: #f8d7da; color: #721c24; display: inline-block; padding: 4px 8px; border-radius: 4px; }' +
+      '</style></head><body>' +
+      '<div class="header"><h1>SmartIntern - Internships Report</h1>' +
+      '<p>Generated on: ' + date + '</p>' +
+      '<p>Total Internships: ' + (checkData.length - 1) + '</p></div>' +
+      '<table><thead><tr><th>Sr. No.</th><th>Title</th><th>Employer</th><th>Type</th><th>Status</th></tr></thead><tbody>';
+    
+    for (var i = 1; i < checkData.length; i++) {
+      var row = checkData[i];
+      var statusText = row[4];
+      var badgeClass = '';
+      if (statusText === 'OPEN') badgeClass = 'badge-open';
+      else if (statusText === 'UPCOMING') badgeClass = 'badge-upcoming';
+      else badgeClass = 'badge-closed';
+      
+      htmlContent += '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td><td>' + row[2] + '</td><td>' + row[3] + '</td><td><span class="' + badgeClass + '">' + row[4] + '</span></td>' + '</tr>';
+    }
+    
+    htmlContent += '</tbody></table>' +
+      '<div class="footer"><p>System-generated report from SmartIntern Platform</p><p>&copy; 2026 SmartIntern</p></div>' +
+      '<script>window.onload = function() { window.print(); }<\/script>' +
+      '</body></html>';
+    
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  }
+
+  // Export to Excel
+  function exportToExcel() {
+    var data = getTableData();
+    if (data.length <= 1) {
+      alert('No data available to export!');
+      return;
+    }
+    
+    var excelHtml = '<html><head><meta charset="UTF-8"><title>Internships Report</title></head><body><table border="1">';
+    for (var i = 0; i < data.length; i++) {
+      excelHtml += '<tr>';
+      for (var j = 0; j < data[i].length; j++) {
+        var tag = (i === 0) ? 'th' : 'td';
+        excelHtml += '<' + tag + '>' + data[i][j] + '</' + tag + '>';
+      }
+      excelHtml += '</tr>';
+    }
+    excelHtml += '</table></body></html>';
+    
+    var blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel' });
+    var link = document.createElement('a');
+    var url = URL.createObjectURL(blob);
+    var date = new Date();
+    var filename = 'Internships_Report_' + date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + '.xls';
+    
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // Export to CSV
+  function exportToCSV() {
+    var data = getTableData();
+    if (data.length <= 1) {
+      alert('No data available to export!');
+      return;
+    }
+    
+    var csvContent = data[0].join(",") + "\n";
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      var processedRow = [];
+      for (var j = 0; j < row.length; j++) {
+        var cell = row[j];
+        if (cell.includes(",") || cell.includes('"') || cell.includes("\n")) {
+          cell = cell.replace(/"/g, '""');
+          cell = '"' + cell + '"';
+        }
+        processedRow.push(cell);
+      }
+      csvContent += processedRow.join(",") + "\n";
+    }
+    
+    var blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    var url = URL.createObjectURL(blob);
+    var date = new Date();
+    var filename = 'Internships_Report_' + date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + '.csv';
+    
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // Export to Word
+  function exportToWord() {
+    var data = getTableData();
+    if (data.length <= 1) {
+      alert('No data available to export!');
+      return;
+    }
+    
+    var date = new Date();
+    var formattedDate = date.toLocaleString();
+    
+    var wordHtml = '<html><head><meta charset="UTF-8"><title>Internships Report</title>' +
+      '<style>body { font-family: "Calibri", Arial, sans-serif; margin: 40px; }' +
+      'h1 { color: #2C3E50; text-align: center; }' +
+      '.info { text-align: center; margin-bottom: 30px; color: #666; }' +
+      'table { width: 100%; border-collapse: collapse; }' +
+      'th { background-color: #4B8BBE; color: white; padding: 10px; border: 1px solid #ddd; }' +
+      'td { padding: 8px; border: 1px solid #ddd; }</style>' +
+      '</head><body>' +
+      '<h1>SmartIntern - Internships Report</h1>' +
+      '<div class="info"><p>Generated on: ' + formattedDate + '</p><p>Total Internships: ' + (data.length - 1) + '</p></div>' +
+      '<table><thead><tr>';
+    
+    for (var i = 0; i < data[0].length; i++) {
+      wordHtml += '<th>' + data[0][i] + '</th>';
+    }
+    wordHtml += '</tr></thead><tbody>';
+    
+    for (var i = 1; i < data.length; i++) {
+      wordHtml += '<tr>';
+      for (var j = 0; j < data[i].length; j++) {
+        wordHtml += '<td>' + data[i][j] + '</td>';
+      }
+      wordHtml += '</tr>';
+    }
+    
+    wordHtml += '</tbody></table></body></html>';
+    
+    var blob = new Blob([wordHtml], { type: 'application/msword' });
+    var link = document.createElement('a');
+    var url = URL.createObjectURL(blob);
+    var filename = 'Internships_Report_' + date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() + '.doc';
+    
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // Print Report
+  function printReport() {
+    var data = getTableData();
+    if (data.length <= 1) {
+      alert('No data available to print!');
+      return;
+    }
+    
+    var printWindow = window.open('', '_blank');
+    var date = new Date().toLocaleString();
+    
+    var printHtml = '<!DOCTYPE html><html><head><title>Print Internships Report</title>' +
+      '<style>@media print { body { margin: 0; padding: 20px; } .no-print { display: none; } }' +
+      'body { font-family: Arial, sans-serif; padding: 20px; }' +
+      'h1 { color: #2C3E50; text-align: center; }' +
+      '.info { text-align: center; margin-bottom: 20px; }' +
+      'table { width: 100%; border-collapse: collapse; }' +
+      'th { background-color: #4B8BBE; color: white; padding: 10px; border: 1px solid #ddd; }' +
+      'td { padding: 8px; border: 1px solid #ddd; }' +
+      '.print-btn { display: block; margin: 20px auto; padding: 10px 20px; background: #4B8BBE; color: white; border: none; border-radius: 5px; cursor: pointer; }</style>' +
+      '</head><body>' +
+      '<button class="print-btn no-print" onclick="window.print()">Print Report</button>' +
+      '<h1>SmartIntern - Internships Report</h1>' +
+      '<div class="info"><p>Generated on: ' + date + '</p><p>Total Internships: ' + (data.length - 1) + '</p></div>' +
+      '<td><thead><tr><th>Sr. No.</th><th>Title</th><th>Employer</th><th>Type</th><th>Status</th></tr></thead><tbody>';
+    
+    for (var i = 1; i < data.length; i++) {
+      printHtml += '<tr>';
+      for (var j = 0; j < data[i].length; j++) {
+        printHtml += '<td>' + data[i][j] + '</tr>';
+      }
+      printHtml += '</tr>';
+    }
+    
+    printHtml += '</tbody></tr></body></html>';
+    
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
+  }
+
+  // Copy to Clipboard
+  function copyToClipboard() {
+    var data = getTableData();
+    if (data.length <= 1) {
+      alert('No data available to copy!');
+      return;
+    }
+    
+    var clipboardText = "";
+    for (var i = 0; i < data.length; i++) {
+      clipboardText += data[i].join("\t") + "\n";
+    }
+    
+    navigator.clipboard.writeText(clipboardText).then(function() {
+      var reportBtn = document.getElementById('reportBtn');
+      var originalHTML = reportBtn.innerHTML;
+      reportBtn.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+      setTimeout(function() {
+        reportBtn.innerHTML = originalHTML;
+        var reportDropdown = document.getElementById('reportDropdown');
+        if (reportDropdown) reportDropdown.classList.remove('active');
+      }, 2000);
+    }).catch(function() {
+      alert('Failed to copy data to clipboard');
+    });
+  }
+</script>
 </body>
 </html>

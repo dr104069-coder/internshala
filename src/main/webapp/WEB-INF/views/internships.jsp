@@ -197,7 +197,7 @@ body {
     font-weight: 500;
 }
 
-/* Navigation Links - Only 3 Links: Dashboard, My Internships, Applications */
+/* Navigation Links */
 .header-nav {
     display: flex;
     align-items: center;
@@ -242,7 +242,7 @@ body {
     margin-left: 0.3rem;
 }
 
-/* Profile Dropdown Menu - Improved Click Area */
+/* Profile Dropdown */
 .profile-dropdown {
     position: relative;
     display: flex;
@@ -305,7 +305,6 @@ body {
     transform: rotate(180deg);
 }
 
-/* Dropdown Menu - Improved Spacing and Click Area */
 .dropdown-menu-custom {
     position: absolute;
     top: calc(100% + 10px);
@@ -727,22 +726,25 @@ body {
     right: 1rem;
     padding: 0.3rem 1rem;
     border-radius: 50px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     z-index: 2;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .status-OPEN {
-    background: #d1fae5;
-    color: var(--success);
-    border: 1px solid #86efac;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.status-LIVE {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    color: white;
 }
 
 .status-UPCOMING {
-    background: #fff7ed;
-    color: var(--warning);
-    border: 1px solid #fed7aa;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
 }
 
 .internship-company-logo {
@@ -852,6 +854,51 @@ body {
     color: var(--cerulean);
     background: rgba(36, 123, 160, 0.1);
     transform: translateY(-2px);
+}
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--tropical-teal);
+    background: white;
+    color: var(--cerulean);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: var(--cerulean);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--cerulean), var(--tropical-teal));
+    color: white;
+    border-color: transparent;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-weight: 600;
+    color: var(--cerulean);
+    padding: 0 1rem;
 }
 
 .no-results {
@@ -1026,12 +1073,16 @@ body {
         justify-content: center;
         flex-wrap: wrap;
     }
+    
+    .pagination-container {
+        flex-wrap: wrap;
+    }
 }
 </style>
 </head>
 <body>
 
-<!-- Modern Header - Only 3 Links: Dashboard, My Internships, Applications -->
+<!-- Modern Header -->
 <header class="modern-header">
     <div class="header-container">
         <div class="logo-area">
@@ -1042,7 +1093,7 @@ body {
             </div>
             <div class="logo-text">
                 <h1>SmartIntern</h1>
-                <p>AI-Powered Internship Platform</p>
+                <p>Internship Platform</p>
             </div>
         </div>
         
@@ -1054,11 +1105,14 @@ body {
             <a href="myinternships" class="nav-link-header">
                 <i class="fas fa-briefcase"></i>
                 <span>My Internships</span>
-                <span class="nav-badge-header">${activeInternshipsCount}</span>
             </a>
             <a href="/myApplications" class="nav-link-header">
                 <i class="fas fa-file-alt"></i>
                 <span>Applications</span>
+            </a>
+            <a href="internships" class="nav-link-header">
+                <i class="fas fa-search"></i>
+                <span>Internships</span>
             </a>
         </div>
         
@@ -1093,7 +1147,7 @@ body {
                     <a href="settings" class="dropdown-item-custom">
                         <i class="fas fa-cog"></i> Settings
                     </a>
-                    <a href="certificates" class="dropdown-item-custom">
+                    <a href="/myCertificates" class="dropdown-item-custom">
                         <i class="fas fa-certificate"></i> My Certificates
                     </a>
                     <div class="dropdown-divider"></div>
@@ -1114,7 +1168,7 @@ body {
         <div class="welcome-content">
             <div class="welcome-text">
                 <h2>Explore Active Internships</h2>
-                <p>Discover open and upcoming opportunities that match your skills</p>
+                <p>Discover open and live opportunities that match your skills</p>
             </div>
             <div class="welcome-stats">
                 <div class="welcome-stat">
@@ -1146,9 +1200,9 @@ body {
                 <span class="filter-label"><i class="fas fa-tag"></i> Type:</span>
                 <select id="typeFilter" class="filter-select">
                     <option value="all">All Types</option>
-                    <option value="REMOTE">Remote</option>
-                    <option value="ONSITE">Onsite</option>
-                    <option value="HYBRID">Hybrid</option>
+                    <option value="Remote">Remote</option>
+                    <option value="Onsite">Onsite</option>
+                    <option value="Hybrid">Hybrid</option>
                 </select>
             </div>
             
@@ -1169,7 +1223,7 @@ body {
     
     <!-- Results Count -->
     <div class="results-count" data-aos="fade-right" data-aos-duration="600" data-aos-delay="200">
-        <span id="visibleCount">${fn:length(activeInternships)}</span> active internships found
+        Showing <span id="visibleCount">0</span> of <span id="totalCount">${fn:length(activeInternships)}</span> active internships
     </div>
     
     <!-- Internships Grid -->
@@ -1189,6 +1243,8 @@ body {
                          data-type="${internship.internshipType}"
                          data-stipend="${internship.stipend}"
                          data-status="${internship.status}"
+                         data-title="${fn:toLowerCase(internship.title)}"
+                         data-company="${fn:toLowerCase(internship.employer.companyName)}"
                          data-aos="flip-up"
                          data-aos-duration="600"
                          data-aos-delay="${status.index * 50}"
@@ -1197,7 +1253,10 @@ body {
                         <span class="internship-status status-${internship.status}">
                             <c:choose>
                                 <c:when test="${internship.status eq 'OPEN'}">
-                                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i> OPEN FOR APPLICATIONS
+                                    <i class="fas fa-door-open"></i> OPEN FOR APPLICATIONS
+                                </c:when>
+                                <c:when test="${internship.status eq 'LIVE'}">
+                                    <i class="fas fa-bolt"></i> LIVE
                                 </c:when>
                                 <c:when test="${internship.status eq 'UPCOMING'}">
                                     <i class="far fa-clock"></i> UPCOMING
@@ -1238,16 +1297,55 @@ body {
                                     </c:otherwise>
                                 </c:choose>
                             </div>
+                            
                             <div onclick="event.stopPropagation();">
-                                <a href="viewInternshipDetails?internshipId=${internship.internshipId}" class="btn-outline" onclick="event.stopPropagation();">
-                                    <i class="fas fa-eye"></i> View Details
-                                </a>
+                                <c:set var="isApplied" value="false" />
+                                <c:forEach var="appliedId" items="${appliedInternshipIds}">
+                                    <c:if test="${appliedId == internship.internshipId}">
+                                        <c:set var="isApplied" value="true" />
+                                    </c:if>
+                                </c:forEach>
+                                
+                                <c:choose>
+                                    <c:when test="${isApplied}">
+                                        <c:set var="appStatus" value="${applicationStatusMap[internship.internshipId]}" />
+                                        <c:choose>
+                                            <c:when test="${appStatus == 'ACCEPTED'}">
+                                                <span class="btn-outline" style="background: #10b981; color: white; border-color: #10b981; cursor: default;">
+                                                    <i class="fas fa-check-circle"></i> Accepted
+                                                </span>
+                                            </c:when>
+                                            <c:when test="${appStatus == 'REJECTED'}">
+                                                <span class="btn-outline" style="background: #ef4444; color: white; border-color: #ef4444; cursor: default;">
+                                                    <i class="fas fa-times-circle"></i> Rejected
+                                                </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="btn-outline" style="background: #f59e0b; color: white; border-color: #f59e0b; cursor: default;">
+                                                    <i class="fas fa-hourglass-half"></i> Applied
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="viewInternshipDetails?internshipId=${internship.internshipId}" class="btn-outline" onclick="event.stopPropagation();">
+                                            <i class="fas fa-eye"></i> View Details
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
             </c:otherwise>
         </c:choose>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination-container" id="paginationContainer" style="display: none;">
+        <button class="page-btn" id="prevBtn" onclick="prevPage()">← Prev</button>
+        <div id="paginationNumbers" style="display: flex; gap: 0.5rem;"></div>
+        <button class="page-btn" id="nextBtn" onclick="nextPage()">Next →</button>
     </div>
 </main>
 
@@ -1280,16 +1378,196 @@ AOS.init({
     offset: 50
 });
 
+// Pagination variables
+let currentPage = 1;
+let rowsPerPage = 6;
+let currentFilteredCards = [];
+let allCards = [];
+
+// Filter variables
 let currentLocationFilter = 'all';
 let currentTypeFilter = 'all';
 let currentStipendFilter = 'all';
+let currentSearchTerm = '';
 
-const cards = document.querySelectorAll('.internship-card');
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    allCards = Array.from(document.querySelectorAll('.internship-card'));
+    updateFiltersAndPagination();
+    
+    // Add click handler for stat cards if needed
+    document.querySelectorAll('.welcome-stat').forEach(stat => {
+        stat.addEventListener('click', function() {
+            // Optional: filter by status
+        });
+    });
+});
 
+// Pagination functions
+function updateFiltersAndPagination() {
+    // Apply all filters
+    currentFilteredCards = allCards.filter(card => {
+        const location = card.getAttribute('data-location') || '';
+        const type = card.getAttribute('data-type') || '';
+        const stipend = parseInt(card.getAttribute('data-stipend')) || 0;
+        const title = card.getAttribute('data-title') || '';
+        const company = card.getAttribute('data-company') || '';
+        
+        let locationMatch = currentLocationFilter === 'all' || location === currentLocationFilter;
+        let typeMatch = currentTypeFilter === 'all' || type === currentTypeFilter;
+        
+        let stipendMatch = true;
+        if (currentStipendFilter === 'paid') {
+            stipendMatch = stipend > 0;
+        } else if (currentStipendFilter === 'free') {
+            stipendMatch = stipend === 0;
+        }
+        
+        let searchMatch = true;
+        if (currentSearchTerm) {
+            searchMatch = title.includes(currentSearchTerm) || company.includes(currentSearchTerm) || location.toLowerCase().includes(currentSearchTerm);
+        }
+        
+        return locationMatch && typeMatch && stipendMatch && searchMatch;
+    });
+    
+    // Update results count
+    const visibleCount = currentFilteredCards.length;
+    const totalCount = allCards.length;
+    document.getElementById('visibleCount').textContent = visibleCount;
+    document.getElementById('totalCount').textContent = totalCount;
+    
+    // Setup pagination
+    setupPagination();
+}
+
+function setupPagination() {
+    const totalPages = Math.ceil(currentFilteredCards.length / rowsPerPage);
+    const paginationNumbers = document.getElementById('paginationNumbers');
+    
+    if (totalPages <= 1) {
+        document.getElementById('paginationContainer').style.display = 'none';
+        showPage(1);
+        return;
+    }
+    
+    document.getElementById('paginationContainer').style.display = 'flex';
+    paginationNumbers.innerHTML = '';
+    
+    // Calculate visible page range
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + 4);
+    
+    if (endPage - startPage < 4) {
+        startPage = Math.max(1, endPage - 4);
+    }
+    
+    // First page button
+    if (startPage > 1) {
+        const firstBtn = document.createElement('button');
+        firstBtn.className = 'page-btn';
+        firstBtn.textContent = '1';
+        firstBtn.onclick = () => goToPage(1);
+        paginationNumbers.appendChild(firstBtn);
+        
+        if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0 0.5rem';
+            paginationNumbers.appendChild(dots);
+        }
+    }
+    
+    // Page number buttons
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        pageBtn.textContent = i;
+        pageBtn.onclick = () => goToPage(i);
+        paginationNumbers.appendChild(pageBtn);
+    }
+    
+    // Last page button
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0 0.5rem';
+            paginationNumbers.appendChild(dots);
+        }
+        
+        const lastBtn = document.createElement('button');
+        lastBtn.className = 'page-btn';
+        lastBtn.textContent = totalPages;
+        lastBtn.onclick = () => goToPage(totalPages);
+        paginationNumbers.appendChild(lastBtn);
+    }
+    
+    // Update prev/next buttons
+    document.getElementById('prevBtn').disabled = currentPage === 1;
+    document.getElementById('nextBtn').disabled = currentPage === totalPages;
+    
+    // Show current page
+    showPage(currentPage);
+}
+
+function goToPage(page) {
+    currentPage = page;
+    setupPagination();
+}
+
+function showPage(page) {
+    // Hide all cards first
+    allCards.forEach(card => card.style.display = 'none');
+    
+    // Calculate visible cards for current page
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const visibleCards = currentFilteredCards.slice(start, end);
+    
+    // Show only cards for current page
+    visibleCards.forEach(card => card.style.display = 'flex');
+    
+    // Hide no results message if needed
+    const noResultsDiv = document.querySelector('.no-results-message');
+    if (visibleCards.length === 0 && currentFilteredCards.length === 0) {
+        if (!noResultsDiv && document.querySelector('.no-results') === null) {
+            const grid = document.getElementById('internshipsGrid');
+            const newNoResults = document.createElement('div');
+            newNoResults.className = 'no-results no-results-message';
+            newNoResults.innerHTML = `
+                <i class="fas fa-search"></i>
+                <h3>No Active Internships Found</h3>
+                <p>Try adjusting your filters to see more opportunities.</p>
+            `;
+            grid.appendChild(newNoResults);
+        }
+    } else if (noResultsDiv) {
+        noResultsDiv.remove();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        setupPagination();
+    }
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(currentFilteredCards.length / rowsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        setupPagination();
+    }
+}
+
+// Filter functions
 function setStipendFilter(filter) {
     currentStipendFilter = filter;
     updateStipendBadgeUI();
-    applyFilters();
+    currentPage = 1;
+    updateFiltersAndPagination();
 }
 
 function updateStipendBadgeUI() {
@@ -1302,6 +1580,7 @@ function updateStipendBadgeUI() {
     });
 }
 
+// Event listeners for filters
 document.querySelectorAll('.filter-badge .badge').forEach(badge => {
     badge.addEventListener('click', function() {
         const stipendValue = this.getAttribute('data-stipend');
@@ -1313,7 +1592,8 @@ const locationFilter = document.getElementById('locationFilter');
 if (locationFilter) {
     locationFilter.addEventListener('change', function() {
         currentLocationFilter = this.value;
-        applyFilters();
+        currentPage = 1;
+        updateFiltersAndPagination();
     });
 }
 
@@ -1321,7 +1601,8 @@ const typeFilter = document.getElementById('typeFilter');
 if (typeFilter) {
     typeFilter.addEventListener('change', function() {
         currentTypeFilter = this.value;
-        applyFilters();
+        currentPage = 1;
+        updateFiltersAndPagination();
     });
 }
 
@@ -1332,8 +1613,9 @@ if (searchInput) {
     searchInput.addEventListener('keyup', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            const searchTerm = this.value.toLowerCase().trim();
-            applyFilters(searchTerm);
+            currentSearchTerm = this.value.toLowerCase().trim();
+            currentPage = 1;
+            updateFiltersAndPagination();
         }, 300);
     });
 }
@@ -1348,78 +1630,22 @@ if (resetBtn) {
         currentLocationFilter = 'all';
         currentTypeFilter = 'all';
         currentStipendFilter = 'all';
+        currentSearchTerm = '';
+        currentPage = 1;
         
         updateStipendBadgeUI();
-        applyFilters();
+        updateFiltersAndPagination();
     });
 }
 
-function applyFilters(searchTerm = '') {
-    let visibleCount = 0;
-    
-    cards.forEach(card => {
-        const location = card.getAttribute('data-location') || '';
-        const type = card.getAttribute('data-type') || '';
-        const stipend = parseInt(card.getAttribute('data-stipend')) || 0;
-        const title = card.querySelector('h4').textContent.toLowerCase();
-        const company = card.querySelector('.internship-company').textContent.toLowerCase();
-        
-        let locationMatch = currentLocationFilter === 'all' || location === currentLocationFilter;
-        let typeMatch = currentTypeFilter === 'all' || type === currentTypeFilter;
-        
-        let stipendMatch = true;
-        if (currentStipendFilter === 'paid') {
-            stipendMatch = stipend > 0;
-        } else if (currentStipendFilter === 'free') {
-            stipendMatch = stipend === 0;
-        }
-        
-        let searchMatch = true;
-        if (searchTerm) {
-            searchMatch = title.includes(searchTerm) || company.includes(searchTerm) || location.toLowerCase().includes(searchTerm);
-        }
-        
-        if (locationMatch && typeMatch && stipendMatch && searchMatch) {
-            card.style.display = 'flex';
-            visibleCount++;
-        } else {
-            card.style.display = 'none';
-        }
-    });
-    
-    const visibleCountSpan = document.getElementById('visibleCount');
-    if (visibleCountSpan) {
-        visibleCountSpan.textContent = visibleCount;
-    }
-    
-    const grid = document.getElementById('internshipsGrid');
-    let noResultsDiv = document.querySelector('.no-results-message');
-    
-    if (visibleCount === 0) {
-        if (!noResultsDiv) {
-            noResultsDiv = document.createElement('div');
-            noResultsDiv.className = 'no-results no-results-message';
-            noResultsDiv.innerHTML = `
-                <i class="fas fa-search"></i>
-                <h3>No Active Internships Found</h3>
-                <p>Try adjusting your filters to see more opportunities.</p>
-            `;
-            grid.appendChild(noResultsDiv);
-        }
-    } else if (noResultsDiv) {
-        noResultsDiv.remove();
-    }
-}
-
-document.querySelector('.notification-badge').addEventListener('click', function() {
+// Notification bell click
+document.querySelector('.notification-badge')?.addEventListener('click', function() {
     alert('You have 3 new notifications');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    cards.forEach((card, index) => {
-        card.style.animationDelay = (index * 0.05) + 's';
-    });
-    applyFilters();
+// Add animation delays
+document.querySelectorAll('.internship-card').forEach((card, index) => {
+    card.style.animationDelay = (index * 0.05) + 's';
 });
 </script>
 </body>

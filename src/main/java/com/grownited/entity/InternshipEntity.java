@@ -35,6 +35,7 @@ public class InternshipEntity {
 	    private LocalDate startDate;
 	    private LocalDate endDate;
 	    private LocalDate lastApplyDate;
+	    private LocalDate startApplyDate;
 	    private Boolean isPaid;
 	    private String status;
 	    private String posterUrl;
@@ -110,6 +111,15 @@ public class InternshipEntity {
 		}
 		public void setLastApplyDate(LocalDate lastApplyDate) {
 			this.lastApplyDate = lastApplyDate;
+		}
+		
+		
+		
+		public LocalDate getStartApplyDate() {
+			return startApplyDate;
+		}
+		public void setStartApplyDate(LocalDate startApplyDate) {
+			this.startApplyDate = startApplyDate;
 		}
 		public Boolean getIsPaid() {
 			return isPaid;

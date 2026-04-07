@@ -12,7 +12,7 @@ import com.grownited.entity.UserEntity;
 public interface EmployerRepository extends JpaRepository<EmployerEntity, Integer> {
 	
 	 
-	// EmployerEntity findByUser(UserEntity user);
+	 EmployerEntity findByUser(UserEntity user);
 	
 	  List<EmployerEntity> findAllByUser(UserEntity user);
 

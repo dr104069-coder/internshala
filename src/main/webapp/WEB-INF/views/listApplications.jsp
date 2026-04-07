@@ -794,6 +794,73 @@
                 font-size: 0.75rem;
             }
         }
+        
+        /* Report Dropdown Styles */
+.report-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.report-btn {
+    background: rgba(75, 139, 190, 0.1);
+    border: 1px solid var(--border-blue);
+    color: var(--soft-blue);
+    border-radius: 40px;
+    padding: 0.7rem 1.8rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+}
+
+.report-btn:hover {
+    background: var(--bright-blue);
+    color: var(--pure-white);
+}
+
+.report-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--glass-deep-darker);
+    border: 1px solid var(--border-blue);
+    border-radius: 16px;
+    padding: 0.5rem;
+    min-width: 220px;
+    z-index: 1000;
+    display: none;
+}
+
+.report-dropdown.active .report-menu {
+    display: block;
+}
+
+.report-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    color: var(--soft-blue);
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+}
+
+.report-menu-item:hover {
+    background: rgba(75, 139, 190, 0.1);
+    color: var(--pure-white);
+}
+
+.report-menu-item i {
+    font-size: 1.2rem;
+    width: 1.5rem;
+}
     </style>
 </head>
 <body>
@@ -936,20 +1003,36 @@
         <main class="main-panel" id="mainPanel">
 
             <!-- Page Header -->
-            <div class="page-header">
-                <div class="page-title">
-                    <i class="bi bi-send-fill"></i>
-                    Applications List
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <a href="applyInternship" class="btn-add">
-                        <i class="bi bi-plus-lg"></i> New Application
-                    </a>
-                    <a href="dashboard" class="btn-back">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </a>
-                </div>
+          <!-- Page Header -->
+<div class="page-header">
+    <div class="page-title">
+        <i class="bi bi-send-fill"></i>
+        Applications List
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <!-- Report Dropdown -->
+        <div class="report-dropdown" id="reportDropdown">
+            <button class="report-btn" id="reportBtn" type="button">
+                <i class="bi bi-download"></i> Download Report
+                <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="report-menu">
+                <button class="report-menu-item" onclick="exportToPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
+                <button class="report-menu-item" onclick="exportToExcel()"><i class="bi bi-file-excel"></i> Excel</button>
+                <button class="report-menu-item" onclick="exportToCSV()"><i class="bi bi-file-spreadsheet"></i> CSV</button>
+                <button class="report-menu-item" onclick="exportToWord()"><i class="bi bi-file-word"></i> Word</button>
+                <button class="report-menu-item" onclick="printReport()"><i class="bi bi-printer"></i> Print</button>
+                <button class="report-menu-item" onclick="copyToClipboard()"><i class="bi bi-clipboard"></i> Copy</button>
             </div>
+        </div>
+   <%--     <a href="applyInternship" class="btn-add">
+            <i class="bi bi-plus-lg"></i> New Application
+        </a>  --%>
+        <a href="dashboard" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
 
             <!-- Applications Table -->
             <div class="table-container">
@@ -1016,11 +1099,11 @@
                                                        title="View Details">
                                                        <i class="bi bi-eye-fill"></i> View
                                                     </a>
-                                                    <a href="/editApplication?applicationId=${app.applicationId}" 
+                                             <%--       <a href="/editApplication?applicationId=${app.applicationId}" 
                                                        class="btn-sm btn-edit"
                                                        title="Edit Application">
                                                        <i class="bi bi-pencil-square"></i> Edit
-                                                    </a>
+                                                    </a>                                                             --%>
                                                     <a href="/deleteApplication?applicationId=${app.applicationId}" 
                                                        class="btn-sm btn-delete"
                                                        title="Delete"
@@ -1147,6 +1230,230 @@
             fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
             collapseText.innerText = 'Collapse';
         })();
+        
+     // ========== REPORT FUNCTIONS FOR APPLICATIONS ==========
+        const reportDropdown = document.getElementById('reportDropdown');
+        const reportBtn = document.getElementById('reportBtn');
+
+        if (reportBtn) {
+            reportBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                reportDropdown.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (reportDropdown && !reportDropdown.contains(e.target)) {
+                    reportDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        function getApplicationData() {
+            var data = [['SR. NO.', 'INTERNSHIP', 'STUDENT NAME', 'STATUS']];
+            var rows = document.querySelectorAll('#applicationsTable tbody tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].querySelectorAll('td');
+                if (cells.length >= 4) {
+                    // Get status and clean it (remove HTML tags and extra spaces)
+                    var statusCell = cells[3];
+                    var statusText = '';
+                    if (statusCell) {
+                        // Get the text from the badge span
+                        var badgeSpan = statusCell.querySelector('.badge-custom');
+                        if (badgeSpan) {
+                            statusText = badgeSpan.innerText.trim();
+                        } else {
+                            statusText = statusCell.innerText.trim();
+                        }
+                        // Clean up status text
+                        statusText = statusText.replace(/Applied/i, 'Applied');
+                        statusText = statusText.replace(/Shortlisted/i, 'Shortlisted');
+                        statusText = statusText.replace(/Selected/i, 'Selected');
+                        statusText = statusText.replace(/Rejected/i, 'Rejected');
+                    }
+                    
+                    data.push([
+                        cells[0] ? cells[0].innerText.trim() : '',
+                        cells[1] ? cells[1].innerText.trim() : '',
+                        cells[2] ? cells[2].innerText.trim() : '',
+                        statusText
+                    ]);
+                }
+            }
+            return data;
+        }
+
+        function exportToPDF() {
+            var data = getApplicationData();
+            if (data.length <= 1) { alert('No data to export!'); return; }
+            
+            var win = window.open('', '_blank');
+            var html = '<!DOCTYPE html><html><head><title>Applications Report</title><style>';
+            html += 'body{font-family:"Segoe UI",Arial,sans-serif;margin:40px;padding:20px}';
+            html += 'h1{color:#2C3E50;text-align:center;margin-bottom:10px}';
+            html += '.header{text-align:center;margin-bottom:30px;border-bottom:2px solid #4B8BBE;padding-bottom:20px}';
+            html += '.header p{color:#666;margin:5px 0}';
+            html += 'table{width:100%;border-collapse:collapse;margin-top:20px}';
+            html += 'th{background-color:#4B8BBE;color:white;padding:12px;text-align:left;font-weight:bold}';
+            html += 'td{padding:10px;border-bottom:1px solid #ddd}';
+            html += 'tr:hover{background-color:#f5f5f5}';
+            html += '.footer{margin-top:30px;text-align:center;font-size:12px;color:#999;border-top:1px solid #ddd;padding-top:20px}';
+            html += '.status-applied{color:#4B8BBE;font-weight:bold}';
+            html += '.status-shortlisted{color:#06b6d4;font-weight:bold}';
+            html += '.status-selected{color:#10b981;font-weight:bold}';
+            html += '.status-rejected{color:#ef4444;font-weight:bold}';
+            html += '</style></head><body>';
+            html += '<div class="header">';
+            html += '<h1>SmartIntern - Internship Applications Report</h1>';
+            html += '<p>Generated on: ' + new Date().toLocaleString() + '</p>';
+            html += '<p>Total Applications: ' + (data.length - 1) + '</p>';
+            html += '</div>';
+            html += '<table><thead><tr>';
+            html += '<th>SR. NO.</th><th>INTERNSHIP</th><th>STUDENT NAME</th><th>STATUS</th>';
+            html += '</thead><tbody>';
+            
+            for (var i = 1; i < data.length; i++) {
+                var row = data[i];
+                var status = row[3] ? row[3].toString().trim() : '';
+                var statusClass = '';
+                
+                // Determine status class
+                if (status === 'Applied' || status.includes('APPLIED')) statusClass = 'status-applied';
+                else if (status === 'Shortlisted' || status.includes('SHORTLISTED')) statusClass = 'status-shortlisted';
+                else if (status === 'Selected' || status.includes('SELECTED')) statusClass = 'status-selected';
+                else if (status === 'Rejected' || status.includes('REJECTED')) statusClass = 'status-rejected';
+                
+                html += '<tr>';
+                html += '<td>' + (row[0] ? row[0] : '') + '</td>';
+                html += '<td>' + (row[1] ? row[1] : '') + '</td>';
+                html += '<td>' + (row[2] ? row[2] : '') + '</td>';
+                html += '<td class="' + statusClass + '">' + status + '</td>';
+                html += '</tr>';
+            }
+            
+            html += '</tbody></table>';
+            html += '<div class="footer">';
+            html += '<p>This is a system-generated report from SmartIntern Platform</p>';
+            html += '<p>&copy; 2026 SmartIntern - All Rights Reserved</p>';
+            html += '</div>';
+            html += '</body></html>';
+            
+            win.document.write(html);
+            win.document.close();
+            win.print();
+        }
+
+        function exportToExcel() {
+            var data = getApplicationData();
+            if (data.length <= 1) { alert('No data to export!'); return; }
+            
+            var html = '<table border="1">';
+            for (var i = 0; i < data.length; i++) {
+                html += '<tr>';
+                for (var j = 0; j < data[i].length; j++) {
+                    var tag = (i === 0) ? 'th' : 'td';
+                    html += '<' + tag + '>' + data[i][j] + '</' + tag + '>';
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            
+            var blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Applications_Report_' + new Date().toISOString().slice(0,10) + '.xls';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function exportToCSV() {
+            var data = getApplicationData();
+            if (data.length <= 1) { alert('No data to export!'); return; }
+            
+            var csv = '';
+            for (var i = 0; i < data.length; i++) {
+                csv += data[i].join(',') + '\n';
+            }
+            var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Applications_Report_' + new Date().toISOString().slice(0,10) + '.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function exportToWord() {
+            var data = getApplicationData();
+            if (data.length <= 1) { alert('No data to export!'); return; }
+            
+            var html = '<html><body>';
+            html += '<h1>Internship Applications Report</h1>';
+            html += '<p>Generated: ' + new Date().toLocaleString() + '</p>';
+            html += '<table border="1" cellpadding="5" cellspacing="0">';
+            for (var i = 0; i < data.length; i++) {
+                html += '<tr>';
+                for (var j = 0; j < data[i].length; j++) {
+                    var tag = (i === 0) ? 'th' : 'td';
+                    html += '<' + tag + '>' + data[i][j] + '</' + tag + '>';
+                }
+                html += '</tr>';
+            }
+            html += '</table></body></html>';
+            
+            var blob = new Blob([html], { type: 'application/msword' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Applications_Report_' + new Date().toISOString().slice(0,10) + '.doc';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function printReport() {
+            var data = getApplicationData();
+            if (data.length <= 1) { alert('No data to print!'); return; }
+            
+            var win = window.open('', '_blank');
+            var html = '<html><head><title>Print Applications Report</title>';
+            html += '<style>body{font-family:Arial;margin:20px}table{border-collapse:collapse;width:100%}';
+            html += 'th{background:#4B8BBE;color:white;padding:8px}td{padding:8px;border:1px solid #ddd}';
+            html += '@media print{.no-print{display:none}}</style>';
+            html += '</head><body>';
+            html += '<button class="no-print" onclick="window.print()" style="margin-bottom:20px">Print</button>';
+            html += '<h1>Internship Applications Report</h1>';
+            html += '<p>Generated: ' + new Date().toLocaleString() + '</p>';
+            html += '<p>Total Applications: ' + (data.length - 1) + '</p>';
+            html += '<table><thead><tr>';
+            for (var j = 0; j < data[0].length; j++) html += '<th>' + data[0][j] + '</th>';
+            html += '</tr></thead><tbody>';
+            for (var i = 1; i < data.length; i++) {
+                html += '<tr>';
+                for (var j = 0; j < data[i].length; j++) html += '<td>' + data[i][j] + '</td>';
+                html += '</tr>';
+            }
+            html += '</tbody></table></body></html>';
+            win.document.write(html);
+            win.document.close();
+        }
+
+        function copyToClipboard() {
+            var data = getApplicationData();
+            if (data.length <= 1) { alert('No data to copy!'); return; }
+            
+            var text = '';
+            for (var i = 0; i < data.length; i++) {
+                text += data[i].join('\t') + '\n';
+            }
+            navigator.clipboard.writeText(text).then(function() {
+                var original = reportBtn.innerHTML;
+                reportBtn.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+                setTimeout(function() { 
+                    reportBtn.innerHTML = original; 
+                    if(reportDropdown) reportDropdown.classList.remove('active'); 
+                }, 2000);
+            });
+        }
     </script>
 
 </body>

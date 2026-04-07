@@ -15,6 +15,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
     <style>
         /* ========================================================
@@ -816,6 +818,169 @@
             animation: dropdownAppear 0.5s var(--transition-elegant);
             animation-fill-mode: both;
         }
+        
+        /* Report Dropdown Styles */
+.report-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.report-btn {
+    background: rgba(75, 139, 190, 0.1);
+    border: 1px solid var(--border-blue);
+    color: var(--soft-blue);
+    border-radius: 40px;
+    padding: 0.7rem 1.8rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+}
+
+.report-btn:hover {
+    background: var(--bright-blue);
+    color: var(--pure-white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-blue);
+}
+
+.report-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--glass-deep-darker);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-blue);
+    border-radius: 16px;
+    padding: 0.5rem;
+    min-width: 220px;
+    z-index: 1000;
+    display: none;
+}
+
+.report-dropdown.active .report-menu {
+    display: block;
+}
+
+.report-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    color: var(--soft-blue);
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    transition: all var(--transition-soft);
+}
+
+.report-menu-item:hover {
+    background: rgba(75, 139, 190, 0.1);
+    color: var(--pure-white);
+    transform: translateX(5px);
+}
+
+.report-menu-item i {
+    font-size: 1.2rem;
+    width: 1.5rem;
+}
+
+/* DataTables Customization */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary) !important;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid var(--border-blue) !important;
+    color: var(--pure-white) !important;
+    border-radius: 40px !important;
+    padding: 0.5rem 1.2rem !important;
+    font-size: 0.9rem !important;
+}
+
+.dataTables_wrapper .dataTables_length select option {
+    background: var(--deep-blue-dark) !important;
+    color: var(--pure-white) !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: var(--text-secondary) !important;
+    padding-top: 1.5rem !important;
+    font-size: 0.9rem !important;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    color: var(--text-secondary) !important;
+    margin-top: 1.5rem !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-blue) !important;
+    color: var(--soft-blue) !important;
+    border-radius: 12px !important;
+    margin: 0 2px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 500 !important;
+    transition: all var(--transition-soft) !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--bright-blue) !important;
+    border-color: var(--bright-blue) !important;
+    color: var(--pure-white) !important;
+    font-weight: 600 !important;
+    box-shadow: var(--shadow-blue) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+    background: rgba(75, 139, 190, 0.2) !important;
+    border-color: var(--bright-blue) !important;
+    color: var(--pure-white) !important;
+    transform: translateY(-2px);
+}
+
+/* Fix DataTables layout */
+.dataTables_wrapper .row:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .dataTables_wrapper .row:first-child {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+    }
+}
+        
     </style>
 </head>
 <body>
@@ -954,14 +1119,32 @@
         <main class="main-panel">
 
             <!-- Header with Back Button and Add Employer Button -->
-            <div class="header-with-back">
-                <a href="dashboard" class="btn-back">
-                    <i class="bi bi-arrow-left"></i> Back to Dashboard
-                </a>
-                <a href="/employer" class="btn-add-employer">
-                    <i class="bi bi-plus-circle"></i> Add Employer
-                </a>
+           <!-- Header with Back Button, Report Dropdown and Add Employer Button -->
+<div class="header-with-back">
+    <div style="display: flex; gap: 1rem;">
+        <!-- Report Dropdown -->
+        <div class="report-dropdown" id="reportDropdown">
+            <button class="report-btn" id="reportBtn" type="button">
+                <i class="bi bi-download"></i> Download Report
+                <i class="bi bi-chevron-down"></i>
+            </button>
+            <div class="report-menu">
+                <button class="report-menu-item" onclick="exportToPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
+                <button class="report-menu-item" onclick="exportToExcel()"><i class="bi bi-file-excel"></i> Excel</button>
+                <button class="report-menu-item" onclick="exportToCSV()"><i class="bi bi-file-spreadsheet"></i> CSV</button>
+                <button class="report-menu-item" onclick="exportToWord()"><i class="bi bi-file-word"></i> Word</button>
+                <button class="report-menu-item" onclick="printReport()"><i class="bi bi-printer"></i> Print</button>
+                <button class="report-menu-item" onclick="copyToClipboard()"><i class="bi bi-clipboard"></i> Copy</button>
             </div>
+        </div>
+        <a href="dashboard" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="/employer" class="btn-add-employer">
+            <i class="bi bi-plus-circle"></i> Add Employer
+        </a>
+    </div>
+</div>
 
             <div class="employer-container">
                 
@@ -979,7 +1162,7 @@
                 <!-- card body with table - 100% original business logic, untouched -->
                 <div class="employer-body">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                       <table id="employersTable" class="table table-hover align-middle">
                             <thead>
                                 <tr>
                                     <th>SR NO</th>
@@ -991,36 +1174,40 @@
                             </thead>
 
                             <tbody>
-                                <c:forEach items="${employerList}" var="e" varStatus="status">
-                                    <tr>
-                                        <td><strong>${status.count}</strong></td>
-                                        <td class="fw-semibold">${e.companyName}</td>
-                                        <td>${e.companyType}</td>
-                                        <td>
-                                            <a href="${e.website}" target="_blank" 
-                                               class="company-link">
-                                                <i class="bi bi-box-arrow-up-right"></i>
-                                                ${e.website}
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <div class="action-btns">
-                                                <a href="viewEmployer?employerId=${e.employerId}" 
-                                                   class="btn-sm btn-primary">
-                                                    <i class="bi bi-eye-fill"></i> View
-                                                </a>
-                                                <a href="#" class="btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-fill"></i> Edit
-                                                </a>
-                                                <a href="deleteEmployer?employerId=${e.employerId}" 
-                                                   class="btn-sm btn-danger"
-                                                   onclick="return confirm('Are you sure you want to delete this employer?');">
-                                                    <i class="bi bi-trash-fill"></i> Delete
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
+                              <c:forEach items="${employerList}" var="e" varStatus="status">
+    <tr>
+        <td><strong>${status.count}</strong></td>
+        <td class="fw-semibold">${e.companyName}</td>
+        <td>${e.companyType}</td>
+        <td>
+            <a href="${e.website}" target="_blank" class="company-link">
+                <i class="bi bi-box-arrow-up-right"></i>
+                ${e.website}
+            </a>
+        </td>
+        <td>
+            <div class="action-btns">
+                <!-- View Button -->
+                <a href="viewEmployer?employerId=${e.employerId}" class="btn-sm btn-primary">
+                    <i class="bi bi-eye-fill"></i> View
+                </a>
+                
+                <!-- Edit Button - FIXED: use ${e.employerId} not ${employer.employerId} -->
+                <a href="${pageContext.request.contextPath}/editemployer?employerId=${e.employerId}" 
+                   class="btn-sm btn-primary">
+                    <i class="bi bi-pencil"></i> Edit
+                </a>
+                
+                <!-- Delete Button -->
+                <a href="deleteEmployer?employerId=${e.employerId}" 
+                   class="btn-sm btn-danger"
+                   onclick="return confirm('Are you sure you want to delete this employer?');">
+                    <i class="bi bi-trash-fill"></i> Delete
+                </a>
+            </div>
+        </td>
+    </tr>
+</c:forEach>
 
                                 <c:if test="${empty employerList}">
                                     <tr>
@@ -1045,64 +1232,379 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    <script>
-        (function() {
-            "use strict";
+   <script>
+    (function() {
+        "use strict";
 
-            // Initialize AOS
-            AOS.init({
-                duration: 600,
-                once: true,
-                offset: 50,
-                easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
-            });
+        // Initialize AOS
+        AOS.init({
+            duration: 600,
+            once: true,
+            offset: 50,
+            easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
+        });
 
-            // Sidebar logic
-            const layout = document.getElementById('dashboardLayout');
-            const sidebar = document.getElementById('mainSidebar');
-            const toggleBtn = document.getElementById('toggleCollapseBtn');
-            const fullscreenBtn = document.getElementById('fullscreenModeBtn');
-            const collapseText = document.getElementById('collapseText');
+        // Sidebar logic
+        const layout = document.getElementById('dashboardLayout');
+        const sidebar = document.getElementById('mainSidebar');
+        const toggleBtn = document.getElementById('toggleCollapseBtn');
+        const fullscreenBtn = document.getElementById('fullscreenModeBtn');
+        const collapseText = document.getElementById('collapseText');
 
-            toggleBtn.addEventListener('click', function(e) {
+        // Initialize DataTable
+        $(document).ready(function() {
+            if ($('#employersTable').length > 0 && $('#employersTable tbody tr').length > 0) {
+                $('#employersTable').DataTable({
+                    pageLength: 10,
+                    lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                    dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                         '<"row"<"col-sm-12"tr>>' +
+                         '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    language: {
+                        search: "<i class='bi bi-search'></i> Search:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ employers",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous"
+                        }
+                    },
+                    columnDefs: [
+                        { orderable: false, targets: [4] } // Disable sorting on Actions column
+                    ],
+                    autoWidth: false
+                });
+            }
+        });
+
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (layout.classList.contains('fullscreen')) {
+                layout.classList.remove('fullscreen');
+            }
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                collapseText.innerText = 'Expand';
+            } else {
+                collapseText.innerText = 'Collapse';
+            }
+            
+            // Redraw DataTable after animation
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#employersTable')) {
+                    $('#employersTable').DataTable().columns.adjust().draw();
+                }
+            }, 300);
+        });
+
+        fullscreenBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            layout.classList.toggle('fullscreen');
+            
+            if (layout.classList.contains('fullscreen')) {
+                sidebar.classList.remove('collapsed');
+                collapseText.innerText = 'Collapse';
+                fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> Sidebar off';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+            }
+            
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#employersTable')) {
+                    $('#employersTable').DataTable().columns.adjust().draw();
+                }
+            }, 300);
+        });
+
+        fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+        collapseText.innerText = 'Collapse';
+
+        // Staggered animation for dropdowns
+        document.querySelectorAll('.dropdown').forEach((dropdown, index) => {
+            dropdown.style.animation = `dropdownAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s forwards`;
+        });
+
+        // ========== REPORT DROPDOWN FUNCTIONS ==========
+        const reportDropdown = document.getElementById('reportDropdown');
+        const reportBtn = document.getElementById('reportBtn');
+
+        if (reportBtn) {
+            reportBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                if (layout.classList.contains('fullscreen')) {
-                    layout.classList.remove('fullscreen');
-                }
-                sidebar.classList.toggle('collapsed');
-                
-                if (sidebar.classList.contains('collapsed')) {
-                    collapseText.innerText = 'Expand';
-                } else {
-                    collapseText.innerText = 'Collapse';
+                e.stopPropagation();
+                reportDropdown.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (reportDropdown && !reportDropdown.contains(e.target)) {
+                    reportDropdown.classList.remove('active');
                 }
             });
+        }
 
-            fullscreenBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                layout.classList.toggle('fullscreen');
-                
-                if (layout.classList.contains('fullscreen')) {
-                    sidebar.classList.remove('collapsed');
-                    collapseText.innerText = 'Collapse';
-                    fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> Sidebar off';
-                } else {
-                    fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+        // Make export functions globally accessible
+        window.exportToPDF = exportToPDF;
+        window.exportToExcel = exportToExcel;
+        window.exportToCSV = exportToCSV;
+        window.exportToWord = exportToWord;
+        window.printReport = printReport;
+        window.copyToClipboard = copyToClipboard;
+
+        function getEmployerData() {
+            var data = [['SR NO', 'COMPANY NAME', 'COMPANY TYPE', 'WEBSITE']];
+            
+            // Get all rows from the table body
+            var rows = document.querySelectorAll('#employersTable tbody tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].querySelectorAll('td');
+                if (cells.length >= 4) {
+                    // Get SR NO
+                    var srNo = cells[0] ? cells[0].innerText.trim() : '';
+                    
+                    // Get Company Name
+                    var companyName = cells[1] ? cells[1].innerText.trim() : '';
+                    
+                    // Get Company Type
+                    var companyType = cells[2] ? cells[2].innerText.trim() : '';
+                    
+                    // Get Website (extract from link)
+                    var website = '';
+                    if (cells[3]) {
+                        var link = cells[3].querySelector('a');
+                        if (link) {
+                            website = link.innerText.trim();
+                        } else {
+                            website = cells[3].innerText.trim();
+                        }
+                    }
+                    
+                    data.push([srNo, companyName, companyType, website]);
                 }
-            });
+            }
+            return data;
+        }
 
-            fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
-            collapseText.innerText = 'Collapse';
+        function exportToPDF() {
+            var data = getEmployerData();
+            if (data.length <= 1) { 
+                alert('No data to export!'); 
+                return; 
+            }
+            
+            var win = window.open('', '_blank');
+            var html = '<!DOCTYPE html><html><head><title>Employers Report</title><style>';
+            html += 'body{font-family:"Segoe UI",Arial,sans-serif;margin:40px;padding:20px}';
+            html += 'h1{color:#2C3E50;text-align:center;margin-bottom:10px}';
+            html += '.header{text-align:center;margin-bottom:30px;border-bottom:2px solid #4B8BBE;padding-bottom:20px}';
+            html += '.header p{color:#666;margin:5px 0}';
+            html += 'table{width:100%;border-collapse:collapse;margin-top:20px}';
+            html += 'th{background-color:#4B8BBE;color:white;padding:12px;text-align:left;font-weight:bold}';
+            html += 'td{padding:10px;border-bottom:1px solid #ddd}';
+            html += '.footer{margin-top:30px;text-align:center;font-size:12px;color:#999;border-top:1px solid #ddd;padding-top:20px}';
+            html += '</style></head><body>';
+            html += '<div class="header">';
+            html += '<h1>SmartIntern - Employers Report</h1>';
+            html += '<p>Generated on: ' + new Date().toLocaleString() + '</p>';
+            html += '<p>Total Employers: ' + (data.length - 1) + '</p>';
+            html += '</div>';
+            html += '<table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+            html += '<thead><tr>';
+            for (var j = 0; j < data[0].length; j++) {
+                html += '<th style="background:#4B8BBE;color:white;padding:12px;">' + data[0][j] + '</th>';
+            }
+            html += '</tr></thead><tbody>';
+            
+            for (var i = 1; i < data.length; i++) {
+                var row = data[i];
+                html += '<tr>';
+                for (var j = 0; j < row.length; j++) {
+                    html += '<td style="padding:10px;border-bottom:1px solid #ddd;">' + (row[j] || '') + '</td>';
+                }
+                html += '</tr>';
+            }
+            
+            html += '</tbody></table>';
+            html += '<div class="footer">';
+            html += '<p>This is a system-generated report from SmartIntern Platform</p>';
+            html += '<p>&copy; 2026 SmartIntern - All Rights Reserved</p>';
+            html += '</div>';
+            html += '</body></html>';
+            
+            win.document.write(html);
+            win.document.close();
+            win.print();
+        }
 
-            // Staggered animation for dropdowns
-            document.querySelectorAll('.dropdown').forEach((dropdown, index) => {
-                dropdown.style.animation = `dropdownAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s forwards`;
+        function exportToExcel() {
+            var data = getEmployerData();
+            if (data.length <= 1) { 
+                alert('No data to export!'); 
+                return; 
+            }
+            
+            var html = '<html><head><meta charset="UTF-8"><title>Employers Report</title></head><body>';
+            html += '<table border="1">';
+            for (var i = 0; i < data.length; i++) {
+                html += '<tr>';
+                for (var j = 0; j < data[i].length; j++) {
+                    var tag = (i === 0) ? 'th' : 'td';
+                    html += '<' + tag + '>' + (data[i][j] || '') + '</' + tag + '>';
+                }
+                html += '</tr>';
+            }
+            html += '</table></body></html>';
+            
+            var blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Employers_Report_' + new Date().toISOString().slice(0,10) + '.xls';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function exportToCSV() {
+            var data = getEmployerData();
+            if (data.length <= 1) { 
+                alert('No data to export!'); 
+                return; 
+            }
+            
+            var csv = '';
+            for (var i = 0; i < data.length; i++) {
+                var row = [];
+                for (var j = 0; j < data[i].length; j++) {
+                    var value = data[i][j] || '';
+                    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    row.push(value);
+                }
+                csv += row.join(',') + '\n';
+            }
+            
+            var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Employers_Report_' + new Date().toISOString().slice(0,10) + '.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function exportToWord() {
+            var data = getEmployerData();
+            if (data.length <= 1) { 
+                alert('No data to export!'); 
+                return; 
+            }
+            
+            var html = '<html><head><meta charset="UTF-8"><title>Employers Report</title>';
+            html += '<style>table{border-collapse:collapse;width:100%}th,td{border:1px solid #000;padding:8px}th{background:#4B8BBE;color:white}</style>';
+            html += '</head><body>';
+            html += '<h1>SmartIntern - Employers Report</h1>';
+            html += '<p>Generated: ' + new Date().toLocaleString() + '</p>';
+            html += '<p>Total Employers: ' + (data.length - 1) + '</p>';
+            html += '<table border="1" cellpadding="5" cellspacing="0">';
+            for (var i = 0; i < data.length; i++) {
+                html += '<tr>';
+                for (var j = 0; j < data[i].length; j++) {
+                    var tag = (i === 0) ? 'th' : 'td';
+                    html += '<' + tag + '>' + (data[i][j] || '') + '</' + tag + '>';
+                }
+                html += '</tr>';
+            }
+            html += '</table></body></html>';
+            
+            var blob = new Blob([html], { type: 'application/msword' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Employers_Report_' + new Date().toISOString().slice(0,10) + '.doc';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function printReport() {
+            var data = getEmployerData();
+            if (data.length <= 1) { 
+                alert('No data to print!'); 
+                return; 
+            }
+            
+            var win = window.open('', '_blank');
+            var html = '<html><head><title>Print Employers Report</title>';
+            html += '<style>';
+            html += 'body{font-family:Arial,sans-serif;margin:20px}';
+            html += 'table{border-collapse:collapse;width:100%;margin-top:20px}';
+            html += 'th{background:#4B8BBE;color:white;padding:10px;text-align:left}';
+            html += 'td{padding:8px;border-bottom:1px solid #ddd}';
+            html += 'h1{color:#2C3E50}';
+            html += '.header{text-align:center;margin-bottom:30px}';
+            html += '.footer{margin-top:30px;text-align:center;font-size:12px;color:#999}';
+            html += '@media print{.no-print{display:none}}';
+            html += '</style>';
+            html += '</head><body>';
+            html += '<button class="no-print" onclick="window.print()" style="margin-bottom:20px;padding:10px 20px;cursor:pointer">Print</button>';
+            html += '<div class="header">';
+            html += '<h1>SmartIntern - Employers Report</h1>';
+            html += '<p>Generated: ' + new Date().toLocaleString() + '</p>';
+            html += '<p>Total Employers: ' + (data.length - 1) + '</p>';
+            html += '</div>';
+            html += '<table>';
+            html += '<thead><tr>';
+            for (var j = 0; j < data[0].length; j++) {
+                html += '<th>' + data[0][j] + '</th>';
+            }
+            html += '</tr></thead><tbody>';
+            for (var i = 1; i < data.length; i++) {
+                html += '<tr>';
+                for (var j = 0; j < data[i].length; j++) {
+                    html += '<td>' + (data[i][j] || '') + '</td>';
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            html += '<div class="footer">';
+            html += '<p>&copy; 2026 SmartIntern - All Rights Reserved</p>';
+            html += '</div>';
+            html += '</body></html>';
+            win.document.write(html);
+            win.document.close();
+        }
+
+        function copyToClipboard() {
+            var data = getEmployerData();
+            if (data.length <= 1) { 
+                alert('No data to copy!'); 
+                return; 
+            }
+            
+            var text = '';
+            for (var i = 0; i < data.length; i++) {
+                text += data[i].join('\t') + '\n';
+            }
+            
+            navigator.clipboard.writeText(text).then(function() {
+                var original = reportBtn.innerHTML;
+                reportBtn.innerHTML = '<i class="bi bi-check-circle"></i> Copied!';
+                setTimeout(function() { 
+                    reportBtn.innerHTML = original; 
+                    if(reportDropdown) reportDropdown.classList.remove('active'); 
+                }, 2000);
+            }).catch(function() {
+                alert('Failed to copy! Please try again.');
             });
-        })();
-    </script>
+        }
+    })();
+</script>
 
 </body>
 </html>

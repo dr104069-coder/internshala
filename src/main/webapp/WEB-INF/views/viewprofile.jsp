@@ -874,17 +874,17 @@ body {
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div class="profile-name">${user.firstName}</div>
+                <div class="profile-name">${user.firstName} ${user.lastName}</div>
                 <i class="fas fa-chevron-down profile-arrow"></i>
                 <div class="dropdown-menu-custom">
-                    <a href="profile" class="dropdown-item-custom">
+                    <a href="/viewProfile" class="dropdown-item-custom">
                         <i class="fas fa-user-circle"></i> My Profile
                     </a>
                     <a href="settings" class="dropdown-item-custom">
                         <i class="fas fa-cog"></i> Settings
                     </a>
-                    <a href="certificates" class="dropdown-item-custom">
-                        <i class="fas fa-certificate"></i> My Certificates
+                    <a href="/myCertificates" class="dropdown-item-custom">
+                        <i class="fas fa-file-alt"></i> My Certificates
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="logout" class="dropdown-item-custom logout">
@@ -908,17 +908,17 @@ body {
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
-            <div class="stat-value">0</div>
+            <div class="stat-value">${fn:length(applications)}</div>
             <div class="stat-label">Applications Sent</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-certificate"></i></div>
-            <div class="stat-value">0</div>
+            <div class="stat-value">${certificates.size()}</div>
             <div class="stat-label">Certificates</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fas fa-calendar-week"></i></div>
-            <div class="stat-value">0</div>
+            <div class="stat-value">${fn:length(applications)}</div>
             <div class="stat-label">Interviews</div>
         </div>
     </div>
@@ -1033,9 +1033,9 @@ body {
     </c:if>
     
     <!-- Back Button -->
-    <a href="studentDashboard" class="btn-back">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
-    </a>
+  <a href="${not empty previousPage ? previousPage : 'studentDashboard'}" class="btn-back" style="display: block; text-align: center; margin-top: 1rem;">
+    <i class="fas fa-arrow-left"></i> Go Back
+</a>
     
 </main>
 

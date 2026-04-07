@@ -1267,9 +1267,9 @@
                         <a href="listEnrollment" class="btn-custom btn-secondary-custom">
                             <i class="bi bi-arrow-left"></i> Back to List
                         </a>
-                        <a href="editEnrollment?enrollmentId=${enrollment.internshipEnrollmentId}" class="btn-custom btn-primary-custom">
-                            <i class="bi bi-pencil-fill"></i> Edit Enrollment
-                        </a>
+                       <a href="updateEnrollment?enrollmentId=${enrollment.internshipEnrollmentId}" class="btn-custom btn-primary-custom">
+    <i class="bi bi-pencil-fill"></i> Edit Enrollment
+</a>
                         <button onclick="confirmDelete(${enrollment.internshipEnrollmentId})" class="btn-custom btn-danger-custom" style="border: none; cursor: pointer;">
                             <i class="bi bi-trash-fill"></i> Delete Enrollment
                         </button>

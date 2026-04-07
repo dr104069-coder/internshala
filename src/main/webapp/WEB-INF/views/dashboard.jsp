@@ -1,1203 +1,755 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartIntern · Professional Blue Dashboard</title>
+  <title>SmartIntern · Analytics Dashboard</title>
 
-  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- AOS Animation -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* ========================================================
-       SECTION 1: PROFESSIONAL BLUE COLOR SYSTEM
-       #2C3E50 - Deep Blue-Grey
-       #4B8BBE - Bright Blue
-       #B3CDE0 - Soft Blue
-       #FFFFFF - Pure White
-       #A8A8A8 - Medium Grey
-       ======================================================== */
     :root {
-      /* Primary Palette */
       --deep-blue: #2C3E50;
       --bright-blue: #4B8BBE;
       --soft-blue: #B3CDE0;
       --pure-white: #FFFFFF;
       --medium-grey: #A8A8A8;
-      
-      /* Extended Shades */
-      --deep-blue-dark: #1e2b38;
-      --deep-blue-light: #3a4f64;
-      --bright-blue-dark: #3a6f99;
-      --bright-blue-light: #6ba5d1;
-      --soft-blue-dark: #8faec9;
-      --soft-blue-light: #c5dbea;
-      
-      /* Glass Backgrounds */
       --glass-deep: rgba(44, 62, 80, 0.7);
       --glass-deep-darker: rgba(44, 62, 80, 0.85);
-      --glass-bright: rgba(75, 139, 190, 0.15);
-      --glass-soft: rgba(179, 205, 224, 0.15);
-      
-      /* Borders */
-      --border-light: rgba(255, 255, 255, 0.08);
       --border-blue: rgba(75, 139, 190, 0.3);
-      --border-soft: rgba(179, 205, 224, 0.3);
-      
-      /* Text Colors */
-      --text-primary: #FFFFFF;
-      --text-secondary: #B3CDE0;
-      --text-muted: #A8A8A8;
-      --text-dark: #2C3E50;
-      
-      /* Shadows */
-      --shadow-sm: 0 2px 8px rgba(44, 62, 80, 0.2);
-      --shadow-md: 0 4px 16px rgba(44, 62, 80, 0.3);
-      --shadow-lg: 0 8px 24px rgba(44, 62, 80, 0.4);
-      --shadow-xl: 0 12px 32px rgba(44, 62, 80, 0.5);
-      --shadow-blue: 0 4px 20px rgba(75, 139, 190, 0.3);
-      
-      /* Layout */
       --sidebar-width: 280px;
-      --sidebar-collapsed: 85px;
       --header-height: 80px;
-      
-      /* Transitions - Same as before */
-      --transition-smooth: 350ms cubic-bezier(0.23, 1, 0.32, 1);
-      --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
-      --transition-elegant: 450ms cubic-bezier(0.165, 0.84, 0.44, 1);
-      --transition-soft: 300ms ease-out;
     }
 
-    /* ========================================================
-       SECTION 2: GLOBAL STYLES - Updated Background
-       ======================================================== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(145deg, #2C3E50 0%, #1e2b38 100%);
       min-height: 100vh;
-      position: relative;
+      transition: all 0.3s ease;
     }
 
-    /* Subtle Grid Pattern */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        linear-gradient(rgba(75, 139, 190, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(75, 139, 190, 0.03) 1px, transparent 1px);
-      background-size: 50px 50px;
-      pointer-events: none;
-      z-index: -1;
+    /* Light Theme */
+    body.light-theme {
+      background: linear-gradient(145deg, #e0e5ec 0%, #f0f4f8 100%);
+    }
+    body.light-theme .metric-card,
+    body.light-theme .chart-card,
+    body.light-theme .nav-sidebar,
+    body.light-theme .admin-header,
+    body.light-theme .dashboard-footer {
+      background: rgba(255, 255, 255, 0.95);
+    }
+    body.light-theme .metric-card h6,
+    body.light-theme .chart-card h6,
+    body.light-theme .metric-number,
+    body.light-theme .dropdown-toggle,
+    body.light-theme .dropdown-item {
+      color: #2C3E50;
     }
 
-    /* Blue Accent Glow */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 30% 50%, rgba(75, 139, 190, 0.08) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    /* ========================================================
-       SECTION 3: SMARTINTERN LOGO (Same animations)
-       ======================================================== */
-    .smartintern-logo {
-      position: relative;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-blue {
-      width: 52px;
-      height: 52px;
-      background: linear-gradient(135deg, #2C3E50, #4B8BBE);
-      border: 2px solid var(--bright-blue);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      animation: logoMove 4s var(--transition-bounce) infinite;
-      box-shadow: 0 0 20px rgba(75, 139, 190, 0.3);
-    }
-
-    @keyframes logoMove {
-      0%, 100% { 
-        transform: translateY(0) rotate(0deg) scale(1);
-        box-shadow: 0 0 20px rgba(75, 139, 190, 0.3);
-      }
-      25% { 
-        transform: translateY(-8px) rotate(5deg) scale(1.05);
-        box-shadow: 0 10px 30px rgba(75, 139, 190, 0.5);
-      }
-      50% { 
-        transform: translateY(5px) rotate(-3deg) scale(0.98);
-        box-shadow: 0 5px 25px rgba(75, 139, 190, 0.4);
-      }
-      75% { 
-        transform: translateY(-3px) rotate(2deg) scale(1.02);
-        box-shadow: 0 8px 28px rgba(75, 139, 190, 0.45);
-      }
-    }
-
-    .logo-blue i {
-      font-size: 28px;
-      color: var(--pure-white);
-      filter: drop-shadow(0 0 10px rgba(75, 139, 190, 0.5));
-      animation: iconMove 3s var(--transition-bounce) infinite;
-    }
-
-    @keyframes iconMove {
-      0%, 100% { 
-        transform: scale(1) rotate(0deg);
-        color: var(--pure-white);
-      }
-      33% { 
-        transform: scale(1.15) rotate(10deg);
-        color: var(--soft-blue);
-      }
-      66% { 
-        transform: scale(0.95) rotate(-10deg);
-        color: var(--bright-blue-light);
-      }
-    }
-
-    .logo-text {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--pure-white);
-      letter-spacing: -0.5px;
-      position: relative;
-      animation: textMove 4s var(--transition-smooth) infinite;
-    }
-
-    @keyframes textMove {
-      0%, 100% { 
-        transform: translateX(0);
-        text-shadow: 0 0 10px rgba(75, 139, 190, 0.3);
-      }
-      25% { 
-        transform: translateX(3px);
-        text-shadow: 2px 2px 15px rgba(75, 139, 190, 0.5);
-      }
-      50% { 
-        transform: translateX(-2px);
-        text-shadow: -2px 2px 15px rgba(75, 139, 190, 0.5);
-      }
-      75% { 
-        transform: translateX(2px);
-        text-shadow: 2px -2px 15px rgba(75, 139, 190, 0.5);
-      }
-    }
-
-    .logo-text::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--bright-blue), transparent);
-      animation: lineMove 3s var(--transition-smooth) infinite;
-    }
-
-    @keyframes lineMove {
-      0%, 100% { 
-        width: 0; 
-        opacity: 0; 
-        left: 50%; 
-      }
-      25% { 
-        width: 30%; 
-        opacity: 0.5; 
-        left: 35%; 
-      }
-      50% { 
-        width: 70%; 
-        opacity: 1; 
-        left: 15%; 
-      }
-      75% { 
-        width: 100%; 
-        opacity: 0.8; 
-        left: 0; 
-      }
-    }
-
-    /* ========================================================
-       SECTION 4: HEADER - Updated Colors
-       ======================================================== */
     .admin-header {
       height: var(--header-height);
       background: var(--glass-deep-darker);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-blue);
-      padding: 0 2.5rem;
+      padding: 0 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: var(--shadow-md);
-      animation: headerFade 0.8s var(--transition-elegant);
     }
 
-    @keyframes headerFade {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .logo-container {
+    .logo-container { display: flex; align-items: center; gap: 1rem; }
+    .logo-text { font-size: 1.5rem; font-weight: 700; color: var(--pure-white); }
+    .logo-blue {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #2C3E50, #4B8BBE);
+      border-radius: 12px;
       display: flex;
       align-items: center;
-      gap: 1.2rem;
+      justify-content: center;
     }
+    .logo-blue i { font-size: 22px; color: white; }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    /* Updated Button Colors */
-    .dark-btn {
+    .dark-btn, .logout-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-blue);
       color: var(--soft-blue);
       border-radius: 40px;
-      padding: 0.6rem 1.4rem;
+      padding: 0.5rem 1.2rem;
       font-weight: 500;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: all var(--transition-soft);
+      transition: all 0.3s ease;
       cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
     }
-
-    .dark-btn:hover {
-      background: var(--bright-blue);
-      border-color: var(--bright-blue);
-      color: var(--pure-white);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-blue);
-    }
-
-    .dark-btn i {
-      transition: transform var(--transition-soft);
-    }
-
-    .dark-btn:hover i {
-      transform: rotate(180deg);
-    }
-
-    .logout-btn {
-      background: var(--deep-blue);
-      border: 1px solid var(--border-blue);
-      color: var(--pure-white);
-      border-radius: 40px;
-      padding: 0.6rem 1.6rem;
-      font-weight: 500;
-      transition: all var(--transition-soft);
-    }
-
-    .logout-btn:hover {
+    .dark-btn:hover, .logout-btn:hover {
       background: var(--bright-blue);
       color: var(--pure-white);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-blue);
     }
 
-    /* ========================================================
-       SECTION 5: LAYOUT
-       ======================================================== */
-    .dashboard-layout {
-      display: flex;
-      min-height: calc(100vh - var(--header-height));
-      transition: all var(--transition-smooth);
-      position: relative;
-    }
+    .dashboard-layout { display: flex; min-height: calc(100vh - var(--header-height)); }
 
-    /* ========================================================
-       SECTION 6: SIDEBAR - Updated Colors
-       ======================================================== */
     .nav-sidebar {
       width: var(--sidebar-width);
       background: var(--glass-deep-darker);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border-right: 1px solid var(--border-blue);
-      padding: 2rem 1.2rem;
-      box-shadow: var(--shadow-lg);
-      transition: width 0.3s var(--transition-elegant), padding 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      white-space: nowrap;
-      z-index: 500;
-      border-radius: 0 30px 30px 0;
-      animation: sidebarSlide 0.8s var(--transition-elegant);
+      padding: 1.5rem 1rem;
+      transition: width 0.3s ease;
+      overflow-y: auto;
     }
 
-    @keyframes sidebarSlide {
-      from { opacity: 0; transform: translateX(-30px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    /* Animated Blue Border */
-    .nav-sidebar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 3px;
-      height: 0;
-      background: var(--bright-blue);
-      animation: borderGrow 1s var(--transition-elegant) forwards;
-      box-shadow: 0 0 20px var(--bright-blue);
-    }
-
-    @keyframes borderGrow {
-      to { height: 100%; }
-    }
-
-    /* Floating Glow Effect */
-    .nav-sidebar::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(75, 139, 190, 0.05) 0%, transparent 70%);
-      animation: glowFloat 8s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes glowFloat {
-      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-      25% { transform: translate(5%, 5%) scale(1.1); opacity: 0.5; }
-      50% { transform: translate(-5%, -5%) scale(0.9); opacity: 0.3; }
-      75% { transform: translate(3%, -3%) scale(1.05); opacity: 0.4; }
-    }
-
-    /* Collapsed State */
-    .nav-sidebar.collapsed {
-      width: var(--sidebar-collapsed);
-      padding: 2rem 0.5rem;
-    }
-
-    .nav-sidebar.collapsed .nav-category,
-    .nav-sidebar.collapsed .dropdown-toggle span,
-    .nav-sidebar.collapsed .dropdown-item span {
-      display: none;
-    }
-
-    .nav-sidebar.collapsed .dropdown-toggle i {
-      margin: 0 auto;
-      font-size: 1.5rem;
-      animation: iconPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes iconPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-
-    .nav-sidebar.collapsed .dropdown-toggle {
-      justify-content: center;
-      padding: 1rem 0;
-    }
-
-    .nav-sidebar.collapsed .dropdown-menu {
-      display: none;
-    }
-
-    /* Fullscreen Mode */
-    .dashboard-layout.fullscreen .nav-sidebar {
-      transform: translateX(-100%);
-      width: 0;
-      padding: 0;
-    }
-
-    .dashboard-layout.fullscreen .main-panel {
-      width: 100%;
-    }
-
-    /* Sidebar Categories */
     .nav-category {
       color: var(--medium-grey);
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      font-weight: 600;
-      margin: 2rem 0 1rem 0.8rem;
-      opacity: 0.7;
-      animation: categoryFade 0.5s ease-out;
+      margin: 1rem 0 0.5rem 0.8rem;
     }
 
-    @keyframes categoryFade {
-      from { opacity: 0; transform: translateX(-10px); }
-      to { opacity: 0.7; transform: translateX(0); }
-    }
+    .dropdown { width: 100%; margin-bottom: 0.2rem; }
 
-    /* Dropdown Toggle - Updated Colors */
-    .nav-sidebar .dropdown {
-      width: 100%;
-      margin-bottom: 0.3rem;
-      animation: dropdownAppear 0.5s var(--transition-elegant);
-      animation-fill-mode: both;
-    }
-
-    .nav-sidebar .dropdown:nth-child(2) { animation-delay: 0.1s; }
-    .nav-sidebar .dropdown:nth-child(4) { animation-delay: 0.2s; }
-    .nav-sidebar .dropdown:nth-child(5) { animation-delay: 0.3s; }
-    .nav-sidebar .dropdown:nth-child(6) { animation-delay: 0.4s; }
-    .nav-sidebar .dropdown:nth-child(8) { animation-delay: 0.5s; }
-    .nav-sidebar .dropdown:nth-child(9) { animation-delay: 0.6s; }
-    .nav-sidebar .dropdown:nth-child(10) { animation-delay: 0.7s; }
-    .nav-sidebar .dropdown:nth-child(11) { animation-delay: 0.8s; }
-    .nav-sidebar .dropdown:nth-child(12) { animation-delay: 0.9s; }
-    .nav-sidebar .dropdown:nth-child(13) { animation-delay: 1s; }
-    .nav-sidebar .dropdown:nth-child(14) { animation-delay: 1.1s; }
-
-    @keyframes dropdownAppear {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .nav-sidebar .dropdown-toggle {
+    .dropdown-toggle {
       display: flex;
       align-items: center;
-      gap: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      border-radius: 12px;
+      gap: 1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
       color: var(--soft-blue);
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: all var(--transition-elegant);
-      width: 100%;
       background: transparent;
       border: none;
+      width: 100%;
       text-align: left;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Hover Effects */
-    .nav-sidebar .dropdown-toggle::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--glass-bright), transparent);
-      transition: left 0.6s var(--transition-elegant);
-      z-index: -1;
-    }
-
-    .nav-sidebar .dropdown-toggle:hover::before {
-      left: 100%;
-    }
-
-    .nav-sidebar .dropdown-toggle i {
-      font-size: 1.3rem;
-      width: 1.8rem;
-      color: var(--bright-blue);
-      transition: all var(--transition-bounce);
-      animation: iconGlow 3s ease-in-out infinite;
-    }
-
-    @keyframes iconGlow {
-      0%, 100% { filter: drop-shadow(0 0 5px rgba(75, 139, 190, 0.3)); }
-      50% { filter: drop-shadow(0 0 15px rgba(75, 139, 190, 0.6)); }
-    }
-
-    .nav-sidebar .dropdown-toggle:hover {
-      color: var(--pure-white);
-      transform: translateX(8px);
-      background: rgba(75, 139, 190, 0.05);
-    }
-
-    .nav-sidebar .dropdown-toggle:hover i {
-      color: var(--bright-blue);
-      transform: scale(1.25) rotate(5deg);
-      animation: none;
-    }
-
-    /* Active State */
-    .nav-sidebar .dropdown-toggle.active {
-      background: rgba(75, 139, 190, 0.1);
-      border-left: 3px solid var(--bright-blue);
-      color: var(--pure-white);
-      animation: activePulse 2s ease-in-out infinite;
-    }
-
-    @keyframes activePulse {
-      0%, 100% { border-left-color: var(--bright-blue); }
-      50% { border-left-color: var(--bright-blue-light); }
-    }
-
-    .nav-sidebar .dropdown-toggle.active i {
-      color: var(--bright-blue);
-    }
-
-    /* Dropdown Menu */
-    .nav-sidebar .dropdown-menu {
-      background: var(--glass-deep);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-blue);
-      border-radius: 12px;
-      padding: 0.5rem 0.2rem;
-      margin: 0.3rem 0 0.8rem 0;
-      box-shadow: var(--shadow-md);
-      width: 100%;
-      position: static !important;
-      transform: none !important;
-      animation: menuExpand 0.5s var(--transition-bounce);
-      transform-origin: top;
-    }
-
-    @keyframes menuExpand {
-      from { 
-        opacity: 0; 
-        transform: translateY(-15px) scaleY(0.8);
-      }
-      to { 
-        opacity: 1; 
-        transform: translateY(0) scaleY(1);
-      }
-    }
-
-    /* Dropdown Items */
-    .nav-sidebar .dropdown-item {
-      border-radius: 8px;
-      padding: 0.7rem 1.6rem;
-      color: var(--soft-blue);
+      transition: all 0.3s ease;
       font-size: 0.9rem;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: all var(--transition-elegant);
-      margin: 0.2rem 0.3rem;
-      position: relative;
-      overflow: hidden;
-      animation: itemSlide 0.4s var(--transition-elegant);
-      animation-fill-mode: both;
     }
-
-    .nav-sidebar .dropdown-item:nth-child(1) { animation-delay: 0.05s; }
-    .nav-sidebar .dropdown-item:nth-child(2) { animation-delay: 0.1s; }
-
-    @keyframes itemSlide {
-      from { 
-        opacity: 0; 
-        transform: translateX(-15px);
-      }
-      to { 
-        opacity: 1; 
-        transform: translateX(0);
-      }
-    }
-
-    .nav-sidebar .dropdown-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -5px;
-      width: 2px;
-      height: 100%;
-      background: var(--bright-blue);
-      transform: scaleY(0);
-      transition: transform 0.3s var(--transition-elegant);
-      box-shadow: 0 0 10px var(--bright-blue);
-    }
-
-    .nav-sidebar .dropdown-item:hover::before {
-      transform: scaleY(1);
-    }
-
-    .nav-sidebar .dropdown-item::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--glass-bright), transparent);
-      transition: left 0.6s var(--transition-elegant);
-      z-index: -1;
-    }
-
-    .nav-sidebar .dropdown-item:hover::after {
-      left: 100%;
-    }
-
-    .nav-sidebar .dropdown-item i {
-      color: var(--bright-blue);
-      font-size: 1.1rem;
-      width: 1.4rem;
-      transition: all var(--transition-bounce);
-    }
-
-    .nav-sidebar .dropdown-item:hover {
-      background: rgba(75, 139, 190, 0.05);
-      color: var(--pure-white);
-      padding-left: 2rem;
+    .dropdown-toggle:hover { 
+      background: rgba(75, 139, 190, 0.1); 
+      color: white;
       transform: translateX(5px);
     }
-
-    .nav-sidebar .dropdown-item:hover i {
-      color: var(--bright-blue);
-      transform: scale(1.3) rotate(360deg);
+    .dropdown-toggle i { 
+      color: var(--bright-blue); 
+      font-size: 1.2rem;
+      width: 1.6rem;
+    }
+    .dropdown-toggle.active {
+      background: rgba(75, 139, 190, 0.15);
+      border-left: 3px solid var(--bright-blue);
+      color: white;
     }
 
-    /* ========================================================
-       SECTION 7: MAIN PANEL
-       ======================================================== */
-    .main-panel {
-      flex: 1;
-      padding: 2.5rem;
-      background: transparent;
-      transition: all var(--transition-smooth);
-      width: calc(100% - var(--sidebar-width));
-      animation: mainFade 1s var(--transition-elegant);
-    }
-
-    @keyframes mainFade {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ========================================================
-       SECTION 8: METRIC CARDS - Updated Colors
-       ======================================================== */
-    .metric-card {
+    .dropdown-menu {
       background: var(--glass-deep);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 2rem 1.8rem;
       border: 1px solid var(--border-blue);
-      transition: all var(--transition-elegant);
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-md);
-      animation: cardAppear 0.6s var(--transition-elegant);
-      animation-fill-mode: both;
+      border-radius: 10px;
+      padding: 0.4rem;
+      margin-left: 1.8rem;
+      margin-top: 0.2rem;
     }
 
-    .metric-card:nth-child(1) { animation-delay: 0.1s; }
-    .metric-card:nth-child(2) { animation-delay: 0.2s; }
-    .metric-card:nth-child(3) { animation-delay: 0.3s; }
-    .metric-card:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes cardAppear {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .metric-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--bright-blue);
-      transform: scaleY(0);
-      transition: transform 0.5s var(--transition-elegant);
-      border-radius: 20px 0 0 20px;
-    }
-
-    .metric-card:hover::before {
-      transform: scaleY(1);
-    }
-
-    .metric-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--bright-blue);
-      box-shadow: var(--shadow-lg), var(--shadow-blue);
-    }
-
-    .metric-card h6 {
-      font-size: 0.8rem;
-      font-weight: 600;
+    .dropdown-item {
+      border-radius: 6px;
+      padding: 0.5rem 0.8rem;
       color: var(--soft-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .dropdown-item:hover {
+      background: rgba(75, 139, 190, 0.1);
+      color: white;
+      transform: translateX(5px);
+    }
+    .dropdown-item i { color: var(--bright-blue); font-size: 0.9rem; width: 1.2rem; }
+
+    .main-panel { flex: 1; padding: 1.5rem; background: transparent; overflow-y: auto; }
+
+    .metric-card, .chart-card {
+      background: var(--glass-deep);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 1.2rem;
+      border: 1px solid var(--border-blue);
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+    .metric-card:hover, .chart-card:hover { 
+      transform: translateY(-3px); 
+      border-color: var(--bright-blue);
+      box-shadow: 0 8px 25px rgba(75, 139, 190, 0.2);
+    }
+
+    .metric-number { font-size: 2rem; font-weight: 700; color: var(--pure-white); }
+    .metric-card h6, .chart-card h6 { 
+      color: var(--soft-blue); 
+      margin-bottom: 0.8rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 1rem;
     }
 
-    .metric-number {
-      font-size: 3rem;
-      font-weight: 700;
-      color: var(--pure-white);
-      line-height: 1;
-      margin-bottom: 1rem;
-    }
+    canvas { max-height: 220px; width: 100% !important; }
 
-    .trend-badge {
-      font-size: 0.8rem;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--soft-blue);
-      padding: 0.4rem 1.2rem;
-      border-radius: 40px;
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      gap: 0.5rem;
-      font-weight: 500;
-      border: 1px solid var(--border-blue);
-      transition: all var(--transition-soft);
-    }
-
-    .trend-badge:hover {
-      background: var(--bright-blue);
-      color: var(--pure-white);
-      transform: scale(1.05);
-    }
-
-    .trend-badge i {
-      color: var(--bright-blue);
-    }
-
-    .trend-badge:hover i {
-      color: var(--pure-white);
-    }
-
-    /* ========================================================
-       SECTION 9: TIMELINE CARD - Updated Colors
-       ======================================================== */
-    .timeline-card {
-      background: var(--glass-deep);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 24px;
-      padding: 2.5rem;
-      margin-top: 2.5rem;
-      border: 1px solid var(--border-blue);
-      transition: all var(--transition-elegant);
-      box-shadow: var(--shadow-md);
-      animation: timelineAppear 0.8s var(--transition-elegant);
-    }
-
-    @keyframes timelineAppear {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .timeline-card:hover {
-      border-color: var(--bright-blue);
-      box-shadow: var(--shadow-lg), var(--shadow-blue);
-      transform: translateY(-4px);
-    }
-
-    .timeline-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--pure-white);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .timeline-title i {
-      background: rgba(75, 139, 190, 0.1);
-      padding: 10px;
-      border-radius: 12px;
-      color: var(--bright-blue);
-      font-size: 1.3rem;
-      animation: titleIcon 3s ease-in-out infinite;
-    }
-
-    @keyframes titleIcon {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1) rotate(5deg); }
-    }
-
-    .timeline-item {
-      display: flex;
-      align-items: center;
-      padding: 1.2rem 1.2rem;
-      border-bottom: 1px solid var(--border-blue);
-      font-size: 0.95rem;
-      color: var(--soft-blue);
-      transition: all var(--transition-elegant);
-      border-radius: 12px;
-      margin-bottom: 0.3rem;
-      animation: itemSlideIn 0.5s var(--transition-elegant);
-      animation-fill-mode: both;
-    }
-
-    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
-    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
-    .timeline-item:nth-child(3) { animation-delay: 0.3s; }
-    .timeline-item:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes itemSlideIn {
-      from { opacity: 0; transform: translateX(30px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .timeline-item:last-child {
-      border-bottom: none;
-    }
-
-    .timeline-item:hover {
-      background: rgba(75, 139, 190, 0.05);
-      transform: translateX(15px);
-    }
-
-    .timeline-item i {
-      margin-right: 1.5rem;
-      font-size: 1.4rem;
-      padding: 8px;
-      border-radius: 10px;
-      color: var(--bright-blue);
-      background: rgba(75, 139, 190, 0.1);
-      transition: all var(--transition-bounce);
-    }
-
-    .timeline-item:hover i {
-      transform: scale(1.3) rotate(360deg);
-      background: rgba(75, 139, 190, 0.2);
-    }
-
-    /* ========================================================
-       SECTION 10: FOOTER - Updated Colors
-       ======================================================== */
     .dashboard-footer {
       background: var(--glass-deep-darker);
-      backdrop-filter: blur(12px);
       color: var(--medium-grey);
       text-align: center;
-      padding: 1.5rem;
-      font-size: 0.9rem;
+      padding: 0.8rem;
+      font-size: 0.8rem;
       border-top: 1px solid var(--border-blue);
-      animation: footerFade 0.8s var(--transition-elegant);
     }
 
-    @keyframes footerFade {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .toast-notification {
+      position: fixed;
+      top: 90px;
+      right: 20px;
+      background: var(--bright-blue);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      z-index: 9999;
+      animation: slideIn 0.3s ease;
+      font-size: 0.9rem;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
-    /* ========================================================
-       SECTION 11: RESPONSIVE
-       ======================================================== */
-    @media (max-width: 1200px) {
-      .main-panel { padding: 2rem; }
-      .metric-number { font-size: 2.5rem; }
-    }
+    .nav-sidebar.collapsed { width: 70px; padding: 1.5rem 0.3rem; }
+    .nav-sidebar.collapsed .nav-category,
+    .nav-sidebar.collapsed .dropdown-toggle span,
+    .nav-sidebar.collapsed .dropdown-menu { display: none; }
+    .nav-sidebar.collapsed .dropdown-toggle { justify-content: center; padding: 0.7rem 0; }
+    .nav-sidebar.collapsed .dropdown-toggle i { margin: 0; }
 
-    @media (max-width: 992px) {
-      .nav-sidebar:not(.collapsed) { width: 240px; }
-    }
+    .dashboard-layout.fullscreen .nav-sidebar { display: none; }
 
-    @media (max-width: 768px) {
-      .admin-header { padding: 0 1.5rem; }
-      .logo-text { font-size: 1.3rem; }
-      .logo-blue { width: 44px; height: 44px; }
-      .logo-blue i { font-size: 24px; }
-      .header-actions { gap: 0.8rem; }
+    @media (max-width: 768px) { 
+      .main-panel { padding: 1rem; } 
+      .admin-header { padding: 0 1rem; }
       .dark-btn span { display: none; }
-      .dark-btn { padding: 0.6rem; }
-      .main-panel { padding: 1.5rem; }
+      .dark-btn { padding: 0.5rem 0.8rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ====================  HEADER ==================== -->
   <header class="admin-header">
     <div class="logo-container">
-      <div class="smartintern-logo">
-        <div class="logo-blue">
-          <i class="bi bi-briefcase-fill"></i>
-        </div>
-      </div>
+      <div class="logo-blue"><i class="bi bi-briefcase-fill"></i></div>
       <span class="logo-text">SmartIntern</span>
     </div>
     <div class="header-actions">
+      <span class="dark-btn" id="toggleThemeBtn" title="Dark/Light Mode">
+        <i class="bi bi-moon-stars-fill"></i> <span>Theme</span>
+      </span>
+      <span class="dark-btn" id="exportPDFBtn" title="Export Dashboard">
+        <i class="bi bi-file-pdf-fill"></i> <span>PDF</span>
+      </span>
+      <span class="dark-btn" id="refreshDataBtn" title="Refresh Data">
+        <i class="bi bi-arrow-repeat"></i> <span>Refresh</span>
+      </span>
       <span class="dark-btn" id="toggleCollapseBtn">
         <i class="bi bi-layout-sidebar"></i> <span id="collapseText">Collapse</span>
       </span>
-      <span class="dark-btn" id="fullscreenModeBtn">
-        <i class="bi bi-arrows-fullscreen"></i> <span>Fullscreen</span>
+      <span class="dark-btn" id="fullscreenBtn" title="Fullscreen">
+        <i class="bi bi-arrows-fullscreen"></i> <span>Full</span>
       </span>
-      <a href="logout" class="btn logout-btn">
-        <i class="bi bi-box-arrow-right"></i> <span>Exit</span>
-      </a>
+      <a href="logout" class="logout-btn"><i class="bi bi-box-arrow-right"></i> <span>Exit</span></a>
     </div>
   </header>
 
-  <!-- ====================  LAYOUT ==================== -->
   <div class="dashboard-layout" id="dashboardLayout">
 
-    <!-- ==========  SIDEBAR (ALL LINKS EXACTLY AS BEFORE) ========= -->
     <aside class="nav-sidebar" id="mainSidebar">
       <div class="nav-category">Core</div>
-
-      <!-- Dashboard dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle active" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle active" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMenu">
           <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
         </button>
-       
       </div>
-
       <div class="nav-category">Identity</div>
-
-      <!-- Manage Users dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#userMenu">
           <i class="bi bi-people-fill"></i> <span>Manage Users</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="/listUser"><i class="bi bi-person-plus"></i> <span>Users</span></a></li>
-          <li><a class="dropdown-item" href=""><i class="bi bi-person-dash"></i> <span>Add User</span></a></li>
-        </ul>
+        <div class="collapse" id="userMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="/listUser"><i class="bi bi-person-plus"></i> Users</a>
+            <a class="dropdown-item" href="addUser"><i class="bi bi-person-dash"></i> Add User</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Verify Student dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#studentMenu">
           <i class="bi bi-patch-check-fill"></i> <span>Verify Student</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listStudent"><i class="bi bi-check-circle"></i> <span>Students</span></a></li>
-          <li><a class="dropdown-item" href="addStudentInfo"><i class="bi bi-x-circle"></i> <span>Add Student</span></a></li>
-        </ul>
+        <div class="collapse" id="studentMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listStudent"><i class="bi bi-check-circle"></i> Students</a>
+            <a class="dropdown-item" href="addStudentInfo"><i class="bi bi-x-circle"></i> Add Student</a>
+          </div>
+        </div>
       </div>
-
-     
-
-      <!-- Verify Employers dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#employerMenu">
           <i class="bi bi-building"></i> <span>Verify Employers</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listEmployer"><i class="bi bi-shield-check"></i> <span>Employers</span></a></li>
-          <li><a class="dropdown-item" href="employer"><i class="bi bi-shield-exclamation"></i> <span>Add Employer</span></a></li>
-        </ul>
+        <div class="collapse" id="employerMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listEmployer"><i class="bi bi-shield-check"></i> Employers</a>
+            <a class="dropdown-item" href="employer"><i class="bi bi-shield-exclamation"></i> Add Employer</a>
+          </div>
+        </div>
       </div>
-
       <div class="nav-category">Opportunities</div>
-
-      <!-- Post Internship dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#internshipMenu">
           <i class="bi bi-briefcase-fill"></i> <span>Internship</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listInternship"><i class="bi bi-send"></i> <span>listInternship</span></a></li>
-          <li><a class="dropdown-item" href="addInternship"><i class="bi bi-file-text"></i> <span>Add Internship</span></a></li>
-        </ul>
+        <div class="collapse" id="internshipMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listInternship"><i class="bi bi-send"></i> List Internship</a>
+            <a class="dropdown-item" href="addInternship"><i class="bi bi-file-text"></i> Add Internship</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Enrollments dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#enrollmentMenu">
           <i class="bi bi-journal-bookmark-fill"></i> <span>Enrollments</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listEnrollment"><i class="bi bi-list-check"></i> <span>List Enrollments</span></a></li>
-          <li><a class="dropdown-item" href="addInternshipEnrollment"><i class="bi bi-clock-history"></i> <span>New Enroll</span></a></li>
-        </ul>
+        <div class="collapse" id="enrollmentMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listEnrollment"><i class="bi bi-list-check"></i> List Enrollments</a>
+            <a class="dropdown-item" href="addInternshipEnrollment"><i class="bi bi-clock-history"></i> New Enroll</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Applications dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#applicationMenu">
           <i class="bi bi-send-fill"></i> <span>Applications</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listapplications"><i class="bi bi-envelope-open"></i> <span>Applications</span></a></li>
-          <li><a class="dropdown-item" href="applyInternship"><i class="bi bi-archive"></i> <span>Add Application</span></a></li>
-        </ul>
+        <div class="collapse" id="applicationMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listapplications"><i class="bi bi-envelope-open"></i> Applications</a>
+            <a class="dropdown-item" href="applyInternship"><i class="bi bi-archive"></i> Add Application</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Reviews dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#reviewMenu">
           <i class="bi bi-star-fill"></i> <span>Reviews</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listReview"><i class="bi bi-star-half"></i> <span>Review</span></a></li>
-          <li><a class="dropdown-item" href="review"><i class="bi bi-star"></i> <span>Add Review</span></a></li>
-        </ul>
+        <div class="collapse" id="reviewMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listReview"><i class="bi bi-star-half"></i> Review</a>
+            <a class="dropdown-item" href="review"><i class="bi bi-star"></i> Add Review</a>
+          </div>
+        </div>
       </div>
-
-      <!-- Certificates dropdown -->
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#certificateMenu">
           <i class="bi bi-award-fill"></i> <span>Certificates</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="listCertificate"><i class="bi bi-file-pdf"></i> <span>listCertificate</span></a></li>
-          <li><a class="dropdown-item" href="certificate"><i class="bi bi-download"></i> <span>Add Certificate</span></a></li>
-        </ul>
+        <div class="collapse" id="certificateMenu">
+          <div class="dropdown-menu show">
+            <a class="dropdown-item" href="listCertificate"><i class="bi bi-file-pdf"></i> List Certificate</a>
+            <a class="dropdown-item" href="certificate"><i class="bi bi-download"></i> Add Certificate</a>
+          </div>
+        </div>
       </div>
     </aside>
 
-    <!-- ==========  MAIN PANEL ============= -->
     <main class="main-panel" id="mainPanel">
 
       <!-- Metric Cards Row -->
-      <div class="row g-4">
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
           <div class="metric-card">
-            <h6>Total users</h6>
-            <div class="metric-number">128</div>
-            <span class="trend-badge"><i class="bi bi-arrow-up-short"></i> +6 this week</span>
+            <h6><i class="bi bi-people-fill"></i> Total Users</h6>
+            <div class="metric-number">${totalUsers}</div>
           </div>
         </div>
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-md-3">
           <div class="metric-card">
-            <h6>Active internships</h6>
-            <div class="metric-number">34</div>
-            <span class="trend-badge"><i class="bi bi-plus-circle"></i> +3 new</span>
+            <h6><i class="bi bi-briefcase-fill"></i> Total Internships</h6>
+            <div class="metric-number">${totalInternships}</div>
           </div>
         </div>
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="col-md-3">
           <div class="metric-card">
-            <h6>Pending employers</h6>
-            <div class="metric-number">4</div>
-            <span class="trend-badge"><i class="bi bi-clock"></i> review</span>
+            <h6><i class="bi bi-send-fill"></i> Total Applications</h6>
+            <div class="metric-number">${totalApplications}</div>
           </div>
         </div>
-        <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+        <div class="col-md-3">
           <div class="metric-card">
-            <h6>Flagged reports</h6>
-            <div class="metric-number">1</div>
-            <span class="trend-badge"><i class="bi bi-flag-fill"></i> urgent</span>
+            <h6><i class="bi bi-award-fill"></i> Total Enrollments</h6>
+            <div class="metric-number">${totalEnrollments}</div>
           </div>
         </div>
       </div>
 
-      <!-- Activity Timeline -->
-      <div class="timeline-card" data-aos="fade-up" data-aos-delay="500">
-        <div class="timeline-title">
-          <i class="bi bi-activity"></i> 
-          Live Activity Feed
+      <!-- Graphs Row 1 -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6><i class="bi bi-pie-chart-fill"></i> 1. User Role Distribution</h6>
+              <button class="btn btn-sm btn-outline-info" onclick="exportChartAsImage('userRoleChart', 'User_Roles')">
+                <i class="bi bi-download"></i>
+              </button>
+            </div>
+            <canvas id="userRoleChart"></canvas>
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6><i class="bi bi-calendar-week"></i> 2. Monthly Registrations</h6>
+              <button class="btn btn-sm btn-outline-info" onclick="toggleChartType('monthlyRegChart')">
+                <i class="bi bi-bar-chart-steps"></i> Toggle
+              </button>
+            </div>
+            <canvas id="monthlyRegChart"></canvas>
+          </div>
+        </div>
+      </div>
 
-        <div class="timeline-item">
-          <i class="bi bi-person-workspace"></i>
-          <span>Darshan applied Java Internship (just now)</span>
+      <!-- Graphs Row 2 -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="chart-card">
+            <h6><i class="bi bi-briefcase"></i> 3. Internship Status</h6>
+            <canvas id="internshipStatusChart"></canvas>
+          </div>
         </div>
-        <div class="timeline-item">
-          <i class="bi bi-building"></i>
-          <span>InnoSoft posted Frontend internship</span>
+        <div class="col-md-6">
+          <div class="chart-card">
+            <h6><i class="bi bi-funnel-fill"></i> 4. Application Status</h6>
+            <canvas id="applicationStatusChart"></canvas>
+          </div>
         </div>
-        <div class="timeline-item">
-          <i class="bi bi-check2-circle"></i>
-          <span> CodeCraft · employer verified + certificate sent</span>
+      </div>
+
+      <!-- Graphs Row 3 -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="chart-card">
+            <h6><i class="bi bi-trophy"></i> 5. Top 5 Internships</h6>
+            <canvas id="topInternshipsChart"></canvas>
+          </div>
         </div>
-        <div class="timeline-item">
-          <i class="bi bi-trophy"></i>
-          <span>3 internships completed - certificates generated</span>
+        <div class="col-md-6">
+          <div class="chart-card">
+            <h6><i class="bi bi-journal-check"></i> 6. Enrollment Status</h6>
+            <canvas id="enrollmentStatusChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graph Row 4 -->
+      <div class="row g-3">
+        <div class="col-md-12">
+          <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6><i class="bi bi-file-pdf-fill"></i> 7. Certificates Issued Monthly</h6>
+              <button class="btn btn-sm btn-outline-info" onclick="toggleChartType('certificatesChart')">
+                <i class="bi bi-bar-chart-steps"></i> Toggle
+              </button>
+            </div>
+            <canvas id="certificatesChart" style="max-height: 260px;"></canvas>
+          </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- ====================  FOOTER ==================== -->
   <footer class="dashboard-footer">
-    2026 SmartIntern - Designed BY Rathod Darshan
+    2026 SmartIntern - Analytics Dashboard | Designed BY Rathod Darshan
   </footer>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
-    (function() {
-      "use strict";
+    // ========== GLOBAL VARIABLES ==========
+    let charts = {};
+    let currentChartTypes = { monthlyRegChart: 'bar', certificatesChart: 'line' };
 
-      // Initialize AOS
-      AOS.init({
-        duration: 600,
-        once: true,
-        offset: 50,
-        easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
-      });
+    // ========== SIDEBAR COLLAPSE ==========
+    const layout = document.getElementById('dashboardLayout');
+    const sidebar = document.getElementById('mainSidebar');
+    const toggleBtn = document.getElementById('toggleCollapseBtn');
+    const collapseText = document.getElementById('collapseText');
 
-      // Original sidebar logic - UNCHANGED
-      const layout = document.getElementById('dashboardLayout');
-      const sidebar = document.getElementById('mainSidebar');
-      const toggleBtn = document.getElementById('toggleCollapseBtn');
-      const fullscreenBtn = document.getElementById('fullscreenModeBtn');
-      const collapseText = document.getElementById('collapseText');
+    toggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      sidebar.classList.toggle('collapsed');
+      collapseText.innerText = sidebar.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+    });
 
-      toggleBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (layout.classList.contains('fullscreen')) {
-          layout.classList.remove('fullscreen');
+    // ========== FULLSCREEN ==========
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> <span>Exit</span>';
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> <span>Full</span>';
+      }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> <span>Exit</span>';
+      } else {
+        fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> <span>Full</span>';
+      }
+    });
+
+    // ========== THEME SWITCHER ==========
+    const themeBtn = document.getElementById('toggleThemeBtn');
+    let isDarkMode = true;
+    themeBtn.addEventListener('click', function() {
+      isDarkMode = !isDarkMode;
+      if(isDarkMode) {
+        document.body.classList.remove('light-theme');
+        themeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i> <span>Theme</span>';
+      } else {
+        document.body.classList.add('light-theme');
+        themeBtn.innerHTML = '<i class="bi bi-sun-fill"></i> <span>Theme</span>';
+      }
+      showToast('Switched to ' + (isDarkMode ? 'Dark' : 'Light') + ' Mode');
+    });
+
+    // ========== TOAST NOTIFICATION ==========
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.innerHTML = '<i class="bi bi-check-circle"></i> ' + message;
+      document.body.appendChild(toast);
+      setTimeout(function() { toast.remove(); }, 3000);
+    }
+
+    // ========== EXPORT CHART AS IMAGE ==========
+    function exportChartAsImage(chartId, filename) {
+      const canvas = document.getElementById(chartId);
+      if(canvas) {
+        const link = document.createElement('a');
+        link.download = filename + '.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        showToast('Exported ' + filename);
+      }
+    }
+
+    // ========== EXPORT AS PDF ==========
+    document.getElementById('exportPDFBtn').addEventListener('click', function() {
+      const element = document.getElementById('mainPanel');
+      html2pdf().from(element).set({
+        margin: [10, 10, 10, 10],
+        filename: 'SmartIntern_Dashboard.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      }).save();
+      showToast('Exporting dashboard as PDF...');
+    });
+
+    // ========== REFRESH DATA ==========
+    document.getElementById('refreshDataBtn').addEventListener('click', function() {
+      location.reload();
+    });
+
+    // ========== TOGGLE CHART TYPE ==========
+    function toggleChartType(chartId) {
+      const canvas = document.getElementById(chartId);
+      if(!canvas) return;
+      
+      const currentType = currentChartTypes[chartId] || 'bar';
+      let newType, labels, values, label;
+      
+      if(chartId === 'monthlyRegChart') {
+        labels = monthlyLabels;
+        values = monthlyValues;
+        label = 'New Users';
+        newType = currentType === 'bar' ? 'line' : 'bar';
+      } else {
+        labels = certMonths;
+        values = certCounts;
+        label = 'Certificates Issued';
+        newType = currentType === 'line' ? 'bar' : 'line';
+      }
+      
+      if(charts[chartId]) charts[chartId].destroy();
+      
+      if(newType === 'bar') {
+        charts[chartId] = createBarChart(canvas.getContext('2d'), labels, values, label);
+      } else {
+        charts[chartId] = createLineChart(canvas.getContext('2d'), labels, values, label);
+      }
+      
+      currentChartTypes[chartId] = newType;
+      showToast('Chart type changed to ' + newType.toUpperCase());
+    }
+
+    // ========== GRAPH DATA FROM BACKEND ==========
+    const roleLabels = ${roleLabelsJson != null ? roleLabelsJson : '[]'};
+    const roleValues = ${roleValuesJson != null ? roleValuesJson : '[]'};
+    const monthlyLabels = ${monthlyLabelsJson != null ? monthlyLabelsJson : '[]'};
+    const monthlyValues = ${monthlyValuesJson != null ? monthlyValuesJson : '[]'};
+    const statusLabels = ${statusLabelsJson != null ? statusLabelsJson : '[]'};
+    const statusValues = ${statusValuesJson != null ? statusValuesJson : '[]'};
+    const appLabels = ${appLabelsJson != null ? appLabelsJson : '[]'};
+    const appValues = ${appValuesJson != null ? appValuesJson : '[]'};
+    const topTitles = ${topTitlesJson != null ? topTitlesJson : '[]'};
+    const topCounts = ${topCountsJson != null ? topCountsJson : '[]'};
+    const enrollLabels = ${enrollLabelsJson != null ? enrollLabelsJson : '[]'};
+    const enrollValues = ${enrollValuesJson != null ? enrollValuesJson : '[]'};
+    const certMonths = ${certMonthsJson != null ? certMonthsJson : '[]'};
+    const certCounts = ${certCountsJson != null ? certCountsJson : '[]'};
+
+    // Chart.js Configuration
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#B3CDE0';
+
+    function createPieChart(ctx, labels, values) {
+      if(!ctx || !labels.length) return null;
+      return new Chart(ctx, {
+        type: 'doughnut',
+        data: { 
+          labels: labels, 
+          datasets: [{ 
+            data: values, 
+            backgroundColor: ['#4B8BBE', '#2C3E50', '#B3CDE0', '#A8A8A8', '#6ba5d1'], 
+            borderWidth: 0,
+            hoverOffset: 10
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: true,
+          plugins: { 
+            legend: { position: 'bottom', labels: { color: '#B3CDE0', font: { size: 10 } } }
+          } 
         }
-        sidebar.classList.toggle('collapsed');
-        
-        if (sidebar.classList.contains('collapsed')) {
-          collapseText.innerText = 'Expand';
-        } else {
-          collapseText.innerText = 'Collapse';
+      });
+    }
+
+    function createBarChart(ctx, labels, values, label) {
+      if(!ctx || !labels.length) return null;
+      return new Chart(ctx, {
+        type: 'bar',
+        data: { 
+          labels: labels, 
+          datasets: [{ 
+            label: label, 
+            data: values, 
+            backgroundColor: '#4B8BBE', 
+            borderRadius: 8,
+            barPercentage: 0.65
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: true,
+          plugins: { legend: { labels: { color: '#B3CDE0' } } },
+          scales: { 
+            y: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179, 205, 224, 0.1)' } }, 
+            x: { ticks: { color: '#B3CDE0' }, grid: { color: 'rgba(179, 205, 224, 0.1)' } } 
+          } 
         }
       });
+    }
 
-      fullscreenBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        layout.classList.toggle('fullscreen');
-        
-        if (layout.classList.contains('fullscreen')) {
-          sidebar.classList.remove('collapsed');
-          collapseText.innerText = 'Collapse';
-          fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> Sidebar off';
-        } else {
-          fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
+    function createLineChart(ctx, labels, values, label) {
+      if(!ctx || !labels.length) return null;
+      return new Chart(ctx, {
+        type: 'line',
+        data: { 
+          labels: labels, 
+          datasets: [{ 
+            label: label, 
+            data: values, 
+            borderColor: '#4B8BBE', 
+            backgroundColor: 'rgba(75, 139, 190, 0.1)', 
+            fill: true, 
+            tension: 0.4,
+            pointBackgroundColor: '#4B8BBE',
+            pointBorderColor: '#FFFFFF',
+            pointRadius: 4
+          }] 
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: true,
+          plugins: { legend: { labels: { color: '#B3CDE0' } } },
+          scales: { 
+            y: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179, 205, 224, 0.1)' } }, 
+            x: { ticks: { color: '#B3CDE0' }, grid: { color: 'rgba(179, 205, 224, 0.1)' } } 
+          } 
         }
       });
+    }
 
-      fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> Fullscreen';
-      collapseText.innerText = 'Collapse';
-
-      // Add staggered animation to dropdown items on page load
-      document.querySelectorAll('.dropdown').forEach((dropdown, index) => {
-        dropdown.style.animation = `dropdownAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 0.1}s forwards`;
+    function createHorizontalBarChart(ctx, labels, values, label) {
+      if(!ctx || !labels.length) return null;
+      return new Chart(ctx, {
+        type: 'bar',
+        data: { 
+          labels: labels, 
+          datasets: [{ 
+            label: label, 
+            data: values, 
+            backgroundColor: '#4B8BBE', 
+            borderRadius: 8
+          }] 
+        },
+        options: { 
+          indexAxis: 'y', 
+          responsive: true, 
+          maintainAspectRatio: true,
+          plugins: { legend: { labels: { color: '#B3CDE0' } } },
+          scales: { 
+            x: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179, 205, 224, 0.1)' } }, 
+            y: { ticks: { color: '#B3CDE0' }, grid: { display: false } } 
+          } 
+        }
       });
-    })();
+    }
+
+    // Create all charts
+    if(roleLabels.length) charts.userRoleChart = createPieChart(document.getElementById('userRoleChart'), roleLabels, roleValues);
+    if(monthlyLabels.length) charts.monthlyRegChart = createBarChart(document.getElementById('monthlyRegChart'), monthlyLabels, monthlyValues, 'New Users');
+    if(statusLabels.length) charts.internshipStatusChart = createPieChart(document.getElementById('internshipStatusChart'), statusLabels, statusValues);
+    if(appLabels.length) charts.applicationStatusChart = createPieChart(document.getElementById('applicationStatusChart'), appLabels, appValues);
+    if(topTitles.length) charts.topInternshipsChart = createHorizontalBarChart(document.getElementById('topInternshipsChart'), topTitles, topCounts, 'Applications');
+    if(enrollLabels.length) charts.enrollmentStatusChart = createPieChart(document.getElementById('enrollmentStatusChart'), enrollLabels, enrollValues);
+    if(certMonths.length) charts.certificatesChart = createLineChart(document.getElementById('certificatesChart'), certMonths, certCounts, 'Certificates Issued');
+
+    console.log("Dashboard loaded successfully!");
   </script>
 </body>
 </html>

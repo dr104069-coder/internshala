@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,8 @@ import com.grownited.entity.UserDetailEntity;
 import com.grownited.entity.UserEntity;
 import com.grownited.repository.UserDetailRepository;
 import com.grownited.repository.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -121,6 +124,73 @@ public class UserController {
 	    
 	    // Redirect to listUser instead of login
 	    return "redirect:/listUser";
+	}
+	
+	// GET mapping to show edit form
+	@GetMapping("/editUser")
+	public String editUser(@RequestParam Integer userId, Model model) {
+	    UserEntity user = userRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+	    UserDetailEntity userDetail = userDetailRepository.findByUserId(userId);
+	    
+	    model.addAttribute("user", user);
+	    model.addAttribute("userDetail", userDetail);
+	    
+	    return "useredit";
+	}
+
+	// POST mapping to update user
+	@PostMapping("/updateUser")
+	public String updateUser(
+	        @ModelAttribute UserEntity user,
+	        @RequestParam(required = false) Integer userDetailId,
+	        @RequestParam(required = false) String qualification,
+	        @RequestParam(required = false) String city,
+	        @RequestParam(required = false) String state,
+	        @RequestParam(required = false) String country,
+	        @RequestParam(required = false) MultipartFile profilePic) {
+	    
+	    // Get existing user from database
+	    UserEntity existingUser = userRepository.findById(user.getUserId())
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+	    
+	    // Update fields (except password)
+	    existingUser.setFirstName(user.getFirstName());
+	    existingUser.setLastName(user.getLastName());
+	    existingUser.setEmail(user.getEmail());
+	    existingUser.setPhone(user.getPhone());
+	    existingUser.setGender(user.getGender());
+	    existingUser.setRole(user.getRole());
+	    existingUser.setUsertype(user.getUsertype());
+	    existingUser.setActive(user.getActive());
+	    
+	    // Handle profile picture
+	    if (profilePic != null && !profilePic.isEmpty()) {
+	        try {
+	            Map map = cloudinary.uploader().upload(profilePic.getBytes(), null);
+	            existingUser.setProfilePicURL(map.get("secure_url").toString());
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    userRepository.save(existingUser);
+	    
+	    // Update UserDetailEntity
+	    UserDetailEntity userDetail = userDetailRepository.findByUserId(existingUser.getUserId());
+	    if (userDetail == null) {
+	        userDetail = new UserDetailEntity();
+	        userDetail.setUserId(existingUser.getUserId());
+	    }
+	    
+	    userDetail.setQualification(qualification);
+	    userDetail.setCity(city);
+	    userDetail.setState(state);
+	    userDetail.setCountry(country);
+	    
+	    userDetailRepository.save(userDetail);
+	    
+	    return "redirect:/viewUser?userId=" + existingUser.getUserId();
 	}
 
 }

@@ -2,6 +2,7 @@ package com.grownited.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
 import com.grownited.entity.StudentDetailEntity;
 import com.grownited.entity.UserEntity;
 import com.grownited.repository.StudentDetailRepository;
@@ -22,7 +25,8 @@ public class StudentDeatilController {
 	@Autowired
 	StudentDetailRepository studentDetailRepository;
 	
-	
+	 @Autowired
+		Cloudinary cloudinary;
 	
 //	@GetMapping("/studentDashboard")
 //    public String studentDashboard() {
@@ -133,7 +137,73 @@ public class StudentDeatilController {
 	}
 
 
+	// GET mapping to show edit form
+	@GetMapping("/editStudent")
+	public String editStudent(@RequestParam Integer studentDetailId, Model model) {
+		
+		
+	    
+	    StudentDetailEntity student = studentDetailRepository.findById(studentDetailId)
+	            .orElseThrow(() -> new RuntimeException("Student not found"));
+	    
+	    model.addAttribute("student", student);
+	    
+	    return "editStudent";
+	}
 
+	// POST mapping to update student
+	@PostMapping("/updateStudent")
+	public String updateStudent(
+	        @RequestParam Integer studentDetailId,
+	        @RequestParam(required = false) String collegeName,
+	        @RequestParam(required = false) String degree,
+	        @RequestParam(required = false) Integer semester,
+	        @RequestParam(required = false) Integer graduationYear,
+	        @RequestParam(required = false) String tshirtSize,
+	        @RequestParam(required = false) String city,
+	        @RequestParam(required = false) String state,
+	        @RequestParam(required = false) MultipartFile profilePic,
+	        @RequestParam(required = false) MultipartFile resume) {
+	    
+	    // Get existing student record
+	    StudentDetailEntity student = studentDetailRepository.findById(studentDetailId)
+	            .orElseThrow(() -> new RuntimeException("Student not found"));
+	    
+	    // Update fields
+	    student.setCollegeName(collegeName);
+	    student.setDegree(degree);
+	    student.setSemester(semester);
+	    student.setGraduationYear(graduationYear);
+	    student.setTshirtSize(tshirtSize);
+	    student.setCity(city);
+	    student.setState(state);
+	    
+	    // Handle profile picture upload (if you have Cloudinary configured)
+	    if (profilePic != null && !profilePic.isEmpty()) {
+	        try {
+	            Map map = cloudinary.uploader().upload(profilePic.getBytes(), null);
+
+	            // ✅ Store full URL (same as user)
+	            student.setProfilePicPath(map.get("secure_url").toString());
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    // Handle resume upload
+	    if (resume != null && !resume.isEmpty()) {
+	        try {
+	            student.setResumePath(resume.getOriginalFilename());
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    
+	    studentDetailRepository.save(student);
+	    
+	    return "redirect:/viewStudent?studentDetailId=" + studentDetailId;
+	}
 	
 	
 }

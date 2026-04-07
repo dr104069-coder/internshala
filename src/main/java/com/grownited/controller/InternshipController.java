@@ -196,6 +196,44 @@ public class InternshipController {
 	}
 	
 	
+	// Employer View Internship Details
+	@GetMapping("/employerViewInternship")
+	public String employerViewInternship(@RequestParam Integer internshipId, 
+	                                      HttpSession session, 
+	                                      Model model) {
+	    
+	    UserEntity user = (UserEntity) session.getAttribute("user");
+	    
+	    if (user == null) {
+	        return "redirect:/login";
+	    }
+	    
+	    // Get employer
+	    List<EmployerEntity> employers = employerRepository.findAllByUser(user);
+	    if (employers.isEmpty()) {
+	        return "redirect:/profileemployer";
+	    }
+	    
+	    EmployerEntity employer = employers.get(0);
+	    
+	    // Get internship and verify it belongs to this employer
+	    InternshipEntity internship = internshiprepository.findById(internshipId).orElse(null);
+	    
+	    if (internship == null || internship.getEmployer().getEmployerId() != employer.getEmployerId()) {
+	        return "redirect:/employerdashboard";
+	    }
+	    
+	    model.addAttribute("internship", internship);
+	    
+	    return "employerViewInternship";
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	@GetMapping("/listInternship")
 	public String listInternship(Model model) {
@@ -221,6 +259,124 @@ public class InternshipController {
 	    // Delete internship by ID
 	    internshiprepository.deleteById(internshipId);
 	    return "redirect:/listInternship";
+	}
+	
+	
+	
+	// GET - Show Edit Form
+	@GetMapping("/editInternship")
+	public String editInternship(@RequestParam Integer internshipId, 
+	                             HttpSession session, 
+	                             Model model) {
+	    
+	    UserEntity user = (UserEntity) session.getAttribute("user");
+	    
+	    if (user == null) {
+	        return "redirect:/login";
+	    }
+	    
+	    // Get employer
+	    List<EmployerEntity> employers = employerRepository.findAllByUser(user);
+	    if (employers.isEmpty()) {
+	        return "redirect:/profileemployer";
+	    }
+	    
+	    EmployerEntity employer = employers.get(0);
+	    
+	    // Get internship and verify ownership
+	    InternshipEntity internship = internshiprepository.findById(internshipId).orElse(null);
+	    
+	    if (internship == null || internship.getEmployer().getEmployerId() != employer.getEmployerId()) {
+	        return "redirect:/employerdashboard";
+	    }
+	    
+	    model.addAttribute("internship", internship);
+	    
+	    return "editInternship";
+	}
+	
+	
+	// GET - Show Edit Form for ADMIN (no employer ownership check)
+	// GET - Show Edit Form for ADMIN (no employer ownership check)
+	@GetMapping("/Internshipedit")
+	public String adminEditInternship(@RequestParam Integer internshipId, Model model) {
+	    
+	    InternshipEntity internship = internshiprepository.findById(internshipId).orElse(null);
+	    
+	    if (internship == null) {
+	        return "redirect:/listInternship";
+	    }
+	    
+	    model.addAttribute("internship", internship);
+	    return "Internshipedit";
+	}
+
+	// POST - Update Internship
+	@PostMapping("/updateInternship")
+	public String updateInternship(InternshipEntity updatedInternship,
+	                               @RequestParam("posterFile") MultipartFile posterFile,
+	                               HttpSession session) {
+	    
+	    UserEntity user = (UserEntity) session.getAttribute("user");
+	    
+	    if (user == null) {
+	        return "redirect:/login";
+	    }
+	    
+	    // Get employer
+	    List<EmployerEntity> employers = employerRepository.findAllByUser(user);
+	    if (employers.isEmpty()) {
+	        return "redirect:/profileemployer";
+	    }
+	    
+	    EmployerEntity employer = employers.get(0);
+	    
+	    // Find existing internship
+	    InternshipEntity existingInternship = internshiprepository.findById(updatedInternship.getInternshipId()).orElse(null);
+	    
+	    if (existingInternship == null || existingInternship.getEmployer().getEmployerId() != employer.getEmployerId()) {
+	        return "redirect:/employerdashboard";
+	    }
+	    
+	    // Update fields
+	    existingInternship.setTitle(updatedInternship.getTitle());
+	    existingInternship.setDescription(updatedInternship.getDescription());
+	    existingInternship.setInternshipType(updatedInternship.getInternshipType());
+	    existingInternship.setDurationMonths(updatedInternship.getDurationMonths());
+	    existingInternship.setStipend(updatedInternship.getStipend());
+	    existingInternship.setLocation(updatedInternship.getLocation());
+	    existingInternship.setSkillsRequired(updatedInternship.getSkillsRequired());
+	    existingInternship.setOpenings(updatedInternship.getOpenings());
+	    existingInternship.setStartDate(updatedInternship.getStartDate());
+	    existingInternship.setEndDate(updatedInternship.getEndDate());
+	    existingInternship.setLastApplyDate(updatedInternship.getLastApplyDate());
+	    existingInternship.setStartApplyDate(updatedInternship.getStartApplyDate());
+	    existingInternship.setIsPaid(updatedInternship.getIsPaid());
+	    existingInternship.setStatus(updatedInternship.getStatus());
+	    
+	    // Handle poster upload
+	    try {
+	        if (posterFile != null && !posterFile.isEmpty()) {
+	            Map<String, Object> map = cloudinary.uploader().upload(posterFile.getBytes(), null);
+	            String posterUrl = map.get("secure_url").toString();
+	            existingInternship.setPosterUrl(posterUrl);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    // Save updated internship
+	    internshiprepository.save(existingInternship);
+	    
+	   
+	 // ✅ FIXED REDIRECTION based on role
+	    if ("ADMIN".equals(user.getRole())) {
+	        // Admin goes back to list page
+	        return "redirect:/listInternship";
+	    } else {
+	        // Employer goes to view page
+	        return "redirect:/employerViewInternship?internshipId=" + existingInternship.getInternshipId();
+	    }
 	}
 
 }

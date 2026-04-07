@@ -899,15 +899,18 @@
                             <div class="row">
                                 <!-- Profile Image & Student Name -->
                                 <div class="col-md-3 profile-image-section">
-                                    <c:choose>
-                                        <c:when test="${not empty student.profilePicPath}">
-                                            <img src="${student.profilePicPath}" class="profile-img" alt="Profile">
-                                        </c:when>
-                                        <c:otherwise>
-                                            <img src="https://via.placeholder.com/150" 
-                                                 class="profile-img" alt="Default Profile">
-                                        </c:otherwise>
-                                    </c:choose>
+                                  <c:choose>
+    <c:when test="${not empty student.profilePicPath}">
+        <img src="${student.profilePicPath}" class="profile-img" alt="Profile">
+    </c:when>
+    <c:when test="${not empty student.user.profilePicURL}">
+        <img src="${student.user.profilePicURL}" class="profile-img" alt="Profile">
+    </c:when>
+    <c:otherwise>
+        <img src="https://via.placeholder.com/150" 
+             class="profile-img" alt="Default Profile">
+    </c:otherwise>
+</c:choose>
                                     <!-- STUDENT NAME DIRECTLY UNDER THE CIRCLE -->
                                     <div class="student-name-under">${student.user.firstName} ${student.user.lastName}</div>
                                 </div>
@@ -993,7 +996,7 @@
                         <i class="bi bi-arrow-left"></i> Back to List
                     </a>
                     <c:if test="${not empty student}">
-                        <a href="editStudent?studentDetailId=${student.studentDetailId}" class="btn footer-btn btn-edit">
+                        <a href="/editStudent?studentDetailId=${student.studentDetailId}" class="btn footer-btn btn-edit">
                             <i class="bi bi-pencil-fill"></i> Edit
                         </a>
                     </c:if>

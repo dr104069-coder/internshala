@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.grownited.entity.CertificateEntity;
 import com.grownited.entity.InternshipEnrollmentEntity;
+import com.grownited.entity.UserEntity;
 import com.grownited.repository.CertificateRepository;
 import com.grownited.repository.InternshipEnrollmentRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CertificateController {
@@ -109,5 +113,24 @@ public class CertificateController {
 	    certificaterepository.deleteById(certificateId);
 
 	    return "redirect:/listCertificate";
+	}
+	
+	
+	// In your Controller
+	@GetMapping("/myCertificates")
+	public String myCertificates(HttpSession session, HttpServletRequest request, Model model) {
+	    UserEntity user = (UserEntity) session.getAttribute("user");
+	    if (user == null) {
+	        return "redirect:/login";
+	    }
+	    
+	    String referer = request.getHeader("referer");
+	    model.addAttribute("previousPage", referer != null ? referer : "/studentDashboard");
+	    
+	    // Get all certificates for this student
+	    List<CertificateEntity> certificates = certificaterepository.findByEnrollment_Student_UserId(user.getUserId());
+	    
+	    model.addAttribute("certificates", certificates);
+	    return "myCertificates";
 	}
 }

@@ -1071,7 +1071,7 @@
                     <a href="listUser" class="btn footer-btn btn-back">
                         <i class="bi bi-arrow-left"></i> Back
                     </a>
-                    <a href="editUser?userId=${user.userId}" class="btn footer-btn btn-edit">
+                    <a href="/editUser?userId=${user.userId}" class="btn footer-btn btn-edit">
                         <i class="bi bi-pencil-fill"></i> Edit
                     </a>
                 </div>

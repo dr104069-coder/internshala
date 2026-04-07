@@ -20,8 +20,8 @@
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <style>
+/* Your existing CSS styles remain the same */
 :root {
-    /* Ocean Sunset Color Palette - Same as Dashboard */
     --cerulean: #247ba0;
     --cerulean-dark: #1a5f7e;
     --cerulean-light: #4098c0;
@@ -156,7 +156,7 @@ body {
     100% { transform: scale(1); }
 }
 
-/* Modern Header - Same as Dashboard */
+/* Modern Header */
 .modern-header {
     background: linear-gradient(135deg, var(--cerulean) 0%, var(--tropical-teal) 100%);
     padding: 1.5rem 0;
@@ -509,7 +509,7 @@ body {
     gap: 1.5rem;
 }
 
-/* Cards - Same style as Dashboard */
+/* Cards */
 .info-card, .poster-card {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(8px);
@@ -685,7 +685,7 @@ body {
 /* Dates Grid */
 .dates-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-top: 1rem;
 }
@@ -989,7 +989,7 @@ body {
     border: 1px solid var(--tropical-teal);
 }
 
-/* Modern Footer - Same as Dashboard */
+/* Modern Footer */
 .modern-footer {
     background: var(--footer-bg);
     color: rgba(255, 255, 255, 0.9);
@@ -1143,7 +1143,7 @@ body {
 </head>
 <body>
 
-<!-- Modern Header - Same as Dashboard -->
+<!-- Modern Header -->
 <header class="modern-header">
     <div class="header-container">
         <div class="logo-area">
@@ -1154,7 +1154,7 @@ body {
             </div>
             <div class="logo-text">
                 <h1>SmartIntern</h1>
-                <p>AI-Powered Internship Platform</p>
+                <p>Internship Platform</p>
             </div>
         </div>
         
@@ -1320,6 +1320,11 @@ body {
                                 </div>
                                 <div class="date-item">
                                     <div class="date-icon"><i class="fas fa-hourglass-end"></i></div>
+                                    <div class="date-label">START APPLY</div>
+                                    <div class="date-value">${internship.startApplyDate}</div>
+                                </div>
+                                <div class="date-item">
+                                    <div class="date-icon"><i class="fas fa-hourglass-end"></i></div>
                                     <div class="date-label">LAST APPLY</div>
                                     <div class="date-value">${internship.lastApplyDate}</div>
                                 </div>
@@ -1385,75 +1390,165 @@ body {
                             </c:choose>
                         </div>
                         
-                        <!-- Action Card -->
-                        <div class="info-card">
+      <!-- Action Card -->
+<div class="info-card">
+    <c:choose>
+        <%-- Already Applied --%>
+        <c:when test="${hasApplied}">
+            <c:choose>
+                <%-- ACCEPTED --%>
+                <c:when test="${applicationStatus == 'ACCEPTED'}">
+                    <div class="btn-applied" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="fas fa-check-circle"></i> 🎉 Congratulations! You've Been Accepted!
+                    </div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 16px; text-align: center; border-left: 4px solid #10b981;">
+                        <i class="fas fa-envelope-open-text" style="color: #10b981; font-size: 1.2rem;"></i>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--dark);">
+                            <strong>You've been selected!</strong><br>
+                            The employer will contact you soon with further instructions.
+                            Please check your email regularly.
+                        </p>
+                    </div>
+                </c:when>
+                
+                <%-- REJECTED --%>
+                <c:when test="${applicationStatus == 'REJECTED'}">
+                    <div class="btn-applied" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                        <i class="fas fa-times-circle"></i> ❌ Application Not Selected
+                    </div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 16px; text-align: center; border-left: 4px solid #ef4444;">
+                        <i class="fas fa-frown" style="color: #ef4444; font-size: 1.2rem;"></i>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--dark);">
+                            <strong>We're sorry, but your application was not selected.</strong><br>
+                            Don't give up! Check out other internships that match your skills.
+                        </p>
+                        <a href="internships" class="btn-primary-modern" style="margin-top: 0.8rem; display: inline-block;">
+                            <i class="fas fa-search"></i> Browse More Internships
+                        </a>
+                    </div>
+                </c:when>
+                
+                <%-- PENDING / APPLIED --%>
+                <c:otherwise>
+                    <div class="btn-applied" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <i class="fas fa-hourglass-half"></i> ⏳ Application Under Review
+                    </div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 16px; text-align: center; border-left: 4px solid #f59e0b;">
+                        <i class="fas fa-spinner fa-pulse" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--dark);">
+                            <strong>Your application has been submitted!</strong><br>
+                            The employer is reviewing your profile. You'll receive an email once a decision is made.
+                            We'll notify you as soon as there's an update.
+                        </p>
+                        <div style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--gray);">
+                            <i class="fas fa-clock"></i> Response typically takes 5-7 business days
+                        </div>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </c:when>
+        
+        <%-- Not Applied Yet --%>
+        <c:otherwise>
+            <c:choose>
+                <%-- OPEN - Show Apply Button --%>
+                <c:when test="${calculatedStatus eq 'OPEN'}">
+                    <a href="applyInternship?internshipId=${internship.internshipId}" class="btn-apply">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </a>
+                    <div style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--gray); text-align: center;">
+                        <i class="fas fa-info-circle"></i> Last date to apply: ${internship.lastApplyDate}
+                    </div>
+                    
+                    <%-- Show countdown to start date if applicable --%>
+                    <c:if test="${showCountdown}">
+                        <div class="countdown-container" style="margin-top: 1rem;">
+                            <div class="countdown-header">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>${countdownLabel}</span>
+                            </div>
+                            <div class="countdown-display">
+                                <span class="countdown-number" id="days">0</span>
+                                <span class="countdown-label">d</span>
+                                <span class="countdown-separator">:</span>
+                                <span class="countdown-number" id="hours">00</span>
+                                <span class="countdown-label">h</span>
+                                <span class="countdown-separator">:</span>
+                                <span class="countdown-number" id="minutes">00</span>
+                                <span class="countdown-label">m</span>
+                                <span class="countdown-separator">:</span>
+                                <span class="countdown-number" id="seconds">00</span>
+                                <span class="countdown-label">s</span>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:when>
+                
+                <%-- UPCOMING - Show Countdown to StartApplyDate --%>
+                <c:when test="${calculatedStatus eq 'UPCOMING'}">
+                    <div class="countdown-container">
+                        <div class="countdown-header">
+                            <i class="fas fa-rocket"></i>
+                            <span>${countdownLabel}</span>
+                        </div>
+                        
+                        <div class="countdown-display">
+                            <span class="countdown-number" id="days">0</span>
+                            <span class="countdown-label">d</span>
+                            <span class="countdown-separator">:</span>
+                            <span class="countdown-number" id="hours">00</span>
+                            <span class="countdown-label">h</span>
+                            <span class="countdown-separator">:</span>
+                            <span class="countdown-number" id="minutes">00</span>
+                            <span class="countdown-label">m</span>
+                            <span class="countdown-separator">:</span>
+                            <span class="countdown-number" id="seconds">00</span>
+                            <span class="countdown-label">s</span>
+                        </div>
+                        
+                        <div class="start-info">
+                            <i class="fas fa-calendar-alt"></i>
                             <c:choose>
-                                <%-- Already Applied --%>
-                                <c:when test="${hasApplied}">
-                                    <div class="btn-applied">
-                                        <i class="fas fa-check-circle"></i> Already Applied
-                                    </div>
+                                <c:when test="${not empty internship.startApplyDate and internship.startApplyDate > currentDate}">
+                                    Applications open on: <strong>${internship.startApplyDate}</strong>
                                 </c:when>
-                                
-                                <%-- Not Applied Yet --%>
                                 <c:otherwise>
-                                    <c:choose>
-                                        <%-- OPEN - Show Apply Button --%>
-                                        <c:when test="${shouldShowApply}">
-                                            <a href="applyInternship?internshipId=${internship.internshipId}" class="btn-apply">
-                                                <i class="fas fa-paper-plane"></i> Apply Now
-                                            </a>
-                                        </c:when>
-                                        
-                                        <%-- UPCOMING - Show Countdown --%>
-                                        <c:when test="${calculatedStatus eq 'UPCOMING'}">
-                                            <div class="countdown-container">
-                                                <div class="countdown-header">
-                                                    <i class="fas fa-rocket"></i>
-                                                    <span>Starts in</span>
-                                                </div>
-                                                
-                                                <!-- Live Countdown Timer -->
-                                                <div class="countdown-display" id="countdownDisplay">
-                                                    <span class="countdown-number" id="days">0</span>
-                                                    <span class="countdown-label">d</span>
-                                                    <span class="countdown-separator">:</span>
-                                                    <span class="countdown-number" id="hours">00</span>
-                                                    <span class="countdown-label">h</span>
-                                                    <span class="countdown-separator">:</span>
-                                                    <span class="countdown-number" id="minutes">00</span>
-                                                    <span class="countdown-label">m</span>
-                                                    <span class="countdown-separator">:</span>
-                                                    <span class="countdown-number" id="seconds">00</span>
-                                                    <span class="countdown-label">s</span>
-                                                </div>
-                                                
-                                                <div class="start-info">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                    Starts: <strong>${internship.startDate}</strong>
-                                                </div>
-                                                
-                                                <a href="#" class="btn-notify-sm" onclick="notifyMe(${internship.internshipId}); return false;">
-                                                    <i class="fas fa-bell"></i> Notify Me
-                                                </a>
-                                            </div>
-                                        </c:when>
-                                        
-                                        <%-- CLOSED --%>
-                                        <c:otherwise>
-                                            <div class="btn-apply disabled">
-                                                <i class="fas fa-ban"></i> Applications Closed
-                                            </div>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    Starts on: <strong>${internship.startDate}</strong>
                                 </c:otherwise>
                             </c:choose>
-                            
-                            <!-- Back Button -->
-                            <a href="studentDashboard" class="btn-back">
-                                <i class="fas fa-arrow-left"></i> Back to Dashboard
-                            </a>
                         </div>
+                        
+                        <a href="#" class="btn-notify-sm" onclick="notifyMe(${internship.internshipId}); return false;">
+                            <i class="fas fa-bell"></i> Get Notified When Applications Open
+                        </a>
+                    </div>
+                </c:when>
+                
+                <%-- CLOSED --%>
+                <c:otherwise>
+                    <div class="btn-apply disabled">
+                        <i class="fas fa-ban"></i> Applications Closed
+                    </div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 16px; text-align: center;">
+                        <i class="fas fa-calendar-times" style="color: #ef4444; font-size: 1.2rem;"></i>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--dark);">
+                            <strong>Application deadline has passed.</strong><br>
+                            Check out other active internships below.
+                        </p>
+                        <a href="internships" class="btn-primary-modern" style="margin-top: 0.8rem; display: inline-block;">
+                            <i class="fas fa-search"></i> View Active Internships
+                        </a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </c:otherwise>
+    </c:choose>
+    
+    <!-- Back Button -->
+   <a href="${not empty previousPage ? previousPage : 'studentDashboard'}" class="btn-back" style="display: block; text-align: center; margin-top: 1rem;">
+    <i class="fas fa-arrow-left"></i> Go Back
+</a>
+</div>
                     </div>
                 </div>
             </div>
@@ -1461,7 +1556,7 @@ body {
     </c:choose>
 </div>
 
-<!-- Modern Footer - Same as Dashboard -->
+<!-- Modern Footer -->
 <footer class="modern-footer">
     <div class="footer-container">
         <div class="footer-logo">
@@ -1485,6 +1580,7 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+// Initialize AOS
 AOS.init({
     duration: 800,
     once: true,
@@ -1492,19 +1588,80 @@ AOS.init({
 });
 
 function notifyMe(id) {
-    alert('✓ You will be notified when this internship opens!');
+    // You can enhance this with AJAX to save notification preference
+    alert('✓ You will be notified when this internship opens for applications!');
+    
+    // Optional: Save notification preference to database
+    /*
+    fetch('/api/notifications/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ internshipId: id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✓ We will notify you when applications open!');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+    */
 }
 
-<c:if test="${calculatedStatus eq 'UPCOMING'}">
-    (function() {
-        const startDateStr = "${internship.startDate}";
-        const startDate = new Date(startDateStr + "T00:00:00");
+// UNIVERSAL COUNTDOWN TIMER - Supports both startApplyDate and startDate
+(function() {
+    // Use the new countdownTimestamp if available, fallback to startDateTimestamp
+    const countdownTimestamp = ${countdownTimestamp != null ? countdownTimestamp : 0};
+    const startDateTimestamp = ${startDateTimestamp != null ? startDateTimestamp : 0};
+    const calculatedStatus = "${calculatedStatus}";
+    const countdownLabel = "${countdownLabel != null ? countdownLabel : ''}";
+    
+    // Determine which timestamp to use
+    let timestamp = countdownTimestamp > 0 ? countdownTimestamp : startDateTimestamp;
+    
+    console.log("=== Countdown Timer Debug ===");
+    console.log("Calculated Status:", calculatedStatus);
+    console.log("Countdown Label:", countdownLabel);
+    console.log("Countdown Timestamp:", countdownTimestamp);
+    console.log("Start Date Timestamp:", startDateTimestamp);
+    console.log("Using Timestamp:", timestamp);
+    console.log("Current Time:", new Date().getTime());
+    console.log("Current Date:", new Date());
+    
+    // Update the countdown header text if label is provided
+    if (countdownLabel && countdownLabel !== '') {
+        const countdownHeader = document.querySelector('.countdown-header span');
+        if (countdownHeader) {
+            countdownHeader.textContent = countdownLabel;
+            console.log("Updated countdown header to:", countdownLabel);
+        }
+    }
+    
+    // Check if timestamp is valid and in the future
+    if (timestamp && timestamp > 0 && timestamp > new Date().getTime()) {
+        console.log("✅ Starting countdown timer with target:", new Date(timestamp));
+        const targetDate = new Date(timestamp);
+        
+        // Get DOM elements
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+        
+        // Check if countdown elements exist
+        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+            console.warn("Countdown display elements not found in DOM");
+            return;
+        }
         
         function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = startDate.getTime() - now;
+            const now = new Date();
+            const distance = targetDate - now;
             
-            if (distance < 0) {
+            if (distance <= 0) {
+                console.log("Countdown finished! Reloading page to update status...");
                 location.reload();
                 return;
             }
@@ -1514,20 +1671,91 @@ function notifyMe(id) {
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
-            document.getElementById('days').textContent = days;
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            // Update DOM elements
+            daysEl.textContent = days;
+            hoursEl.textContent = hours.toString().padStart(2, '0');
+            minutesEl.textContent = minutes.toString().padStart(2, '0');
+            secondsEl.textContent = seconds.toString().padStart(2, '0');
+            
+            // Log every minute for debugging
+            if (seconds === 0) {
+                console.log(`Countdown - ${days}d ${hours}h ${minutes}m remaining`);
+            }
         }
         
+        // Initial call
         updateCountdown();
-        setInterval(updateCountdown, 1000);
-    })();
-</c:if>
+        
+        // Update every second
+        const interval = setInterval(updateCountdown, 1000);
+        
+        // Cleanup interval on page unload (optional but good practice)
+        window.addEventListener('beforeunload', function() {
+            clearInterval(interval);
+        });
+        
+    } else {
+        console.log("⏸ Countdown not started - No future target date");
+        if (timestamp && timestamp <= new Date().getTime()) {
+            console.log("Target date has already passed:", new Date(timestamp));
+        }
+        
+        // Hide countdown container if it exists and status is not UPCOMING
+        const countdownContainer = document.querySelector('.countdown-container');
+        if (countdownContainer && calculatedStatus !== "UPCOMING") {
+            countdownContainer.style.display = 'none';
+            console.log("Hiding countdown container (status: " + calculatedStatus + ")");
+        }
+    }
+})();
 
-// Notification bell click
+// Enhanced notification badge click handler
 document.querySelector('.notification-badge')?.addEventListener('click', function() {
+    // You can replace this with a modal or dropdown
     alert('You have 3 new notifications');
+    
+    // Optional: Fetch actual notifications from server
+    /*
+    fetch('/api/notifications/unread')
+        .then(response => response.json())
+        .then(notifications => {
+            // Display notifications in a modal
+            console.log('Unread notifications:', notifications);
+        });
+    */
+});
+
+// Optional: Add hover effects for skill tags
+document.querySelectorAll('.skill-tag').forEach(tag => {
+    tag.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-3px)';
+    });
+    tag.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+    });
+});
+
+// Optional: Add animation for detail items on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observe detail items
+document.querySelectorAll('.detail-item, .date-item').forEach(item => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(20px)';
+    item.style.transition = 'all 0.5s ease-out';
+    observer.observe(item);
 });
 </script>
 </body>

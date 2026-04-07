@@ -905,10 +905,10 @@
                             <a href="/listapplications" class="btn-custom btn-secondary-custom">
                                 <i class="bi bi-list-ul"></i> All Applications
                             </a>
-                            <a href="/editApplication?applicationId=${application.applicationId}" 
+                     <%--       <a href="/editApplication?applicationId=${application.applicationId}" 
                                class="btn-custom btn-edit">
                                <i class="bi bi-pencil-square"></i> Edit Application
-                            </a>
+                            </a>   --%>
                         </div>
                         
                         <a href="/deleteApplication?applicationId=${application.applicationId}" 
