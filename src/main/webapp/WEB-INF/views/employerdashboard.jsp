@@ -467,10 +467,10 @@ body {
                 <i class="fas fa-file-alt mr-3 w-5"></i> Applications
                 <span class="float-right bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">${applications.size()}</span>
             </a>
-            <a href="${pageContext.request.contextPath}/listInternship"
+   <%--         <a href="${pageContext.request.contextPath}/listInternship"
                class="sidebar-item block p-3 rounded-xl text-gray-300 transition-all duration-300">
                 <i class="fas fa-briefcase mr-3 w-5"></i> All Internships
-            </a>
+            </a> --%>
             <div class="pt-8 mt-8 border-t border-white/10">
                 <a href="${pageContext.request.contextPath}/logout"
                    class="sidebar-item block p-3 rounded-xl text-red-400 transition-all duration-300">

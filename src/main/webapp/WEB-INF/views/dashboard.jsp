@@ -1,5 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,36 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartIntern · Analytics Dashboard</title>
 
+  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js & SweetAlert -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- html2pdf for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
+    /* ========================================================
+       PROFESSIONAL BLUE COLOR SYSTEM - EXACTLY LIKE USER LIST (CODE A)
+       ======================================================== */
     :root {
       --deep-blue: #2C3E50;
       --bright-blue: #4B8BBE;
       --soft-blue: #B3CDE0;
       --pure-white: #FFFFFF;
       --medium-grey: #A8A8A8;
+      
+      --deep-blue-dark: #1e2b38;
+      --deep-blue-light: #3a4f64;
+      --bright-blue-dark: #3a6f99;
+      --bright-blue-light: #6ba5d1;
+      --soft-blue-dark: #8faec9;
+      --soft-blue-light: #c5dbea;
+      
       --glass-deep: rgba(44, 62, 80, 0.7);
       --glass-deep-darker: rgba(44, 62, 80, 0.85);
+      --glass-bright: rgba(75, 139, 190, 0.15);
+      --glass-soft: rgba(179, 205, 224, 0.15);
+      
+      --border-light: rgba(255, 255, 255, 0.08);
       --border-blue: rgba(75, 139, 190, 0.3);
+      --border-soft: rgba(179, 205, 224, 0.3);
+      
+      --text-primary: #FFFFFF;
+      --text-secondary: #B3CDE0;
+      --text-muted: #A8A8A8;
+      --text-dark: #2C3E50;
+      
+      --shadow-sm: 0 2px 8px rgba(44, 62, 80, 0.2);
+      --shadow-md: 0 4px 16px rgba(44, 62, 80, 0.3);
+      --shadow-lg: 0 8px 24px rgba(44, 62, 80, 0.4);
+      --shadow-xl: 0 12px 32px rgba(44, 62, 80, 0.5);
+      --shadow-blue: 0 4px 20px rgba(75, 139, 190, 0.3);
+      
       --sidebar-width: 280px;
+      --sidebar-collapsed: 85px;
       --header-height: 80px;
+      
+      --transition-smooth: 350ms cubic-bezier(0.23, 1, 0.32, 1);
+      --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-elegant: 450ms cubic-bezier(0.165, 0.84, 0.44, 1);
+      --transition-soft: 300ms ease-out;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(145deg, #2C3E50 0%, #1e2b38 100%);
       min-height: 100vh;
-      transition: all 0.3s ease;
+      transition: all var(--transition-soft);
     }
 
-    /* Light Theme */
+    /* Light Theme Override */
     body.light-theme {
       background: linear-gradient(145deg, #e0e5ec 0%, #f0f4f8 100%);
     }
@@ -45,73 +86,200 @@
     body.light-theme .nav-sidebar,
     body.light-theme .admin-header,
     body.light-theme .dashboard-footer {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(12px);
     }
     body.light-theme .metric-card h6,
     body.light-theme .chart-card h6,
     body.light-theme .metric-number,
     body.light-theme .dropdown-toggle,
-    body.light-theme .dropdown-item {
-      color: #2C3E50;
+    body.light-theme .dropdown-item,
+    body.light-theme .nav-category {
+      color: var(--deep-blue) !important;
+    }
+    body.light-theme .metric-card,
+    body.light-theme .chart-card {
+      border-color: rgba(75, 139, 190, 0.2);
     }
 
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(75, 139, 190, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(75, 139, 190, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* ========================================================
+       HEADER - EXACTLY LIKE CODE A
+       ======================================================== */
     .admin-header {
       height: var(--header-height);
       background: var(--glass-deep-darker);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-blue);
-      padding: 0 2rem;
+      padding: 0 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
       z-index: 1000;
+      box-shadow: var(--shadow-md);
     }
 
-    .logo-container { display: flex; align-items: center; gap: 1rem; }
-    .logo-text { font-size: 1.5rem; font-weight: 700; color: var(--pure-white); }
-    .logo-blue {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, #2C3E50, #4B8BBE);
-      border-radius: 12px;
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .smartintern-logo {
+      position: relative;
+      width: 60px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .logo-blue i { font-size: 22px; color: white; }
 
-    .dark-btn, .logout-btn {
+    .logo-blue {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #2C3E50, #4B8BBE);
+      border: 2px solid var(--bright-blue);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: logoMove 4s var(--transition-bounce) infinite;
+      box-shadow: 0 0 20px rgba(75, 139, 190, 0.3);
+    }
+
+    @keyframes logoMove {
+      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+      25% { transform: translateY(-8px) rotate(5deg) scale(1.05); }
+      50% { transform: translateY(5px) rotate(-3deg) scale(0.98); }
+      75% { transform: translateY(-3px) rotate(2deg) scale(1.02); }
+    }
+
+    .logo-blue i {
+      font-size: 28px;
+      color: var(--pure-white);
+      filter: drop-shadow(0 0 10px rgba(75, 139, 190, 0.5));
+    }
+
+    .logo-text {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--pure-white);
+      letter-spacing: -0.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .dark-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-blue);
       color: var(--soft-blue);
       border-radius: 40px;
-      padding: 0.5rem 1.2rem;
+      padding: 0.6rem 1.4rem;
       font-weight: 500;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
+      font-size: 0.95rem;
+      display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-    }
-    .dark-btn:hover, .logout-btn:hover {
-      background: var(--bright-blue);
-      color: var(--pure-white);
+      gap: 0.6rem;
+      transition: all var(--transition-soft);
+      cursor: pointer;
     }
 
-    .dashboard-layout { display: flex; min-height: calc(100vh - var(--header-height)); }
+    .dark-btn:hover {
+      background: var(--bright-blue);
+      border-color: var(--bright-blue);
+      color: var(--pure-white);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-blue);
+    }
+
+    .logout-btn {
+      background: var(--deep-blue);
+      border: 1px solid var(--border-blue);
+      color: var(--pure-white);
+      border-radius: 40px;
+      padding: 0.6rem 1.6rem;
+      font-weight: 500;
+      transition: all var(--transition-soft);
+      text-decoration: none;
+    }
+
+    .logout-btn:hover {
+      background: var(--bright-blue);
+      color: var(--pure-white);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-blue);
+    }
+
+    /* ========================================================
+       LAYOUT & SIDEBAR - EXACTLY LIKE CODE A
+       ======================================================== */
+    .dashboard-layout {
+      display: flex;
+      min-height: calc(100vh - var(--header-height));
+      transition: all var(--transition-smooth);
+    }
 
     .nav-sidebar {
       width: var(--sidebar-width);
       background: var(--glass-deep-darker);
       backdrop-filter: blur(12px);
       border-right: 1px solid var(--border-blue);
-      padding: 1.5rem 1rem;
-      transition: width 0.3s ease;
-      overflow-y: auto;
+      padding: 2rem 1.2rem;
+      box-shadow: var(--shadow-lg);
+      transition: width 0.3s var(--transition-elegant);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      white-space: nowrap;
+      z-index: 500;
+      border-radius: 0 30px 30px 0;
+    }
+
+    .nav-sidebar.collapsed {
+      width: var(--sidebar-collapsed);
+      padding: 2rem 0.5rem;
+    }
+
+    .nav-sidebar.collapsed .nav-category,
+    .nav-sidebar.collapsed .dropdown-toggle span,
+    .nav-sidebar.collapsed .dropdown-item span {
+      display: none;
+    }
+
+    .nav-sidebar.collapsed .dropdown-toggle {
+      justify-content: center;
+      padding: 1rem 0;
+    }
+
+    .dashboard-layout.fullscreen .nav-sidebar {
+      transform: translateX(-100%);
+      width: 0;
+      padding: 0;
+    }
+
+    .dashboard-layout.fullscreen .main-panel {
+      width: 100%;
     }
 
     .nav-category {
@@ -119,305 +287,331 @@
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin: 1rem 0 0.5rem 0.8rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem 0.8rem;
+      opacity: 0.7;
     }
 
-    .dropdown { width: 100%; margin-bottom: 0.2rem; }
+    .nav-sidebar .dropdown {
+      width: 100%;
+      margin-bottom: 0.3rem;
+    }
 
-    .dropdown-toggle {
+    .nav-sidebar .dropdown-toggle {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 0.7rem 1rem;
-      border-radius: 10px;
+      gap: 1.2rem;
+      padding: 0.9rem 1.2rem;
+      border-radius: 12px;
       color: var(--soft-blue);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all var(--transition-elegant);
+      width: 100%;
       background: transparent;
       border: none;
-      width: 100%;
       text-align: left;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
-    }
-    .dropdown-toggle:hover { 
-      background: rgba(75, 139, 190, 0.1); 
-      color: white;
-      transform: translateX(5px);
-    }
-    .dropdown-toggle i { 
-      color: var(--bright-blue); 
-      font-size: 1.2rem;
-      width: 1.6rem;
-    }
-    .dropdown-toggle.active {
-      background: rgba(75, 139, 190, 0.15);
-      border-left: 3px solid var(--bright-blue);
-      color: white;
+      cursor: pointer;
     }
 
-    .dropdown-menu {
+    .nav-sidebar .dropdown-toggle i {
+      font-size: 1.3rem;
+      width: 1.8rem;
+      color: var(--bright-blue);
+    }
+
+    .nav-sidebar .dropdown-toggle:hover {
+      color: var(--pure-white);
+      transform: translateX(8px);
+      background: rgba(75, 139, 190, 0.05);
+    }
+
+    .nav-sidebar .dropdown-toggle.active {
+      background: rgba(75, 139, 190, 0.1);
+      border-left: 3px solid var(--bright-blue);
+      color: var(--pure-white);
+    }
+
+    .nav-sidebar .dropdown-menu {
       background: var(--glass-deep);
       backdrop-filter: blur(12px);
       border: 1px solid var(--border-blue);
-      border-radius: 10px;
-      padding: 0.4rem;
-      margin-left: 1.8rem;
-      margin-top: 0.2rem;
+      border-radius: 12px;
+      padding: 0.5rem 0.2rem;
+      margin: 0.3rem 0 0.8rem 0;
+      width: 100%;
+      position: static !important;
+      transform: none !important;
     }
 
-    .dropdown-item {
-      border-radius: 6px;
-      padding: 0.5rem 0.8rem;
+    .nav-sidebar .dropdown-item {
+      border-radius: 8px;
+      padding: 0.7rem 1.6rem;
       color: var(--soft-blue);
+      font-size: 0.9rem;
+      font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      transition: all 0.3s ease;
+      gap: 1rem;
+      transition: all var(--transition-elegant);
       text-decoration: none;
-      font-size: 0.85rem;
     }
-    .dropdown-item:hover {
-      background: rgba(75, 139, 190, 0.1);
-      color: white;
+
+    .nav-sidebar .dropdown-item i {
+      color: var(--bright-blue);
+      font-size: 1.1rem;
+      width: 1.4rem;
+    }
+
+    .nav-sidebar .dropdown-item:hover {
+      background: rgba(75, 139, 190, 0.05);
+      color: var(--pure-white);
+      padding-left: 2rem;
       transform: translateX(5px);
     }
-    .dropdown-item i { color: var(--bright-blue); font-size: 0.9rem; width: 1.2rem; }
 
-    .main-panel { flex: 1; padding: 1.5rem; background: transparent; overflow-y: auto; }
+    /* ========================================================
+       MAIN PANEL & CARDS
+       ======================================================== */
+    .main-panel {
+      flex: 1;
+      padding: 2.5rem;
+      background: transparent;
+      transition: all var(--transition-smooth);
+    }
 
     .metric-card, .chart-card {
       background: var(--glass-deep);
       backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 1.2rem;
+      border-radius: 24px;
+      padding: 1.5rem;
       border: 1px solid var(--border-blue);
-      transition: all 0.3s ease;
+      transition: all var(--transition-elegant);
       height: 100%;
     }
-    .metric-card:hover, .chart-card:hover { 
-      transform: translateY(-3px); 
+
+    .metric-card:hover, .chart-card:hover {
       border-color: var(--bright-blue);
-      box-shadow: 0 8px 25px rgba(75, 139, 190, 0.2);
+      box-shadow: var(--shadow-lg), var(--shadow-blue);
+      transform: translateY(-3px);
     }
 
-    .metric-number { font-size: 2rem; font-weight: 700; color: var(--pure-white); }
-    .metric-card h6, .chart-card h6 { 
-      color: var(--soft-blue); 
-      margin-bottom: 0.8rem;
-      font-size: 0.8rem;
+    .metric-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--pure-white);
+      margin-top: 0.5rem;
+    }
+
+    .metric-card h6, .chart-card h6 {
+      color: var(--soft-blue);
+      font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
     }
 
-    canvas { max-height: 220px; width: 100% !important; }
-
-    .dashboard-footer {
-      background: var(--glass-deep-darker);
-      color: var(--medium-grey);
-      text-align: center;
-      padding: 0.8rem;
-      font-size: 0.8rem;
-      border-top: 1px solid var(--border-blue);
+    canvas {
+      max-height: 220px;
+      width: 100% !important;
     }
 
+    /* Toast Notification */
     .toast-notification {
       position: fixed;
       top: 90px;
       right: 20px;
       background: var(--bright-blue);
       color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      border-radius: 40px;
       z-index: 9999;
       animation: slideIn 0.3s ease;
       font-size: 0.9rem;
+      box-shadow: var(--shadow-md);
     }
+
     @keyframes slideIn {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
 
-    .nav-sidebar.collapsed { width: 70px; padding: 1.5rem 0.3rem; }
-    .nav-sidebar.collapsed .nav-category,
-    .nav-sidebar.collapsed .dropdown-toggle span,
-    .nav-sidebar.collapsed .dropdown-menu { display: none; }
-    .nav-sidebar.collapsed .dropdown-toggle { justify-content: center; padding: 0.7rem 0; }
-    .nav-sidebar.collapsed .dropdown-toggle i { margin: 0; }
+    .dashboard-footer {
+      background: var(--glass-deep-darker);
+      backdrop-filter: blur(12px);
+      color: var(--medium-grey);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-blue);
+    }
 
-    .dashboard-layout.fullscreen .nav-sidebar { display: none; }
-
-    @media (max-width: 768px) { 
-      .main-panel { padding: 1rem; } 
-      .admin-header { padding: 0 1rem; }
+    @media (max-width: 768px) {
+      .admin-header { padding: 0 1.5rem; }
+      .main-panel { padding: 1.5rem; }
       .dark-btn span { display: none; }
-      .dark-btn { padding: 0.5rem 0.8rem; }
+      .dark-btn { padding: 0.6rem; }
     }
   </style>
 </head>
 <body>
 
+  <!-- HEADER - EXACTLY LIKE CODE A -->
   <header class="admin-header">
     <div class="logo-container">
-      <div class="logo-blue"><i class="bi bi-briefcase-fill"></i></div>
+      <div class="smartintern-logo">
+        <div class="logo-blue">
+          <i class="bi bi-briefcase-fill"></i>
+        </div>
+      </div>
       <span class="logo-text">SmartIntern</span>
     </div>
     <div class="header-actions">
-      <span class="dark-btn" id="toggleThemeBtn" title="Dark/Light Mode">
+      <span class="dark-btn" id="toggleThemeBtn">
         <i class="bi bi-moon-stars-fill"></i> <span>Theme</span>
       </span>
-      <span class="dark-btn" id="exportPDFBtn" title="Export Dashboard">
+      <span class="dark-btn" id="exportPDFBtn">
         <i class="bi bi-file-pdf-fill"></i> <span>PDF</span>
       </span>
-      <span class="dark-btn" id="refreshDataBtn" title="Refresh Data">
+      <span class="dark-btn" id="refreshDataBtn">
         <i class="bi bi-arrow-repeat"></i> <span>Refresh</span>
       </span>
       <span class="dark-btn" id="toggleCollapseBtn">
         <i class="bi bi-layout-sidebar"></i> <span id="collapseText">Collapse</span>
       </span>
-      <span class="dark-btn" id="fullscreenBtn" title="Fullscreen">
-        <i class="bi bi-arrows-fullscreen"></i> <span>Full</span>
+      <span class="dark-btn" id="fullscreenModeBtn">
+        <i class="bi bi-arrows-fullscreen"></i> <span>Fullscreen</span>
       </span>
-      <a href="logout" class="logout-btn"><i class="bi bi-box-arrow-right"></i> <span>Exit</span></a>
+      <a href="logout" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> <span>Exit</span>
+      </a>
     </div>
   </header>
 
+  <!-- LAYOUT -->
   <div class="dashboard-layout" id="dashboardLayout">
 
+    <!-- SIDEBAR - EXACTLY AS IN CODE A (USER LIST) -->
     <aside class="nav-sidebar" id="mainSidebar">
       <div class="nav-category">Core</div>
-      <div class="dropdown">
-        <button class="dropdown-toggle active" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMenu">
-          <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
-        </button>
-      </div>
+     <a href="/dashboard" class="dropdown-toggle active" style="text-decoration: none;">
+ 		 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+	</a>
+
       <div class="nav-category">Identity</div>
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#userMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-people-fill"></i> <span>Manage Users</span>
         </button>
-        <div class="collapse" id="userMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="/listUser"><i class="bi bi-person-plus"></i> Users</a>
-            <a class="dropdown-item" href="addUser"><i class="bi bi-person-dash"></i> Add User</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/listUser"><i class="bi bi-person-plus"></i> <span>Users</span></a></li>
+         
+        </ul>
       </div>
+
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#studentMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-patch-check-fill"></i> <span>Verify Student</span>
         </button>
-        <div class="collapse" id="studentMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listStudent"><i class="bi bi-check-circle"></i> Students</a>
-            <a class="dropdown-item" href="addStudentInfo"><i class="bi bi-x-circle"></i> Add Student</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="listStudent"><i class="bi bi-check-circle"></i> <span>Students</span></a></li>
+          <li><a class="dropdown-item" href="addStudentInfo"><i class="bi bi-x-circle"></i> <span>Add Student</span></a></li>
+        </ul>
       </div>
+
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#employerMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-building"></i> <span>Verify Employers</span>
         </button>
-        <div class="collapse" id="employerMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listEmployer"><i class="bi bi-shield-check"></i> Employers</a>
-            <a class="dropdown-item" href="employer"><i class="bi bi-shield-exclamation"></i> Add Employer</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="listEmployer"><i class="bi bi-shield-check"></i> <span>Employers</span></a></li>
+          <li><a class="dropdown-item" href="employer"><i class="bi bi-shield-exclamation"></i> <span>Add Employer</span></a></li>
+        </ul>
       </div>
+
       <div class="nav-category">Opportunities</div>
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#internshipMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-briefcase-fill"></i> <span>Internship</span>
         </button>
-        <div class="collapse" id="internshipMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listInternship"><i class="bi bi-send"></i> List Internship</a>
-            <a class="dropdown-item" href="addInternship"><i class="bi bi-file-text"></i> Add Internship</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="listInternship"><i class="bi bi-send"></i> <span>List Internship</span></a></li>
+          <li><a class="dropdown-item" href="addInternship"><i class="bi bi-file-text"></i> <span>Add Internship</span></a></li>
+        </ul>
       </div>
+
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#enrollmentMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-journal-bookmark-fill"></i> <span>Enrollments</span>
         </button>
-        <div class="collapse" id="enrollmentMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listEnrollment"><i class="bi bi-list-check"></i> List Enrollments</a>
-            <a class="dropdown-item" href="addInternshipEnrollment"><i class="bi bi-clock-history"></i> New Enroll</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="listEnrollment"><i class="bi bi-list-check"></i> <span>List Enrollments</span></a></li>
+          <li><a class="dropdown-item" href="addInternshipEnrollment"><i class="bi bi-clock-history"></i> <span>New Enroll</span></a></li>
+        </ul>
       </div>
+
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#applicationMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-send-fill"></i> <span>Applications</span>
         </button>
-        <div class="collapse" id="applicationMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listapplications"><i class="bi bi-envelope-open"></i> Applications</a>
-            <a class="dropdown-item" href="applyInternship"><i class="bi bi-archive"></i> Add Application</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/listapplications"><i class="bi bi-envelope-open"></i> <span>All Applications</span></a></li>
+         
+        </ul>
       </div>
+
+    
+
       <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#reviewMenu">
-          <i class="bi bi-star-fill"></i> <span>Reviews</span>
-        </button>
-        <div class="collapse" id="reviewMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listReview"><i class="bi bi-star-half"></i> Review</a>
-            <a class="dropdown-item" href="review"><i class="bi bi-star"></i> Add Review</a>
-          </div>
-        </div>
-      </div>
-      <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#certificateMenu">
+        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-award-fill"></i> <span>Certificates</span>
         </button>
-        <div class="collapse" id="certificateMenu">
-          <div class="dropdown-menu show">
-            <a class="dropdown-item" href="listCertificate"><i class="bi bi-file-pdf"></i> List Certificate</a>
-            <a class="dropdown-item" href="certificate"><i class="bi bi-download"></i> Add Certificate</a>
-          </div>
-        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="listCertificate"><i class="bi bi-file-pdf"></i> <span>List Certificates</span></a></li>
+          <li><a class="dropdown-item" href="certificate"><i class="bi bi-download"></i> <span>Add Certificate</span></a></li>
+        </ul>
       </div>
     </aside>
 
+    <!-- MAIN PANEL - DASHBOARD CONTENT -->
     <main class="main-panel" id="mainPanel">
-
       <!-- Metric Cards Row -->
-      <div class="row g-3 mb-4">
+      <div class="row g-4 mb-4">
         <div class="col-md-3">
           <div class="metric-card">
-            <h6><i class="bi bi-people-fill"></i> Total Users</h6>
-            <div class="metric-number">${totalUsers}</div>
+            <h6><i class="bi bi-people-fill me-1"></i> Total Users</h6>
+            <div class="metric-number">${totalUsers != null ? totalUsers : 0}</div>
           </div>
         </div>
         <div class="col-md-3">
           <div class="metric-card">
-            <h6><i class="bi bi-briefcase-fill"></i> Total Internships</h6>
-            <div class="metric-number">${totalInternships}</div>
+            <h6><i class="bi bi-briefcase-fill me-1"></i> Total Internships</h6>
+            <div class="metric-number">${totalInternships != null ? totalInternships : 0}</div>
           </div>
         </div>
         <div class="col-md-3">
           <div class="metric-card">
-            <h6><i class="bi bi-send-fill"></i> Total Applications</h6>
-            <div class="metric-number">${totalApplications}</div>
+            <h6><i class="bi bi-send-fill me-1"></i> Total Applications</h6>
+            <div class="metric-number">${totalApplications != null ? totalApplications : 0}</div>
           </div>
         </div>
         <div class="col-md-3">
           <div class="metric-card">
-            <h6><i class="bi bi-award-fill"></i> Total Enrollments</h6>
-            <div class="metric-number">${totalEnrollments}</div>
+            <h6><i class="bi bi-award-fill me-1"></i> Total Enrollments</h6>
+            <div class="metric-number">${totalEnrollments != null ? totalEnrollments : 0}</div>
           </div>
         </div>
       </div>
 
-      <!-- Graphs Row 1 -->
-      <div class="row g-3 mb-4">
+      <!-- Row 1: Role Distribution & Monthly Registrations -->
+      <div class="row g-4 mb-4">
         <div class="col-md-6">
           <div class="chart-card">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center mb-2">
               <h6><i class="bi bi-pie-chart-fill"></i> 1. User Role Distribution</h6>
-              <button class="btn btn-sm btn-outline-info" onclick="exportChartAsImage('userRoleChart', 'User_Roles')">
+              <button class="btn btn-sm" style="background:rgba(75,139,190,0.2); color:var(--soft-blue); border-radius:20px;" onclick="exportChartAsImage('userRoleChart', 'User_Roles')">
                 <i class="bi bi-download"></i>
               </button>
             </div>
@@ -426,9 +620,9 @@
         </div>
         <div class="col-md-6">
           <div class="chart-card">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center mb-2">
               <h6><i class="bi bi-calendar-week"></i> 2. Monthly Registrations</h6>
-              <button class="btn btn-sm btn-outline-info" onclick="toggleChartType('monthlyRegChart')">
+              <button class="btn btn-sm" style="background:rgba(75,139,190,0.2); color:var(--soft-blue); border-radius:20px;" onclick="toggleChartType('monthlyRegChart')">
                 <i class="bi bi-bar-chart-steps"></i> Toggle
               </button>
             </div>
@@ -437,8 +631,8 @@
         </div>
       </div>
 
-      <!-- Graphs Row 2 -->
-      <div class="row g-3 mb-4">
+      <!-- Row 2: Internship Status & Application Status -->
+      <div class="row g-4 mb-4">
         <div class="col-md-6">
           <div class="chart-card">
             <h6><i class="bi bi-briefcase"></i> 3. Internship Status</h6>
@@ -453,8 +647,8 @@
         </div>
       </div>
 
-      <!-- Graphs Row 3 -->
-      <div class="row g-3 mb-4">
+      <!-- Row 3: Top Internships & Enrollment Status -->
+      <div class="row g-4 mb-4">
         <div class="col-md-6">
           <div class="chart-card">
             <h6><i class="bi bi-trophy"></i> 5. Top 5 Internships</h6>
@@ -469,13 +663,13 @@
         </div>
       </div>
 
-      <!-- Graph Row 4 -->
-      <div class="row g-3">
+      <!-- Row 4: Certificates Issued Monthly -->
+      <div class="row g-4">
         <div class="col-md-12">
           <div class="chart-card">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center mb-2">
               <h6><i class="bi bi-file-pdf-fill"></i> 7. Certificates Issued Monthly</h6>
-              <button class="btn btn-sm btn-outline-info" onclick="toggleChartType('certificatesChart')">
+              <button class="btn btn-sm" style="background:rgba(75,139,190,0.2); color:var(--soft-blue); border-radius:20px;" onclick="toggleChartType('certificatesChart')">
                 <i class="bi bi-bar-chart-steps"></i> Toggle
               </button>
             </div>
@@ -491,265 +685,175 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
   <script>
-    // ========== GLOBAL VARIABLES ==========
-    let charts = {};
-    let currentChartTypes = { monthlyRegChart: 'bar', certificatesChart: 'line' };
+    (function() {
+      // ========== SIDEBAR FUNCTIONALITY (MATCHING CODE A) ==========
+      const layout = document.getElementById('dashboardLayout');
+      const sidebar = document.getElementById('mainSidebar');
+      const toggleBtn = document.getElementById('toggleCollapseBtn');
+      const collapseText = document.getElementById('collapseText');
+      const fullscreenBtn = document.getElementById('fullscreenModeBtn');
 
-    // ========== SIDEBAR COLLAPSE ==========
-    const layout = document.getElementById('dashboardLayout');
-    const sidebar = document.getElementById('mainSidebar');
-    const toggleBtn = document.getElementById('toggleCollapseBtn');
-    const collapseText = document.getElementById('collapseText');
-
-    toggleBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      sidebar.classList.toggle('collapsed');
-      collapseText.innerText = sidebar.classList.contains('collapsed') ? 'Expand' : 'Collapse';
-    });
-
-    // ========== FULLSCREEN ==========
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-    fullscreenBtn.addEventListener('click', function() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> <span>Exit</span>';
-      } else {
-        document.exitFullscreen();
-        fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> <span>Full</span>';
+      if(toggleBtn) {
+        toggleBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if(layout.classList.contains('fullscreen')) layout.classList.remove('fullscreen');
+          sidebar.classList.toggle('collapsed');
+          collapseText.innerText = sidebar.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+          setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 300);
+        });
       }
-    });
 
-    document.addEventListener('fullscreenchange', () => {
-      if (document.fullscreenElement) {
-        fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> <span>Exit</span>';
-      } else {
-        fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> <span>Full</span>';
+      if(fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          layout.classList.toggle('fullscreen');
+          if(layout.classList.contains('fullscreen')) {
+            sidebar.classList.remove('collapsed');
+            collapseText.innerText = 'Collapse';
+            fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> <span>Sidebar off</span>';
+          } else {
+            fullscreenBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i> <span>Fullscreen</span>';
+          }
+          setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 300);
+        });
       }
-    });
 
-    // ========== THEME SWITCHER ==========
-    const themeBtn = document.getElementById('toggleThemeBtn');
-    let isDarkMode = true;
-    themeBtn.addEventListener('click', function() {
-      isDarkMode = !isDarkMode;
-      if(isDarkMode) {
-        document.body.classList.remove('light-theme');
-        themeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i> <span>Theme</span>';
-      } else {
-        document.body.classList.add('light-theme');
-        themeBtn.innerHTML = '<i class="bi bi-sun-fill"></i> <span>Theme</span>';
+      // ========== THEME TOGGLE ==========
+      const themeBtn = document.getElementById('toggleThemeBtn');
+      let isDark = true;
+      if(themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          isDark = !isDark;
+          if(isDark) {
+            document.body.classList.remove('light-theme');
+            themeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i> <span>Theme</span>';
+          } else {
+            document.body.classList.add('light-theme');
+            themeBtn.innerHTML = '<i class="bi bi-sun-fill"></i> <span>Theme</span>';
+          }
+          showToast('Switched to ' + (isDark ? 'Dark' : 'Light') + ' Mode');
+        });
       }
-      showToast('Switched to ' + (isDarkMode ? 'Dark' : 'Light') + ' Mode');
-    });
 
-    // ========== TOAST NOTIFICATION ==========
-    function showToast(message) {
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification';
-      toast.innerHTML = '<i class="bi bi-check-circle"></i> ' + message;
-      document.body.appendChild(toast);
-      setTimeout(function() { toast.remove(); }, 3000);
-    }
-
-    // ========== EXPORT CHART AS IMAGE ==========
-    function exportChartAsImage(chartId, filename) {
-      const canvas = document.getElementById(chartId);
-      if(canvas) {
-        const link = document.createElement('a');
-        link.download = filename + '.png';
-        link.href = canvas.toDataURL();
-        link.click();
-        showToast('Exported ' + filename);
+      // ========== TOAST UTILITY ==========
+      function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.innerHTML = '<i class="bi bi-check-circle"></i> ' + msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
       }
-    }
 
-    // ========== EXPORT AS PDF ==========
-    document.getElementById('exportPDFBtn').addEventListener('click', function() {
-      const element = document.getElementById('mainPanel');
-      html2pdf().from(element).set({
-        margin: [10, 10, 10, 10],
-        filename: 'SmartIntern_Dashboard.pdf',
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      }).save();
-      showToast('Exporting dashboard as PDF...');
-    });
-
-    // ========== REFRESH DATA ==========
-    document.getElementById('refreshDataBtn').addEventListener('click', function() {
-      location.reload();
-    });
-
-    // ========== TOGGLE CHART TYPE ==========
-    function toggleChartType(chartId) {
-      const canvas = document.getElementById(chartId);
-      if(!canvas) return;
-      
-      const currentType = currentChartTypes[chartId] || 'bar';
-      let newType, labels, values, label;
-      
-      if(chartId === 'monthlyRegChart') {
-        labels = monthlyLabels;
-        values = monthlyValues;
-        label = 'New Users';
-        newType = currentType === 'bar' ? 'line' : 'bar';
-      } else {
-        labels = certMonths;
-        values = certCounts;
-        label = 'Certificates Issued';
-        newType = currentType === 'line' ? 'bar' : 'line';
-      }
-      
-      if(charts[chartId]) charts[chartId].destroy();
-      
-      if(newType === 'bar') {
-        charts[chartId] = createBarChart(canvas.getContext('2d'), labels, values, label);
-      } else {
-        charts[chartId] = createLineChart(canvas.getContext('2d'), labels, values, label);
-      }
-      
-      currentChartTypes[chartId] = newType;
-      showToast('Chart type changed to ' + newType.toUpperCase());
-    }
-
-    // ========== GRAPH DATA FROM BACKEND ==========
-    const roleLabels = ${roleLabelsJson != null ? roleLabelsJson : '[]'};
-    const roleValues = ${roleValuesJson != null ? roleValuesJson : '[]'};
-    const monthlyLabels = ${monthlyLabelsJson != null ? monthlyLabelsJson : '[]'};
-    const monthlyValues = ${monthlyValuesJson != null ? monthlyValuesJson : '[]'};
-    const statusLabels = ${statusLabelsJson != null ? statusLabelsJson : '[]'};
-    const statusValues = ${statusValuesJson != null ? statusValuesJson : '[]'};
-    const appLabels = ${appLabelsJson != null ? appLabelsJson : '[]'};
-    const appValues = ${appValuesJson != null ? appValuesJson : '[]'};
-    const topTitles = ${topTitlesJson != null ? topTitlesJson : '[]'};
-    const topCounts = ${topCountsJson != null ? topCountsJson : '[]'};
-    const enrollLabels = ${enrollLabelsJson != null ? enrollLabelsJson : '[]'};
-    const enrollValues = ${enrollValuesJson != null ? enrollValuesJson : '[]'};
-    const certMonths = ${certMonthsJson != null ? certMonthsJson : '[]'};
-    const certCounts = ${certCountsJson != null ? certCountsJson : '[]'};
-
-    // Chart.js Configuration
-    Chart.defaults.font.family = "'Inter', sans-serif";
-    Chart.defaults.color = '#B3CDE0';
-
-    function createPieChart(ctx, labels, values) {
-      if(!ctx || !labels.length) return null;
-      return new Chart(ctx, {
-        type: 'doughnut',
-        data: { 
-          labels: labels, 
-          datasets: [{ 
-            data: values, 
-            backgroundColor: ['#4B8BBE', '#2C3E50', '#B3CDE0', '#A8A8A8', '#6ba5d1'], 
-            borderWidth: 0,
-            hoverOffset: 10
-          }] 
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: true,
-          plugins: { 
-            legend: { position: 'bottom', labels: { color: '#B3CDE0', font: { size: 10 } } }
-          } 
+      // ========== EXPORT CHART AS IMAGE ==========
+      window.exportChartAsImage = function(chartId, filename) {
+        const canvas = document.getElementById(chartId);
+        if(canvas) {
+          const link = document.createElement('a');
+          link.download = filename + '.png';
+          link.href = canvas.toDataURL();
+          link.click();
+          showToast('Exported ' + filename);
         }
-      });
-    }
+      };
 
-    function createBarChart(ctx, labels, values, label) {
-      if(!ctx || !labels.length) return null;
-      return new Chart(ctx, {
-        type: 'bar',
-        data: { 
-          labels: labels, 
-          datasets: [{ 
-            label: label, 
-            data: values, 
-            backgroundColor: '#4B8BBE', 
-            borderRadius: 8,
-            barPercentage: 0.65
-          }] 
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: true,
-          plugins: { legend: { labels: { color: '#B3CDE0' } } },
-          scales: { 
-            y: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179, 205, 224, 0.1)' } }, 
-            x: { ticks: { color: '#B3CDE0' }, grid: { color: 'rgba(179, 205, 224, 0.1)' } } 
-          } 
+      // ========== PDF EXPORT ==========
+      document.getElementById('exportPDFBtn')?.addEventListener('click', () => {
+        const element = document.getElementById('mainPanel');
+        html2pdf().from(element).set({
+          margin: [10,10,10,10],
+          filename: 'SmartIntern_Dashboard.pdf',
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        }).save();
+        showToast('Exporting dashboard as PDF...');
+      });
+
+      // ========== REFRESH ==========
+      document.getElementById('refreshDataBtn')?.addEventListener('click', () => location.reload());
+
+      // ========== CHART DATA FROM BACKEND (FALLBACKS) ==========
+      const roleLabels = ${roleLabelsJson != null ? roleLabelsJson : '[]'};
+      const roleValues = ${roleValuesJson != null ? roleValuesJson : '[]'};
+      const monthlyLabels = ${monthlyLabelsJson != null ? monthlyLabelsJson : '[]'};
+      const monthlyValues = ${monthlyValuesJson != null ? monthlyValuesJson : '[]'};
+      const statusLabels = ${statusLabelsJson != null ? statusLabelsJson : '[]'};
+      const statusValues = ${statusValuesJson != null ? statusValuesJson : '[]'};
+      const appLabels = ${appLabelsJson != null ? appLabelsJson : '[]'};
+      const appValues = ${appValuesJson != null ? appValuesJson : '[]'};
+      const topTitles = ${topTitlesJson != null ? topTitlesJson : '[]'};
+      const topCounts = ${topCountsJson != null ? topCountsJson : '[]'};
+      const enrollLabels = ${enrollLabelsJson != null ? enrollLabelsJson : '[]'};
+      const enrollValues = ${enrollValuesJson != null ? enrollValuesJson : '[]'};
+      const certMonths = ${certMonthsJson != null ? certMonthsJson : '[]'};
+      const certCounts = ${certCountsJson != null ? certCountsJson : '[]'};
+
+      // Chart helpers
+      function createPie(ctx, labels, values) {
+        if(!ctx || !labels.length) return null;
+        return new Chart(ctx, {
+          type: 'doughnut',
+          data: { labels, datasets: [{ data: values, backgroundColor: ['#4B8BBE','#2C3E50','#B3CDE0','#A8A8A8','#6ba5d1'], borderWidth: 0, hoverOffset: 10 }] },
+          options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#B3CDE0', font: { size: 10 } } } } }
+        });
+      }
+      function createBar(ctx, labels, values, label) {
+        if(!ctx || !labels.length) return null;
+        return new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets: [{ label, data: values, backgroundColor: '#4B8BBE', borderRadius: 8 }] },
+          options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#B3CDE0' } } }, scales: { y: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179,205,224,0.1)' } }, x: { ticks: { color: '#B3CDE0' }, grid: { display: false } } } }
+        });
+      }
+      function createLine(ctx, labels, values, label) {
+        if(!ctx || !labels.length) return null;
+        return new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets: [{ label, data: values, borderColor: '#4B8BBE', backgroundColor: 'rgba(75,139,190,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#4B8BBE', pointBorderColor: '#FFF' }] },
+          options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#B3CDE0' } } }, scales: { y: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179,205,224,0.1)' } }, x: { ticks: { color: '#B3CDE0' }, grid: { display: false } } } }
+        });
+      }
+      function createHorizBar(ctx, labels, values, label) {
+        if(!ctx || !labels.length) return null;
+        return new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets: [{ label, data: values, backgroundColor: '#4B8BBE', borderRadius: 8 }] },
+          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#B3CDE0' } } }, scales: { x: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179,205,224,0.1)' } }, y: { ticks: { color: '#B3CDE0' }, grid: { display: false } } } }
+        });
+      }
+
+      let charts = {};
+      let chartTypes = { monthlyRegChart: 'bar', certificatesChart: 'line' };
+
+      if(roleLabels.length) charts.userRoleChart = createPie(document.getElementById('userRoleChart'), roleLabels, roleValues);
+      if(monthlyLabels.length) charts.monthlyRegChart = createBar(document.getElementById('monthlyRegChart'), monthlyLabels, monthlyValues, 'New Users');
+      if(statusLabels.length) charts.internshipStatusChart = createPie(document.getElementById('internshipStatusChart'), statusLabels, statusValues);
+      if(appLabels.length) charts.applicationStatusChart = createPie(document.getElementById('applicationStatusChart'), appLabels, appValues);
+      if(topTitles.length) charts.topInternshipsChart = createHorizBar(document.getElementById('topInternshipsChart'), topTitles, topCounts, 'Applications');
+      if(enrollLabels.length) charts.enrollmentStatusChart = createPie(document.getElementById('enrollmentStatusChart'), enrollLabels, enrollValues);
+      if(certMonths.length) charts.certificatesChart = createLine(document.getElementById('certificatesChart'), certMonths, certCounts, 'Certificates Issued');
+
+      window.toggleChartType = function(chartId) {
+        const canvas = document.getElementById(chartId);
+        if(!canvas) return;
+        const current = chartTypes[chartId];
+        let newType, labels, values, label;
+        if(chartId === 'monthlyRegChart') {
+          labels = monthlyLabels; values = monthlyValues; label = 'New Users';
+          newType = current === 'bar' ? 'line' : 'bar';
+        } else {
+          labels = certMonths; values = certCounts; label = 'Certificates Issued';
+          newType = current === 'line' ? 'bar' : 'line';
         }
-      });
-    }
+        if(charts[chartId]) charts[chartId].destroy();
+        if(newType === 'bar') charts[chartId] = createBar(canvas.getContext('2d'), labels, values, label);
+        else charts[chartId] = createLine(canvas.getContext('2d'), labels, values, label);
+        chartTypes[chartId] = newType;
+        showToast('Chart type changed to ' + newType.toUpperCase());
+      };
 
-    function createLineChart(ctx, labels, values, label) {
-      if(!ctx || !labels.length) return null;
-      return new Chart(ctx, {
-        type: 'line',
-        data: { 
-          labels: labels, 
-          datasets: [{ 
-            label: label, 
-            data: values, 
-            borderColor: '#4B8BBE', 
-            backgroundColor: 'rgba(75, 139, 190, 0.1)', 
-            fill: true, 
-            tension: 0.4,
-            pointBackgroundColor: '#4B8BBE',
-            pointBorderColor: '#FFFFFF',
-            pointRadius: 4
-          }] 
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: true,
-          plugins: { legend: { labels: { color: '#B3CDE0' } } },
-          scales: { 
-            y: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179, 205, 224, 0.1)' } }, 
-            x: { ticks: { color: '#B3CDE0' }, grid: { color: 'rgba(179, 205, 224, 0.1)' } } 
-          } 
-        }
-      });
-    }
-
-    function createHorizontalBarChart(ctx, labels, values, label) {
-      if(!ctx || !labels.length) return null;
-      return new Chart(ctx, {
-        type: 'bar',
-        data: { 
-          labels: labels, 
-          datasets: [{ 
-            label: label, 
-            data: values, 
-            backgroundColor: '#4B8BBE', 
-            borderRadius: 8
-          }] 
-        },
-        options: { 
-          indexAxis: 'y', 
-          responsive: true, 
-          maintainAspectRatio: true,
-          plugins: { legend: { labels: { color: '#B3CDE0' } } },
-          scales: { 
-            x: { ticks: { color: '#B3CDE0', stepSize: 1 }, grid: { color: 'rgba(179, 205, 224, 0.1)' } }, 
-            y: { ticks: { color: '#B3CDE0' }, grid: { display: false } } 
-          } 
-        }
-      });
-    }
-
-    // Create all charts
-    if(roleLabels.length) charts.userRoleChart = createPieChart(document.getElementById('userRoleChart'), roleLabels, roleValues);
-    if(monthlyLabels.length) charts.monthlyRegChart = createBarChart(document.getElementById('monthlyRegChart'), monthlyLabels, monthlyValues, 'New Users');
-    if(statusLabels.length) charts.internshipStatusChart = createPieChart(document.getElementById('internshipStatusChart'), statusLabels, statusValues);
-    if(appLabels.length) charts.applicationStatusChart = createPieChart(document.getElementById('applicationStatusChart'), appLabels, appValues);
-    if(topTitles.length) charts.topInternshipsChart = createHorizontalBarChart(document.getElementById('topInternshipsChart'), topTitles, topCounts, 'Applications');
-    if(enrollLabels.length) charts.enrollmentStatusChart = createPieChart(document.getElementById('enrollmentStatusChart'), enrollLabels, enrollValues);
-    if(certMonths.length) charts.certificatesChart = createLineChart(document.getElementById('certificatesChart'), certMonths, certCounts, 'Certificates Issued');
-
-    console.log("Dashboard loaded successfully!");
+      console.log("Analytics Dashboard with Code A Sidebar Loaded");
+    })();
   </script>
 </body>
 </html>

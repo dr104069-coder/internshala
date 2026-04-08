@@ -1105,37 +1105,27 @@
   </header>
 
   <!-- LAYOUT -->
+  <!-- LAYOUT -->
   <div class="dashboard-layout" id="dashboardLayout">
 
-    <!-- SIDEBAR - EXACTLY LIKE DASHBOARD WITH ALL DROPDOWNS -->
+    <!-- SIDEBAR - EXACTLY AS IN CODE A (USER LIST) -->
     <aside class="nav-sidebar" id="mainSidebar">
       <div class="nav-category">Core</div>
-
-      <!-- Dashboard dropdown -->
-      <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-graph-up"></i> <span>Analytics</span></a></li>
-          <li><a class="dropdown-item" href="#"><i class="bi bi-pie-chart"></i> <span>Reports</span></a></li>
-        </ul>
-      </div>
+     <a href="/dashboard" class="dropdown-toggle active" style="text-decoration: none;">
+ 		 <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+	</a>
 
       <div class="nav-category">Identity</div>
-
-      <!-- Manage Users dropdown -->
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-people-fill"></i> <span>Manage Users</span>
         </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="/listUser"><i class="bi bi-person-plus"></i> <span>Users</span></a></li>
-          <li><a class="dropdown-item" href=""><i class="bi bi-person-dash"></i> <span>Add User</span></a></li>
+         
         </ul>
       </div>
 
-      <!-- Verify Student dropdown -->
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-patch-check-fill"></i> <span>Verify Student</span>
@@ -1146,18 +1136,6 @@
         </ul>
       </div>
 
-      <!-- Manage Student dropdown -->
-      <div class="dropdown">
-        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          <i class="bi bi-pencil-square"></i> <span>Manage Student</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle"></i> <span>Edit</span></a></li>
-          <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> <span>Settings</span></a></li>
-        </ul>
-      </div>
-
-      <!-- Verify Employers dropdown -->
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-building"></i> <span>Verify Employers</span>
@@ -1169,8 +1147,6 @@
       </div>
 
       <div class="nav-category">Opportunities</div>
-
-      <!-- Post Internship dropdown -->
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-briefcase-fill"></i> <span>Internship</span>
@@ -1181,7 +1157,6 @@
         </ul>
       </div>
 
-      <!-- Enrollments dropdown -->
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-journal-bookmark-fill"></i> <span>Enrollments</span>
@@ -1192,35 +1167,24 @@
         </ul>
       </div>
 
-      <!-- Applications dropdown -->
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-send-fill"></i> <span>Applications</span>
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-envelope-open"></i> <span>Inbox</span></a></li>
-          <li><a class="dropdown-item" href="applyInternship"><i class="bi bi-archive"></i> <span>Add New</span></a></li>
+          <li><a class="dropdown-item" href="/listapplications"><i class="bi bi-envelope-open"></i> <span>All Applications</span></a></li>
+         
         </ul>
       </div>
 
-      <!-- Reviews dropdown -->
+    
+
       <div class="dropdown">
         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          <i class="bi bi-star-fill"></i> <span>Reviews</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-star-half"></i> <span>All Reviews</span></a></li>
-          <li><a class="dropdown-item" href="review"><i class="bi bi-star"></i> <span>Add Review</span></a></li>
-        </ul>
-      </div>
-
-      <!-- Certificates dropdown - ACTIVE -->
-      <div class="dropdown">
-        <button class="dropdown-toggle active" type="button" data-bs-toggle="dropdown">
           <i class="bi bi-award-fill"></i> <span>Certificates</span>
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item active" href="listCertificate"><i class="bi bi-file-pdf"></i> <span>List Certificates</span></a></li>
+          <li><a class="dropdown-item" href="listCertificate"><i class="bi bi-file-pdf"></i> <span>List Certificates</span></a></li>
           <li><a class="dropdown-item" href="certificate"><i class="bi bi-download"></i> <span>Add Certificate</span></a></li>
         </ul>
       </div>
